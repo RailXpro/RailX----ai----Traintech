@@ -21,6 +21,11 @@ export const AiBlockOptimizer: React.FC = () => {
   const [nightWindowPreference, setNightWindowPreference] = useState<number>(85);
   const [maxTsrTolerance, setMaxTsrTolerance] = useState<number>(30);
 
+  // Dynamic calculation based on constraints
+  const dynamicAssetUtilization = Math.min(98.8, +(metrics.afterOptimization.assetUtilizationPercent + (passengerPriorityWeight - 3) * 0.4 + (nightWindowPreference - 75) * 0.04).toFixed(1));
+  const dynamicAvgDelay = Math.max(1.5, +(metrics.afterOptimization.averageTrainDelayMins - (passengerPriorityWeight - 3) * 0.2 + (maxTsrTolerance - 30) * 0.03).toFixed(1));
+  const dynamicEnergySaved = Math.max(9.5, +(12.3 + (nightWindowPreference - 75) * 0.05).toFixed(1));
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Top Banner & Solver Engine Config */}
@@ -69,7 +74,7 @@ export const AiBlockOptimizer: React.FC = () => {
         <div style={{ background: '#F8F8FB', padding: '18px 20px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
           <h4 style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Sliders size={15} color="var(--bms-red)" />
-            Optimization Objective Constraints & Weights
+            Optimization Objective Constraints & Weights (Interactive)
           </h4>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '18px' }}>
@@ -150,17 +155,17 @@ export const AiBlockOptimizer: React.FC = () => {
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
             <span style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--bms-red)' }} className="font-display">
-              {metrics.afterOptimization.assetUtilizationPercent}%
+              {dynamicAssetUtilization}%
             </span>
             <span style={{ fontSize: '0.8rem', color: '#999999', textDecoration: 'line-through' }}>
               {metrics.beforeOptimization.assetUtilizationPercent}%
             </span>
             <span className="badge badge-clear" style={{ fontSize: '0.65rem' }}>
-              +{Math.round(metrics.afterOptimization.assetUtilizationPercent - metrics.beforeOptimization.assetUtilizationPercent)}% Gain
+              +{Math.round(dynamicAssetUtilization - metrics.beforeOptimization.assetUtilizationPercent)}% Gain
             </span>
           </div>
           <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-            Locomotives, tamping rakes & crew roasters
+            Locomotives, tamping rakes & crew rosters
           </p>
         </div>
 
@@ -172,7 +177,7 @@ export const AiBlockOptimizer: React.FC = () => {
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
             <span style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-dark)' }} className="font-display">
-              {metrics.afterOptimization.averageTrainDelayMins}m
+              {dynamicAvgDelay}m
             </span>
             <span style={{ fontSize: '0.8rem', color: '#999999', textDecoration: 'line-through' }}>
               {metrics.beforeOptimization.averageTrainDelayMins}m
@@ -216,7 +221,7 @@ export const AiBlockOptimizer: React.FC = () => {
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
             <span style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-dark)' }} className="font-display">
-              12.3 MWh
+              {dynamicEnergySaved} MWh
             </span>
             <span className="badge badge-saffron" style={{ fontSize: '0.65rem' }}>
               Saved / Day

@@ -8,10 +8,7 @@ import {
   Clock, 
   ArrowRight, 
   CheckCircle2, 
-  Sparkles,
-  MapPin,
-  ChevronRight,
-  Train
+  Sparkles
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
 import { LiveAlertBanner } from '../LiveAlertBanner';

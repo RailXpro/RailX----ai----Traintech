@@ -2,18 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { 
   Train, 
   ShieldAlert, 
-  User, 
-  SlidersHorizontal, 
-  Radio, 
   CalendarClock,
-  MapPin,
   Search,
-  ChevronDown,
-  Menu,
-  Sparkles,
-  Layers,
-  Cpu,
-  BarChart3
+  ChevronDown
 } from 'lucide-react';
 import { useRailway } from '../context/RailwayContext';
 import { DivisionName } from '../types/railway';
@@ -27,7 +18,7 @@ const DIVISIONS: DivisionName[] = [
   'Bengaluru SWR'
 ];
 
-export const Header: React.FC<{ activeTab?: string; setActiveTab?: (tab: string) => void }> = ({ activeTab, setActiveTab }) => {
+export const Header: React.FC = () => {
   const { 
     persona, 
     setPersona, 
@@ -115,8 +106,8 @@ export const Header: React.FC<{ activeTab?: string; setActiveTab?: (tab: string)
           {/* Right Controls: City/Division Dropdown & Sign In / Persona Switcher */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             {/* Division Selector */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
-              <span style={{ fontSize: '0.84rem', color: '#E0E0E0', fontWeight: 500 }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.08)', padding: '5px 12px', borderRadius: '6px', cursor: 'pointer' }}>
+              <span style={{ fontSize: '0.82rem', color: '#E0E0E0', fontWeight: 600 }}>
                 {selectedDivision === 'All' ? 'National Grid' : selectedDivision}
               </span>
               <select
@@ -124,13 +115,14 @@ export const Header: React.FC<{ activeTab?: string; setActiveTab?: (tab: string)
                 onChange={(e) => setSelectedDivision(e.target.value as 'All' | DivisionName)}
                 style={{
                   position: 'absolute',
+                  inset: 0,
                   opacity: 0,
-                  width: '120px',
-                  height: '30px',
+                  width: '100%',
+                  height: '100%',
                   cursor: 'pointer'
                 }}
               >
-                <option value="All">All Divisions</option>
+                <option value="All">All Divisions (National Grid)</option>
                 {DIVISIONS.map(d => (
                   <option key={d} value={d}>{d}</option>
                 ))}

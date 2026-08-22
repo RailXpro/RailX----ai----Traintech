@@ -7,8 +7,7 @@ import {
   BarChart3, 
   Train, 
   Activity, 
-  Sparkles,
-  ChevronRight
+  Sparkles
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
 import { InteractiveTrackMap } from './InteractiveTrackMap';

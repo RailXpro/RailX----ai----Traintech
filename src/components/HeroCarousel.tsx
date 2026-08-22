@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Sparkles, CalendarClock, ShieldAlert, Cpu, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRailway } from '../context/RailwayContext';
 
 const BANNERS = [
@@ -34,7 +34,7 @@ const BANNERS = [
 
 export const HeroCarousel: React.FC<{ onActionClick: (action: string) => void }> = ({ onActionClick }) => {
   const [currentIdx, setCurrentIdx] = useState<number>(0);
-  const { runAiOptimizer, isOptimizing } = useRailway();
+  const { runAiOptimizer } = useRailway();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -52,6 +52,16 @@ export const HeroCarousel: React.FC<{ onActionClick: (action: string) => void }>
     onActionClick(banner.action);
   };
 
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIdx((prev) => (prev - 1 + BANNERS.length) % BANNERS.length);
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentIdx((prev) => (prev + 1) % BANNERS.length);
+  };
+
   return (
     <div style={{ position: 'relative', marginBottom: '24px' }}>
       <div
@@ -67,7 +77,8 @@ export const HeroCarousel: React.FC<{ onActionClick: (action: string) => void }>
           flexWrap: 'wrap',
           gap: '20px',
           boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-          transition: 'background 0.5s ease'
+          transition: 'background 0.5s ease',
+          position: 'relative'
         }}
       >
         <div style={{ maxWidth: '750px' }}>
@@ -94,7 +105,7 @@ export const HeroCarousel: React.FC<{ onActionClick: (action: string) => void }>
           </p>
         </div>
 
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
             onClick={handleCtaClick}
             className="btn btn-primary"
@@ -106,23 +117,64 @@ export const HeroCarousel: React.FC<{ onActionClick: (action: string) => void }>
         </div>
       </div>
 
-      {/* Slide dots */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', marginTop: '10px' }}>
-        {BANNERS.map((b, idx) => (
-          <button
-            key={b.id}
-            onClick={() => setCurrentIdx(idx)}
-            style={{
-              width: idx === currentIdx ? '20px' : '6px',
-              height: '6px',
-              borderRadius: '4px',
-              background: idx === currentIdx ? 'var(--bms-red)' : '#CCCCCC',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-          />
-        ))}
+      {/* Navigation arrows and slide dots */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '10px' }}>
+        <button
+          onClick={handlePrev}
+          title="Previous slide"
+          style={{
+            background: '#FFFFFF',
+            border: '1px solid #DDDDDD',
+            borderRadius: '50%',
+            width: '24px',
+            height: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: 'var(--text-dark)'
+          }}
+        >
+          <ChevronLeft size={14} />
+        </button>
+
+        <div style={{ display: 'flex', gap: '6px' }}>
+          {BANNERS.map((b, idx) => (
+            <button
+              key={b.id}
+              onClick={() => setCurrentIdx(idx)}
+              title={`Slide ${idx + 1}`}
+              style={{
+                width: idx === currentIdx ? '20px' : '6px',
+                height: '6px',
+                borderRadius: '4px',
+                background: idx === currentIdx ? 'var(--bms-red)' : '#CCCCCC',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            />
+          ))}
+        </div>
+
+        <button
+          onClick={handleNext}
+          title="Next slide"
+          style={{
+            background: '#FFFFFF',
+            border: '1px solid #DDDDDD',
+            borderRadius: '50%',
+            width: '24px',
+            height: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: 'var(--text-dark)'
+          }}
+        >
+          <ChevronRight size={14} />
+        </button>
       </div>
     </div>
   );

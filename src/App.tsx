@@ -3,7 +3,7 @@ import { RailwayProvider, useRailway } from './context/RailwayContext';
 import { Header } from './components/Header';
 import { PlannerDashboard } from './components/planner/PlannerDashboard';
 import { PassengerPortal } from './components/passenger/PassengerPortal';
-import { Train, ShieldCheck, PhoneCall, HelpCircle, Mail, MapPin } from 'lucide-react';
+import { Train, ShieldCheck, PhoneCall } from 'lucide-react';
 
 const MainView: React.FC = () => {
   const { persona } = useRailway();

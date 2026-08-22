@@ -1,18 +1,32 @@
 {
-  "name": "rail-block-planner",
-  "private": true,
+  "name": "trainx-ai-rail-block-planner",
   "version": "1.0.0",
+  "description": "Next-Gen AI-Powered Automatic Block Planning and Emergency Disruption Management System for Indian Railways",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
   },
+  "keywords": [
+    "railway",
+    "indian-railways",
+    "block-planning",
+    "ai-optimization",
+    "kavach",
+    "react",
+    "typescript",
+    "vite"
+  ],
+  "author": "TrainX.ai Team",
+  "license": "MIT",
   "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "canvas-confetti": "^1.9.4",
     "lucide-react": "^0.475.0",
-    "canvas-confetti": "^1.9.4"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/canvas-confetti": "^1.9.0",

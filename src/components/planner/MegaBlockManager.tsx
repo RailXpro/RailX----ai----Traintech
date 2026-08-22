@@ -37,6 +37,15 @@ export const MegaBlockManager: React.FC = () => {
     selectedDivision === 'All' || b.division === selectedDivision
   );
 
+  const handleSectionChange = (secId: string) => {
+    setSelectedSectionId(secId);
+    const sec = trackSections.find(s => s.id === secId);
+    if (sec) {
+      setSelectedDivisionForm(sec.division);
+      setPublicAdvisory(`Block on ${sec.name} (${linesAffected}). Suburban/Express trains diverted or regulated.`);
+    }
+  };
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const sectionObj = trackSections.find(s => s.id === selectedSectionId);
@@ -253,7 +262,7 @@ export const MegaBlockManager: React.FC = () => {
                   <select
                     className="input-control"
                     value={selectedSectionId}
-                    onChange={(e) => setSelectedSectionId(e.target.value)}
+                    onChange={(e) => handleSectionChange(e.target.value)}
                   >
                     {trackSections.map(s => (
                       <option key={s.id} value={s.id}>{s.name} ({s.code})</option>

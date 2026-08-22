@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Train as TrainIcon, 
-  Zap, 
   Gauge, 
   MapPin, 
-  Layers,
   Info,
   ChevronRight
 } from 'lucide-react';
