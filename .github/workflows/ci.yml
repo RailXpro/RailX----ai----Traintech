@@ -1,10 +1,10 @@
-name: CI - Build and Test
+name: CI - Build and Typecheck
 
 on:
   push:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "front-end" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main", "master", "front-end" ]
 
 jobs:
   build:

@@ -1,13 +1,14 @@
-# TrainX.ai (TrainX)
+# RailX.ai (TrainTech)
 ### Next-Gen AI-Powered Automatic Block Planning & Emergency Disruption Management for Indian Railways (भारतीय रेल)
 
+[![CI - Build and Typecheck](https://github.com/RailXpro/RailX----ai----Traintech/actions/workflows/ci.yml/badge.svg)](https://github.com/RailXpro/RailX----ai----Traintech/actions)
 [![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat&logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.1.0-646CFF?style=flat&logo=vite)](https://vitejs.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/RailXpro/RailX----ai----Traintech/pulls)
 
-**TrainX.ai** is an enterprise-grade railway operations command system and passenger disruption management platform tailored for Indian Railways (CRIS / IR-KAVACH). Styled with a high-density, eye-pleasing BookMyShow-inspired aesthetic (`#F84464` crimson red, `#333545` slate navy, `#222434` dark footer, and `#F5F5FA` off-white canvas).
+**RailX.ai (TrainTech)** is an enterprise-grade railway operations command system and passenger disruption management platform tailored for Indian Railways (CRIS / IR-KAVACH). Styled with a high-density, eye-pleasing BookMyShow-inspired aesthetic (`#F84464` crimson red, `#333545` slate navy, `#222434` dark footer, and `#F5F5FA` off-white canvas).
 
 ---
 
@@ -34,7 +35,7 @@
 
 ```mermaid
 flowchart TD
-    A[Section Sensors / SCADA Telemetry] --> B[TrainX.ai Core State Engine]
+    A[Section Sensors / SCADA Telemetry] --> B[RailX.ai Core State Engine]
     C[IR-KAVACH 2.0 Safety Interlock] --> B
     D[Section Controller Input] --> B
     
@@ -69,7 +70,7 @@ flowchart TD
 ## 📂 Project Structure
 
 ```
-rail-block-planner/
+RailX----ai----Traintech/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml              # Automated GitHub Actions CI workflow
@@ -118,28 +119,33 @@ rail-block-planner/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/rail-block-planner.git
-cd rail-block-planner
+git clone https://github.com/RailXpro/RailX----ai----Traintech.git
+cd RailX----ai----Traintech
 ```
 
-### 2. Install Dependencies
+### 2. Switch to `front-end` Branch
+```bash
+git checkout front-end
+```
+
+### 3. Install Dependencies
 ```bash
 npm install
 ```
 
-### 3. Run Locally in Development Mode
+### 4. Run Locally in Development Mode
 ```bash
 npm run dev
 ```
 Open your browser at [http://localhost:3000](http://localhost:3000) (or the port shown in terminal).
 
-### 4. Build for Production
+### 5. Build for Production
 ```bash
 npm run build
 ```
 The optimized production bundle will be generated in the `dist/` directory.
 
-### 5. Preview Production Build
+### 6. Preview Production Build
 ```bash
 npm run preview
 ```
