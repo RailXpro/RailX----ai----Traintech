@@ -1,18 +1,90 @@
-*.ss~
-*.ss#*
-.#*.ss
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
 
-*.scm~
-*.scm#*
-.#*.scm
+# Production & Build outputs
+dist/
+dist-ssr/
+build/
+out/
+*.tsbuildinfo
 
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
-*.env
-.venv/
+*.so
+.Python
 env/
 venv/
+.venv/
+ENV/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+*.db
+*.sqlite3
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor & OS files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
-.vscode/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Thumbs.db
+ehthumbs.db
+
+# Scheme / editor backup files
+*.ss~
+*.ss#*
+.#*.ss
+*.scm~
+*.scm#*
+.#*.scm
+
+# Testing & Coverage
+coverage/
+.nyc_output/
+
+# Temporary / Cache
+.eslintcache
+.stylelintcache
+.cache/
+.temp/
+.tmp/

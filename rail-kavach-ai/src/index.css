@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #020617;
+    color: #f8fafc;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+/* Glassmorphic Cyber Rail Utilities */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-glow {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.15);
+}
+
+.glass-panel-danger {
+  background: rgba(45, 10, 15, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 30px -5px rgba(239, 68, 68, 0.25);
+}
+
+.glass-panel-warning {
+  background: rgba(45, 30, 10, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 30px -5px rgba(245, 158, 11, 0.2);
+}
+
+.glass-panel-success {
+  background: rgba(6, 40, 25, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  box-shadow: 0 0 30px -5px rgba(34, 197, 94, 0.2);
+}
+
+/* Indian Railways Signature Gradients */
+.ir-gradient-badge {
+  background: linear-gradient(135deg, #f97316 0%, #3b82f6 50%, #10b981 100%);
+}
+
+.ir-glow-orange {
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.35);
+}
+
+.ir-glow-cyan {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+}
+
+.ir-glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+.ir-glow-red {
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+}
+
+/* Pulsing and Rail Radar Animations */
+@keyframes railPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.08);
+  }
+}
+
+.animate-rail-pulse {
+  animation: railPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes trackDash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+.animate-track-flow {
+  stroke-dasharray: 8, 8;
+  animation: trackDash 1.2s linear infinite;
+}
+
+@keyframes trackDashFast {
+  to {
+    stroke-dashoffset: -60;
+  }
+}
+
+.animate-detour-flow {
+  stroke-dasharray: 6, 6;
+  animation: trackDashFast 0.8s linear infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Leaflet Container Custom Stying */
+.leaflet-container {
+  background: #050b14 !important;
+  font-family: var(--font-sans) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.95) !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(56, 189, 248, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+}
+
+.leaflet-popup-tip {
+  background: rgba(15, 23, 42, 0.95) !important;
+}
