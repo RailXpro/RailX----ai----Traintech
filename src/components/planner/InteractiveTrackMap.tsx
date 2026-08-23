@@ -9,6 +9,7 @@ import {
 import { useRailway } from '../../context/RailwayContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { TrackSection } from '../../types/railway';
+import { CorridorInspectorModal } from './CorridorInspectorModal';
 
 export const InteractiveTrackMap: React.FC = () => {
   const { 
@@ -22,6 +23,7 @@ export const InteractiveTrackMap: React.FC = () => {
   const { t, localize, language } = useLanguage();
 
   const [filterStatus, setFilterStatus] = useState<'all' | 'clear' | 'mega_block' | 'accident'>('all');
+  const [inspectModalSection, setInspectModalSection] = useState<TrackSection | null>(null);
 
   const filteredSections = trackSections.filter(sec => {
     const matchesDiv = selectedDivision === 'All' || sec.division === selectedDivision;
@@ -32,14 +34,14 @@ export const InteractiveTrackMap: React.FC = () => {
   const activeSection = trackSections.find(s => s.id === selectedSectionId);
   const trainsInSelectedSection = trains.filter(t => t.currentSectionId === selectedSectionId);
 
-  const getSectionBadge = (status: TrackSection['status']) => {
+  const getSectionBadge = (status: TrackSection['status'], sec?: TrackSection) => {
     switch (status) {
       case 'clear': 
         return <span className="badge badge-clear">{t('map.statusAvailable')}</span>;
       case 'mega_block': 
-        return <span className="badge badge-megablock">{t('map.statusMegaBlock')}</span>;
+        return <span className="badge badge-megablock" style={{ cursor: 'pointer' }}>{t('map.statusMegaBlock')}</span>;
       case 'accident': 
-        return <span className="badge badge-accident">{t('map.statusCordoned')}</span>;
+        return <span className="badge badge-accident" style={{ cursor: 'pointer' }}>{t('map.statusCordoned')}</span>;
       case 'speed_restriction': 
         return <span className="badge badge-cyan">{t('map.statusTsr')}</span>;
       default: 
@@ -49,6 +51,12 @@ export const InteractiveTrackMap: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+      {/* Corridor Inspector Modal */}
+      <CorridorInspectorModal
+        section={inspectModalSection}
+        onClose={() => setInspectModalSection(null)}
+      />
+
       {/* Section Header */}
       <div className="bms-card" style={{ padding: '18px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
         <div>
@@ -138,14 +146,18 @@ export const InteractiveTrackMap: React.FC = () => {
           return (
             <div
               key={sec.id}
-              onClick={() => setSelectedSectionId(isSelected ? null : sec.id)}
+              onClick={() => {
+                setSelectedSectionId(sec.id);
+                setInspectModalSection(sec);
+              }}
               className="bms-card"
               style={{
                 padding: '18px',
                 cursor: 'pointer',
-                border: isSelected ? '2px solid var(--rx-orange)' : 'none',
+                border: isSelected ? '2px solid var(--rx-orange)' : '1px solid var(--border-light)',
                 boxShadow: isSelected ? '0 8px 24px var(--rx-orange-glow)' : 'var(--shadow-card)',
-                transform: isSelected ? 'translateY(-2px)' : 'none'
+                transform: isSelected ? 'translateY(-2px)' : 'none',
+                transition: 'all 0.18s ease'
               }}
             >
               {/* Header Badge */}
@@ -153,7 +165,12 @@ export const InteractiveTrackMap: React.FC = () => {
                 <span className="font-mono" style={{ fontSize: '0.72rem', color: '#666666', fontWeight: 600 }}>
                   [{sec.zone}] {sec.code} • {localize(sec.division)}
                 </span>
-                {getSectionBadge(sec.status)}
+                <div onClick={(e) => {
+                  e.stopPropagation();
+                  setInspectModalSection(sec);
+                }}>
+                  {getSectionBadge(sec.status, sec)}
+                </div>
               </div>
 
               {/* Title */}
@@ -232,9 +249,37 @@ export const InteractiveTrackMap: React.FC = () => {
                   <TrainIcon size={13} color="var(--rx-orange)" />
                   {secTrains.length} {t('map.activeTrainsCount')}
                 </span>
-                <span style={{ color: 'var(--rx-orange)', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-                  {t('map.inspectCTA')} <ChevronRight size={14} />
-                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedSectionId(sec.id);
+                    setInspectModalSection(sec);
+                  }}
+                  style={{
+                    background: 'rgba(255, 107, 26, 0.12)',
+                    border: '1px solid rgba(255, 107, 26, 0.3)',
+                    color: 'var(--rx-orange)',
+                    fontWeight: 800,
+                    borderRadius: '8px',
+                    padding: '4px 10px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    fontSize: '0.72rem',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = 'var(--rx-orange)';
+                    e.currentTarget.style.color = '#FFFFFF';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'rgba(255, 107, 26, 0.12)';
+                    e.currentTarget.style.color = 'var(--rx-orange)';
+                  }}
+                >
+                  {t('map.inspectCTA')} <ChevronRight size={13} />
+                </button>
               </div>
             </div>
           );
