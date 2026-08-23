@@ -1,10 +1,12 @@
 import React from 'react';
 import { ShieldAlert, AlertTriangle, ChevronRight, PhoneCall, Volume2 } from 'lucide-react';
 import { useRailway } from '../context/RailwayContext';
+import { useLanguage } from '../context/LanguageContext';
 import { playEmergencyAlertSound } from '../utils/audioAlert';
 
 export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> = ({ onNavigateToIncidents }) => {
   const { accidents, megaBlocks, persona } = useRailway();
+  const { t } = useLanguage();
 
   const activeAccidents = accidents.filter(a => a.status !== 'resolved');
   const activeMegaBlocks = megaBlocks.filter(b => b.status === 'active');
@@ -21,23 +23,24 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
           key={incident.id}
           className="bms-card"
           style={{
-            background: 'var(--bms-red-light)',
-            borderColor: 'var(--bms-red-border)',
-            borderLeft: '5px solid var(--bms-red)',
+            background: 'var(--rx-red-light)',
+            borderColor: 'rgba(239, 68, 68, 0.3)',
+            borderLeft: '5px solid var(--rx-red)',
             padding: '16px 20px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
-            gap: '14px'
+            gap: '14px',
+            borderRadius: 'var(--radius-sm)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1, minWidth: '280px' }}>
             <div style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '8px',
-              background: 'var(--bms-red)',
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              background: 'var(--rx-red)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -48,17 +51,17 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
                 <span className="badge badge-accident">
-                  CRITICAL: {incident.natureOfIncident.toUpperCase()}
+                  {t('alert.critical')}: {incident.natureOfIncident.toUpperCase()}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                  Reported: {incident.reportedAt}
+                  {t('alert.reported')}: {incident.reportedAt}
                 </span>
               </div>
               <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-dark)' }}>
-                Train #{incident.trainNumber} ({incident.trainName}) on {incident.sectionName}
+                Train #{incident.trainNumber} ({incident.trainName}) — {incident.sectionName}
               </h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                {incident.description} • <strong>Relief: {incident.reliefTrainStatus}</strong> ({incident.reliefTrainId || 'Dispatching'})
+                {incident.description} • <strong>{t('alert.relief')}: {incident.reliefTrainStatus}</strong> ({incident.reliefTrainId || 'Dispatching'})
               </p>
             </div>
           </div>
@@ -68,24 +71,24 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
               onClick={() => playEmergencyAlertSound()}
               className="btn btn-secondary"
               title="Play Siren"
-              style={{ padding: '6px 12px', fontSize: '0.78rem', color: 'var(--bms-red)' }}
+              style={{ padding: '7px 14px', fontSize: '0.78rem', color: 'var(--rx-red)' }}
             >
-              <Volume2 size={14} color="var(--bms-red)" />
-              Siren
+              <Volume2 size={14} color="var(--rx-red)" />
+              {t('alert.siren')}
             </button>
 
             {persona === 'passenger' ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#FFFFFF', padding: '6px 14px', borderRadius: '6px', border: '1px solid #E0E0E0' }}>
-                <PhoneCall size={14} color="#2e7d32" />
-                <span style={{ fontSize: '0.82rem', color: 'var(--text-dark)', fontWeight: 700 }}>Helpline: 139</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: '#FFFFFF', padding: '6px 14px', borderRadius: 'var(--radius-pill)', border: '1px solid var(--border-medium)' }}>
+                <PhoneCall size={14} color="var(--rx-green)" />
+                <span style={{ fontSize: '0.82rem', color: 'var(--text-dark)', fontWeight: 700 }}>{t('alert.helpline')}</span>
               </div>
             ) : (
               <button
                 onClick={onNavigateToIncidents}
                 className="btn btn-emergency"
-                style={{ fontSize: '0.82rem', padding: '7px 16px' }}
+                style={{ fontSize: '0.82rem', padding: '8px 18px' }}
               >
-                Manage Incident & ART
+                {t('alert.manageIncident')}
                 <ChevronRight size={14} />
               </button>
             )}
@@ -99,23 +102,24 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
           key={block.id}
           className="bms-card"
           style={{
-            background: 'var(--bms-amber-light)',
-            borderColor: '#fed7aa',
-            borderLeft: '5px solid var(--bms-amber)',
+            background: 'var(--rx-amber-light)',
+            borderColor: 'rgba(245, 158, 11, 0.3)',
+            borderLeft: '5px solid var(--rx-amber)',
             padding: '14px 20px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
-            gap: '12px'
+            gap: '12px',
+            borderRadius: 'var(--radius-sm)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: '260px' }}>
             <div style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              background: 'var(--bms-amber)',
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
+              background: 'var(--rx-amber)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -126,10 +130,10 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span className="badge badge-megablock" style={{ fontSize: '0.68rem' }}>
-                  ACTIVE MEGA BLOCK • {block.linesAffected}
+                  {t('alert.activeMegaBlock')} • {block.linesAffected}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                  Time Window: {block.startTime} – {block.endTime} ({block.division})
+                  {t('alert.timeWindow')}: {block.startTime} – {block.endTime} ({block.division})
                 </span>
               </div>
               <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-dark)', marginTop: '2px' }}>

@@ -13,6 +13,7 @@ import {
   Clock 
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { AccidentIncident, AccidentSeverity } from '../../types/railway';
 import { playEmergencyAlertSound } from '../../utils/audioAlert';
 
@@ -25,6 +26,7 @@ export const AccidentIncidentManager: React.FC = () => {
     resolveIncident, 
     selectedDivision 
   } = useRailway();
+  const { t } = useLanguage();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [trainNumber, setTrainNumber] = useState<string>('12951');
@@ -54,22 +56,22 @@ export const AccidentIncidentManager: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Incident Header */}
-      <div className="bms-card" style={{ padding: '22px', borderLeft: '4px solid var(--bms-red)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bms-card" style={{ padding: '22px', borderLeft: '4px solid var(--rx-red)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '46px', height: '46px', borderRadius: '8px', background: 'var(--bms-red-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bms-red)' }}>
+          <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'var(--rx-red-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rx-red)' }}>
             <ShieldAlert size={24} className="pulse-radar" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h2 className="bms-section-title" style={{ fontSize: '1.2rem' }}>
-                Accident & Emergency Incident Command Center
+              <h2 className="bms-section-title" style={{ fontSize: '1.2rem', fontFamily: 'var(--font-display)' }}>
+                {t('incident.title')}
               </h2>
               <span className="badge badge-accident" style={{ fontSize: '0.68rem' }}>
                 SAFETY PROTOCOL ACTIVE
               </span>
             </div>
             <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-              Instant section cordon-off, automatic signal lockdown, relief train (ART/ARME) telemetry & passenger advisories
+              {t('incident.subtitle')}
             </p>
           </div>
         </div>
@@ -78,24 +80,24 @@ export const AccidentIncidentManager: React.FC = () => {
           <button
             onClick={() => playEmergencyAlertSound()}
             className="btn btn-secondary"
-            style={{ fontSize: '0.8rem', color: 'var(--bms-red)', borderColor: 'var(--bms-red-border)' }}
+            style={{ fontSize: '0.8rem', color: 'var(--rx-red)' }}
           >
-            <Volume2 size={15} color="var(--bms-red)" />
-            Sound Siren
+            <Volume2 size={15} color="var(--rx-red)" />
+            {t('alert.siren')}
           </button>
 
           <button
             onClick={() => setIsModalOpen(true)}
-            className="btn btn-primary"
+            className="btn btn-emergency"
             style={{ padding: '9px 18px', fontSize: '0.85rem' }}
           >
             <Plus size={16} />
-            Log SOS / Incident Report
+            {t('incident.reportBtn')}
           </button>
         </div>
       </div>
 
-      {/* Incidents List in BookMyShow Card Style */}
+      {/* Incidents List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
         {filteredIncidents.map(inc => (
           <div
@@ -103,129 +105,89 @@ export const AccidentIncidentManager: React.FC = () => {
             className="bms-card"
             style={{
               padding: '22px',
-              borderLeft: `5px solid ${inc.status === 'resolved' ? 'var(--bms-green)' : 'var(--bms-red)'}`
+              borderLeft: `5px solid ${inc.severity === 'critical' ? 'var(--rx-red)' : '#F59E0B'}`,
+              background: inc.status === 'resolved' ? '#FAFAFA' : 'var(--rx-surface)',
+              opacity: inc.status === 'resolved' ? 0.75 : 1
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px', marginBottom: '14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '8px',
-                  background: inc.status === 'resolved' ? 'var(--bms-green-light)' : 'var(--bms-red-light)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: inc.status === 'resolved' ? '#2e7d32' : 'var(--bms-red)'
-                }}>
-                  {inc.status === 'resolved' ? <CheckCircle2 size={20} /> : <AlertOctagon size={20} className="pulse-radar" />}
-                </div>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span className="font-mono" style={{ fontSize: '0.72rem', color: '#666666', fontWeight: 600 }}>
-                      {inc.id}
-                    </span>
-                    <span className={`badge ${
-                      inc.severity === 'critical' ? 'badge-accident' :
-                      inc.severity === 'severe' ? 'badge-megablock' : 'badge-saffron'
-                    }`} style={{ fontSize: '0.65rem' }}>
-                      {inc.severity.toUpperCase()} SEVERITY
-                    </span>
-                    <span className={`badge ${inc.status === 'resolved' ? 'badge-clear' : 'badge-cyan'}`} style={{ fontSize: '0.65rem' }}>
-                      STATUS: {inc.status.toUpperCase()}
-                    </span>
-                  </div>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-dark)', marginTop: '2px' }}>
-                    {inc.natureOfIncident}: Train #{inc.trainNumber} ({inc.trainName})
-                  </h3>
-                </div>
-              </div>
-
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Clock size={13} />
-                  Reported at {inc.reportedAt}
+                <span className={`badge ${inc.status === 'resolved' ? 'badge-clear' : 'badge-accident'}`}>
+                  {inc.status === 'resolved' ? 'RESOLVED & RESTORED' : `${inc.severity.toUpperCase()} ALERT`}
                 </span>
-                {inc.status !== 'resolved' && (
-                  <button
-                    onClick={() => resolveIncident(inc.id)}
-                    className="btn btn-secondary"
-                    style={{ padding: '6px 14px', fontSize: '0.76rem', color: '#2e7d32' }}
-                  >
-                    <CheckCircle2 size={14} />
-                    Certify Track Safe & Resolve
-                  </button>
-                )}
+                <span className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                  ID: {inc.id} • {t('alert.reported')}: {inc.reportedAt}
+                </span>
               </div>
+
+              {inc.status !== 'resolved' && (
+                <button
+                  onClick={() => resolveIncident(inc.id)}
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.78rem', padding: '6px 14px', color: '#15803D' }}
+                >
+                  <CheckCircle2 size={14} />
+                  {t('incident.resolve')}
+                </button>
+              )}
             </div>
 
-            {/* Description & Location */}
-            <div style={{ background: '#F8F8FB', padding: '14px 16px', borderRadius: '8px', marginBottom: '14px', fontSize: '0.8rem', lineHeight: '1.5', border: '1px solid var(--border-light)' }}>
-              <div style={{ color: 'var(--text-dark)', marginBottom: '4px' }}>
-                <strong>Incident Summary:</strong> {inc.description}
-              </div>
-              <div style={{ color: 'var(--text-secondary)' }}>
-                📍 <strong>Location:</strong> {inc.sectionName} ({inc.locationDetails})
-              </div>
-            </div>
+            <h3 style={{ fontSize: '1.12rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '6px' }}>
+              Train #{inc.trainNumber} ({inc.trainName}) — {inc.sectionName}
+            </h3>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-body)', marginBottom: '14px', lineHeight: '1.5' }}>
+              {inc.description}
+            </p>
 
-            {/* Response Telemetry & Passenger Advisory */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '12px', fontSize: '0.75rem' }}>
-              {/* Relief Train Status */}
-              <div style={{ background: '#FFFFFF', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--bms-cyan)', fontWeight: 700, marginBottom: '4px' }}>
-                  <Truck size={14} />
-                  Accident Relief Train (ART/ARME)
-                </div>
-                <div style={{ color: 'var(--text-dark)' }}>
-                  Unit: <strong>{inc.reliefTrainId || 'SP-ARME HQ'}</strong> — Status: <strong style={{ color: inc.reliefTrainStatus === 'Relief Complete' ? '#2e7d32' : 'var(--bms-amber)' }}>{inc.reliefTrainStatus}</strong>
-                </div>
-                <div style={{ color: 'var(--text-secondary)', marginTop: '2px' }}>
-                  Restoration ETA: {inc.estimatedTrackRestoration}
-                </div>
+            {/* Emergency Protocols Strip */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', background: 'var(--rx-surface-alt)', padding: '12px 14px', borderRadius: 'var(--radius-xs)', fontSize: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Truck size={15} color="var(--rx-orange)" />
+                <span>
+                  <strong>SP-ARME Relief Train:</strong> {inc.reliefTrainStatus} ({inc.reliefTrainId || 'None'})
+                </span>
               </div>
 
-              {/* Public Advisory Broadcast */}
-              <div style={{ background: '#FFFFFF', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--bms-red)', fontWeight: 700, marginBottom: '4px' }}>
-                  <Radio size={14} />
-                  Passenger Safety Advisory Broadcast
-                </div>
-                <div style={{ color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                  {inc.publicEmergencyAdvisory}
-                </div>
-                <div style={{ color: '#2e7d32', marginTop: '4px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <PhoneCall size={12} />
-                  Help Desk: {inc.passengerAssistanceContact}
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Clock size={15} color="var(--rx-blue)" />
+                <span>
+                  <strong>Estimated Restoration:</strong> {inc.estimatedTrackRestoration}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <PhoneCall size={15} color="#15803D" />
+                <span>
+                  <strong>Passenger Helpline:</strong> {inc.passengerAssistanceContact}
+                </span>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Modal: Report SOS Incident */}
+      {/* Modal Form */}
       {isModalOpen && (
         <div style={{
           position: 'fixed',
           inset: 0,
-          background: 'rgba(0, 0, 0, 0.65)',
-          backdropFilter: 'blur(4px)',
+          background: 'rgba(10, 14, 35, 0.82)',
+          backdropFilter: 'blur(8px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 1000,
           padding: '20px'
         }}>
-          <div className="bms-card" style={{ maxWidth: '580px', width: '100%', padding: '26px', maxHeight: '90vh', overflowY: 'auto', borderTop: '4px solid var(--bms-red)' }}>
+          <div className="bms-card" style={{ maxWidth: '580px', width: '100%', padding: '26px', maxHeight: '90vh', overflowY: 'auto', borderTop: '4px solid var(--rx-red)', borderRadius: 'var(--radius-md)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: 'var(--bms-red-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bms-red)' }}>
-                  <ShieldAlert size={20} />
+                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--rx-red-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rx-red)' }}>
+                  <ShieldAlert size={22} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.12rem', fontWeight: 700, color: 'var(--text-dark)' }}>
-                    Log Emergency Accident / SOS Incident
+                  <h3 style={{ fontSize: '1.12rem', fontWeight: 800, color: 'var(--text-dark)' }}>
+                    {t('incident.reportBtn')}
                   </h3>
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                     Auto-locks block signals & alerts Section Controller, GRP, and NDRF
@@ -244,7 +206,7 @@ export const AccidentIncidentManager: React.FC = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                    Involved Train Number
+                    {t('incident.formTrain')}
                   </label>
                   <select
                     className="input-control"
@@ -259,7 +221,7 @@ export const AccidentIncidentManager: React.FC = () => {
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                    Incident Section
+                    {t('block.formSection')}
                   </label>
                   <select
                     className="input-control"
@@ -276,7 +238,7 @@ export const AccidentIncidentManager: React.FC = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1.3fr 0.7fr', gap: '12px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                    Nature of Incident
+                    {t('incident.formNature')}
                   </label>
                   <select
                     className="input-control"
@@ -294,7 +256,7 @@ export const AccidentIncidentManager: React.FC = () => {
 
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                    Severity Triage
+                    {t('incident.formSeverity')}
                   </label>
                   <select
                     className="input-control"
@@ -310,7 +272,7 @@ export const AccidentIncidentManager: React.FC = () => {
 
               <div>
                 <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Incident Description & Location Details
+                  {t('incident.formDesc')}
                 </label>
                 <textarea
                   className="input-control"
@@ -321,7 +283,7 @@ export const AccidentIncidentManager: React.FC = () => {
                 />
               </div>
 
-              <div style={{ background: 'var(--bms-red-light)', border: '1px solid var(--bms-red-border)', padding: '10px 14px', borderRadius: '6px', fontSize: '0.73rem', color: 'var(--bms-red)' }}>
+              <div style={{ background: 'var(--rx-red-light)', padding: '10px 14px', borderRadius: 'var(--radius-xs)', fontSize: '0.73rem', color: 'var(--rx-red)' }}>
                 ⚠️ <strong>Automatic Safety Actions:</strong> Submitting will instantly switch section signals to DANGER (Red), halt approaching rakes, and dispatch the nearest Accident Relief Train.
               </div>
 
@@ -331,14 +293,14 @@ export const AccidentIncidentManager: React.FC = () => {
                   onClick={() => setIsModalOpen(false)}
                   className="btn btn-secondary"
                 >
-                  Cancel
+                  {t('block.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="btn btn-emergency"
                 >
                   <Send size={15} />
-                  Authorize Emergency Lockdown
+                  {t('incident.submitSos')}
                 </button>
               </div>
             </form>

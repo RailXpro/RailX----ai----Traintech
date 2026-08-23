@@ -11,11 +11,13 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { LiveAlertBanner } from '../LiveAlertBanner';
 import { SimulationControls } from '../SimulationControls';
 
 export const PassengerPortal: React.FC = () => {
   const { megaBlocks, accidents, selectedDivision } = useRailway();
+  const { t } = useLanguage();
 
   const [searchOrigin, setSearchOrigin] = useState<string>('CSMT Mumbai');
   const [searchDest, setSearchDest] = useState<string>('Kalyan Junction');
@@ -36,79 +38,80 @@ export const PassengerPortal: React.FC = () => {
       {/* Emergency Alerts Banner */}
       <LiveAlertBanner />
 
-      {/* BookMyShow Style Passenger Hero Card */}
+      {/* Passenger Hero Card */}
       <div
         className="bms-card"
         style={{
-          padding: '28px',
-          background: 'linear-gradient(135deg, #333545 0%, #222434 100%)',
+          padding: '30px',
+          background: 'linear-gradient(135deg, #0F1C3D 0%, #162248 100%)',
           color: '#FFFFFF',
-          borderRadius: '12px',
-          boxShadow: '0 4px 18px rgba(0,0,0,0.15)'
+          borderRadius: 'var(--radius-md)',
+          boxShadow: 'var(--shadow-card)'
         }}
       >
         <div style={{ maxWidth: '820px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-            <span className="badge" style={{ background: 'var(--bms-red)', color: '#FFFFFF', fontSize: '0.72rem' }}>
-              TRAINX.AI • COMMUTER LIVE PORTAL
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+            <span className="badge" style={{ background: 'var(--rx-orange)', color: '#FFFFFF', fontSize: '0.72rem' }}>
+              {t('passenger.heroBadge1')}
             </span>
             <span className="badge badge-clear" style={{ fontSize: '0.72rem' }}>
-              SUNDAY MEGA BLOCK RADAR
+              {t('passenger.heroBadge2')}
             </span>
           </div>
 
-          <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '10px' }}>
-            Live Sunday Mega Block & Disruption Bulletins
+          <h2 style={{ fontSize: '1.65rem', fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em', marginBottom: '10px', fontFamily: 'var(--font-display)' }}>
+            {t('passenger.heroTitle')}
           </h2>
           <p style={{ fontSize: '0.88rem', color: '#D0D5DD', lineHeight: '1.6' }}>
-            Stay ahead of planned maintenance diversions, track possessions, and real-time safety advisories. Plan smooth commutes with TrainX.ai smart rerouting.
+            {t('passenger.heroSubtitle')}
           </p>
 
           {/* Quick Helplines Strip */}
-          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginTop: '18px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginTop: '20px' }}>
             <a
               href="tel:139"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                background: 'var(--bms-red)',
-                padding: '8px 18px',
-                borderRadius: '6px',
+                background: 'var(--rx-orange)',
+                padding: '9px 20px',
+                borderRadius: 'var(--radius-pill)',
                 color: '#FFFFFF',
                 textDecoration: 'none',
                 fontSize: '0.84rem',
                 fontWeight: 700,
-                boxShadow: '0 2px 8px rgba(248, 68, 100, 0.4)'
+                boxShadow: '0 2px 10px var(--rx-orange-glow)',
+                transition: 'all 0.18s ease'
               }}
             >
               <PhoneCall size={14} />
-              139 (24x7 RailMadad Helpline)
+              {t('passenger.helpline139')}
             </a>
             <span style={{ fontSize: '0.82rem', color: '#E0E0E0' }}>
-              GRP Emergency: <strong style={{ color: '#FFFFFF' }}>1512</strong>
+              {t('passenger.grpHelp')}: <strong style={{ color: '#FFFFFF' }}>1512</strong>
             </span>
             <span style={{ fontSize: '0.82rem', color: '#E0E0E0' }}>
-              Women Safety: <strong style={{ color: '#FFFFFF' }}>182</strong>
+              {t('passenger.womenSafety')}: <strong style={{ color: '#FFFFFF' }}>182</strong>
             </span>
           </div>
         </div>
       </div>
 
       {/* AI Smart Alternate Journey Route Finder */}
-      <div className="bms-card" style={{ padding: '24px' }}>
+      <div className="bms-card" style={{ padding: '26px' }}>
         <h3 className="bms-section-title" style={{ fontSize: '1.18rem', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Sparkles size={18} color="var(--bms-red)" />
-          AI Smart Disruption-Aware Journey Planner
+          <Sparkles size={18} color="var(--rx-orange)" />
+          {t('passenger.journeyPlannerTitle')}
         </h3>
         <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '18px' }}>
-          Find the fastest suburban and express route accounting for active Sunday mega blocks
+          {t('passenger.journeyPlannerSubtitle')}
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '18px' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dark)', marginBottom: '4px' }}>
-              Origin Station
+              {t('passenger.origin')}
             </label>
             <input
               type="text"
@@ -121,7 +124,7 @@ export const PassengerPortal: React.FC = () => {
 
           <div>
             <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-dark)', marginBottom: '4px' }}>
-              Destination Station
+              {t('passenger.destination')}
             </label>
             <input
               type="text"
@@ -136,10 +139,10 @@ export const PassengerPortal: React.FC = () => {
             <button
               onClick={() => setSearched(true)}
               className="btn btn-primary"
-              style={{ width: '100%', padding: '10px 18px', borderRadius: '6px' }}
+              style={{ width: '100%', padding: '11px 18px', borderRadius: 'var(--radius-sm)' }}
             >
               <Search size={16} />
-              Find Best Route
+              {t('passenger.findRoute')}
             </button>
           </div>
         </div>
@@ -149,24 +152,23 @@ export const PassengerPortal: React.FC = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {/* Recommended Option 1: Diverted Fast Local */}
             <div style={{
-              background: '#FFFFFF',
-              border: '1px solid var(--border-light)',
-              borderLeft: '5px solid var(--bms-green)',
-              borderRadius: '8px',
+              background: 'var(--rx-surface)',
+              borderLeft: '5px solid var(--rx-green)',
+              borderRadius: 'var(--radius-sm)',
               padding: '18px',
               boxShadow: 'var(--shadow-card)'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span className="badge badge-clear" style={{ fontSize: '0.68rem' }}>
-                    RECOMMENDED (AI OPTIMIZED)
+                    {t('passenger.recAi')}
                   </span>
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    Departing in 6 mins • 98% On-Time Probability
+                    {t('passenger.departingIn')}
                   </span>
                 </div>
-                <span className="font-mono" style={{ fontSize: '0.9rem', color: '#2e7d32', fontWeight: 800 }}>
-                  Est. Travel Time: 58 mins
+                <span className="font-mono" style={{ fontSize: '0.9rem', color: '#15803D', fontWeight: 800 }}>
+                  {t('passenger.estTime')}: 58 {t('passenger.mins')}
                 </span>
               </div>
 
@@ -174,7 +176,7 @@ export const PassengerPortal: React.FC = () => {
                 Train #95401: CSMT to Kalyan Fast Local (15-Car Rake)
               </h4>
 
-              <div style={{ background: 'var(--bms-amber-light)', border: '1px solid #fed7aa', padding: '10px 14px', borderRadius: '6px', fontSize: '0.75rem', color: '#b7791f', marginBottom: '10px', lineHeight: '1.45' }}>
+              <div style={{ background: 'var(--rx-amber-light)', padding: '10px 14px', borderRadius: 'var(--radius-xs)', fontSize: '0.75rem', color: '#92400E', marginBottom: '10px', lineHeight: '1.45' }}>
                 ℹ️ <strong>Block Diversion Advisory:</strong> Diverted to Fast Line between Thane & Dadar to bypass track tamping. Skipping halts at Vidyavihar and Kanjurmarg. Slow line season pass valid.
               </div>
 
@@ -184,27 +186,26 @@ export const PassengerPortal: React.FC = () => {
                   <ArrowRight size={13} color="#999999" />
                   <span>To: <strong>Kalyan Platform 3</strong> (15:28)</span>
                 </div>
-                <button className="btn btn-primary" style={{ padding: '5px 14px', fontSize: '0.75rem' }}>
-                  Select Train
+                <button className="btn btn-primary" style={{ padding: '6px 16px', fontSize: '0.75rem' }}>
+                  {t('passenger.selectTrain')}
                 </button>
               </div>
             </div>
 
             {/* Multimodal Metro / Feeder Bus Link Alternative */}
             <div style={{
-              background: '#FFFFFF',
-              border: '1px solid var(--border-light)',
-              borderLeft: '5px solid var(--bms-cyan)',
-              borderRadius: '8px',
+              background: 'var(--rx-surface)',
+              borderLeft: '5px solid var(--rx-blue)',
+              borderRadius: 'var(--radius-sm)',
               padding: '18px',
               boxShadow: 'var(--shadow-card)'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <span className="badge badge-cyan" style={{ fontSize: '0.68rem' }}>
-                  MULTIMODAL METRO + BEST BUS SHUTTLE
+                  {t('passenger.multimodalTitle')}
                 </span>
-                <span className="font-mono" style={{ fontSize: '0.9rem', color: '#0369A1', fontWeight: 800 }}>
-                  Est. Travel Time: 64 mins
+                <span className="font-mono" style={{ fontSize: '0.9rem', color: 'var(--rx-blue)', fontWeight: 800 }}>
+                  {t('passenger.estTime')}: 64 {t('passenger.mins')}
                 </span>
               </div>
 
@@ -213,7 +214,7 @@ export const PassengerPortal: React.FC = () => {
               </h4>
 
               <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                Take Metro from CSMT to Ghatkopar, transfer to special BEST mega block feeder bus route #F-18 running every 5 mins directly to Thane / Kalyan.
+                {t('passenger.metroDesc')}
               </p>
             </div>
           </div>
@@ -221,24 +222,24 @@ export const PassengerPortal: React.FC = () => {
       </div>
 
       {/* Upcoming & Active Mega Blocks Bulletin for Commuters */}
-      <div className="bms-card" style={{ padding: '24px' }}>
+      <div className="bms-card" style={{ padding: '26px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--bms-amber-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#b7791f' }}>
-              <CalendarClock size={20} />
+            <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--rx-amber-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#92400E' }}>
+              <CalendarClock size={22} />
             </div>
             <div>
               <h3 className="bms-section-title" style={{ fontSize: '1.18rem' }}>
-                Live Mega Block Bulletins & Maintenance Schedule
+                {t('passenger.bulletinsTitle')}
               </h3>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                Official disruption bulletin for suburban commuters & long-distance passengers
+                {t('passenger.bulletinsSubtitle')}
               </p>
             </div>
           </div>
 
           <span className="badge badge-megablock" style={{ fontSize: '0.7rem' }}>
-            {filteredBlocks.length} Active / Scheduled Blocks
+            {filteredBlocks.length} {t('passenger.activeScheduledBlocks')}
           </span>
         </div>
 
@@ -247,10 +248,9 @@ export const PassengerPortal: React.FC = () => {
             <div
               key={block.id}
               style={{
-                background: '#FFFFFF',
-                border: '1px solid var(--border-light)',
-                borderTop: `4px solid ${block.status === 'active' ? 'var(--bms-amber)' : 'var(--bms-cyan)'}`,
-                borderRadius: '8px',
+                background: 'var(--rx-surface)',
+                borderTop: `4px solid ${block.status === 'active' ? 'var(--rx-amber)' : 'var(--rx-blue)'}`,
+                borderRadius: 'var(--radius-sm)',
                 padding: '18px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -265,7 +265,7 @@ export const PassengerPortal: React.FC = () => {
                     {block.division}
                   </span>
                   <span className={`badge ${block.status === 'active' ? 'badge-megablock' : 'badge-cyan'}`} style={{ fontSize: '0.62rem' }}>
-                    {block.status === 'active' ? 'IN PROGRESS NOW' : 'UPCOMING'}
+                    {block.status === 'active' ? t('passenger.inProgressNow') : t('passenger.upcoming')}
                   </span>
                 </div>
 
@@ -273,23 +273,23 @@ export const PassengerPortal: React.FC = () => {
                   {block.sectionName}
                 </h4>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#b7791f', marginBottom: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#92400E', marginBottom: '10px' }}>
                   <Clock size={13} />
                   <span>{block.date} • <strong>{block.startTime} – {block.endTime}</strong></span>
                 </div>
 
-                <div style={{ background: '#F8F8FB', padding: '10px 12px', borderRadius: '6px', fontSize: '0.73rem', color: 'var(--text-secondary)', marginBottom: '10px', border: '1px solid var(--border-light)' }}>
-                  <div><strong>Lines Affected:</strong> {block.linesAffected}</div>
-                  <div><strong>Maintenance Work:</strong> {block.reason}</div>
+                <div style={{ background: 'var(--rx-surface-alt)', padding: '10px 12px', borderRadius: 'var(--radius-xs)', fontSize: '0.73rem', color: 'var(--text-secondary)', marginBottom: '10px' }}>
+                  <div><strong>{t('passenger.linesAffected')}:</strong> {block.linesAffected}</div>
+                  <div><strong>{t('passenger.maintenanceWork')}:</strong> {block.reason}</div>
                 </div>
 
-                <p style={{ fontSize: '0.76rem', color: '#555555', lineHeight: '1.45' }}>
+                <p style={{ fontSize: '0.76rem', color: '#475569', lineHeight: '1.45' }}>
                   📢 {block.publicAdvisory}
                 </p>
               </div>
 
               {block.alternativeBusServices && (
-                <div style={{ background: 'var(--bms-green-light)', border: '1px solid #c8e6c9', padding: '8px 12px', borderRadius: '6px', fontSize: '0.73rem', color: '#2e7d32', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ background: 'var(--rx-green-light)', padding: '8px 12px', borderRadius: 'var(--radius-xs)', fontSize: '0.73rem', color: '#15803D', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Bus size={13} />
                   <span>{block.alternativeBusServices}</span>
                 </div>
@@ -300,30 +300,30 @@ export const PassengerPortal: React.FC = () => {
       </div>
 
       {/* Safety & Incident Advisory Feed for Commuters */}
-      <div className="bms-card" style={{ padding: '24px' }}>
+      <div className="bms-card" style={{ padding: '26px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
-          <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: 'var(--bms-red-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bms-red)' }}>
-            <ShieldAlert size={20} />
+          <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--rx-red-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rx-red)' }}>
+            <ShieldAlert size={22} />
           </div>
           <div>
             <h3 className="bms-section-title" style={{ fontSize: '1.18rem' }}>
-              Safety Bulletins & Emergency Assistance
+              {t('passenger.safetyTitle')}
             </h3>
             <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-              Real-time safety status and emergency help contact points
+              {t('passenger.safetySubtitle')}
             </p>
           </div>
         </div>
 
         {activeAccidents.length === 0 ? (
-          <div style={{ background: 'var(--bms-green-light)', border: '1px solid #c8e6c9', padding: '18px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-            <CheckCircle2 size={24} color="#2e7d32" />
+          <div style={{ background: 'var(--rx-green-light)', padding: '18px', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <CheckCircle2 size={24} color="#15803D" />
             <div>
-              <h4 style={{ fontSize: '0.94rem', fontWeight: 700, color: '#2e7d32' }}>
-                All Rail Corridors Operating Normal with Kavach Safety Interlocks
+              <h4 style={{ fontSize: '0.94rem', fontWeight: 700, color: '#15803D' }}>
+                {t('passenger.allNormal')}
               </h4>
               <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
-                No active emergency accidents or safety halts reported across Indian Railways network.
+                {t('passenger.noAccidents')}
               </p>
             </div>
           </div>
@@ -333,10 +333,9 @@ export const PassengerPortal: React.FC = () => {
               <div
                 key={inc.id}
                 style={{
-                  background: 'var(--bms-red-light)',
-                  border: '1px solid var(--bms-red-border)',
-                  borderLeft: '5px solid var(--bms-red)',
-                  borderRadius: '8px',
+                  background: 'var(--rx-red-light)',
+                  borderLeft: '5px solid var(--rx-red)',
+                  borderRadius: 'var(--radius-sm)',
                   padding: '18px'
                 }}
               >
@@ -357,8 +356,8 @@ export const PassengerPortal: React.FC = () => {
                   {inc.publicEmergencyAdvisory}
                 </p>
 
-                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '14px', fontSize: '0.75rem', borderTop: '1px solid var(--bms-red-border)', paddingTop: '10px' }}>
-                  <span style={{ color: '#2e7d32', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '14px', fontSize: '0.75rem', borderTop: '1px solid rgba(239,68,68,0.2)', paddingTop: '10px' }}>
+                  <span style={{ color: '#15803D', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <PhoneCall size={12} />
                     Helpline: {inc.passengerAssistanceContact}
                   </span>

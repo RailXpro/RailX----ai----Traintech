@@ -10,6 +10,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { InteractiveTrackMap } from './InteractiveTrackMap';
 import { AiBlockOptimizer } from './AiBlockOptimizer';
 import { MegaBlockManager } from './MegaBlockManager';
@@ -21,6 +22,7 @@ import { HeroCarousel } from '../HeroCarousel';
 
 export const PlannerDashboard: React.FC = () => {
   const { trackSections, trains, megaBlocks, accidents, metrics } = useRailway();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'map' | 'optimizer' | 'megablock' | 'accidents' | 'analytics'>('map');
 
   const clearTracksCount = trackSections.filter(s => s.status === 'clear').length;
@@ -36,7 +38,7 @@ export const PlannerDashboard: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* BookMyShow Hero Carousel Banner */}
+      {/* Hero Carousel Banner */}
       <HeroCarousel onActionClick={handleCarouselAction} />
 
       {/* Emergency Live Alerts Ticker */}
@@ -45,90 +47,89 @@ export const PlannerDashboard: React.FC = () => {
       {/* Simulation Sandbox Toolbar */}
       <SimulationControls />
 
-      {/* BookMyShow Style Quick Telemetry Grid */}
+      {/* Quick Telemetry Grid */}
       <div className="grid-metrics">
         {/* Track Network Availability */}
         <div className="metric-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', marginBottom: '6px' }}>
-            <span>Network Availability</span>
-            <Activity size={15} color="var(--bms-green)" />
+            <span>{t('metrics.networkAvailability')}</span>
+            <Activity size={15} color="var(--rx-green)" />
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
             <span style={{ fontSize: '1.7rem', fontWeight: 800, color: 'var(--text-dark)' }} className="font-display">
               {Math.round((clearTracksCount / trackSections.length) * 100)}%
             </span>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              ({clearTracksCount}/{trackSections.length} Sections Clear)
+              ({clearTracksCount}/{trackSections.length} {t('metrics.sectionsClear')})
             </span>
           </div>
-          <div style={{ height: '4px', background: '#EEEEEE', borderRadius: '2px', marginTop: '8px', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${(clearTracksCount / trackSections.length) * 100}%`, background: 'var(--bms-green)' }} />
+          <div style={{ height: '4px', background: 'var(--rx-surface-alt)', borderRadius: '2px', marginTop: '8px', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${(clearTracksCount / trackSections.length) * 100}%`, background: 'var(--rx-green)' }} />
           </div>
         </div>
 
         {/* Active Trains on Corridor */}
         <div className="metric-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', marginBottom: '6px' }}>
-            <span>Active Trains on Grid</span>
-            <Train size={15} color="var(--bms-red)" />
+            <span>{t('metrics.activeTrains')}</span>
+            <Train size={15} color="var(--rx-orange)" />
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
             <span style={{ fontSize: '1.7rem', fontWeight: 800, color: 'var(--text-dark)' }} className="font-display">
               {trains.length}
             </span>
-            <span style={{ fontSize: '0.75rem', color: delayedTrainsCount > 0 ? 'var(--bms-red)' : 'var(--bms-green)', fontWeight: 600 }}>
-              {delayedTrainsCount > 0 ? `${delayedTrainsCount} Delayed/Diverted` : 'All On-Time'}
+            <span style={{ fontSize: '0.75rem', color: delayedTrainsCount > 0 ? 'var(--rx-red)' : 'var(--rx-green)', fontWeight: 600 }}>
+              {delayedTrainsCount > 0 ? `${delayedTrainsCount} ${t('metrics.delayedDiverted')}` : t('metrics.allOnTime')}
             </span>
           </div>
           <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-            Vande Bharat, Rajdhani, Suburban Locals
+            {t('metrics.fleetTypes')}
           </p>
         </div>
 
         {/* Mega Blocks Status */}
         <div className="metric-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', marginBottom: '6px' }}>
-            <span>Mega Blocks Scheduled</span>
-            <CalendarClock size={15} color="var(--bms-amber)" />
+            <span>{t('metrics.blocksScheduled')}</span>
+            <CalendarClock size={15} color="var(--rx-amber)" />
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
             <span style={{ fontSize: '1.7rem', fontWeight: 800, color: 'var(--text-dark)' }} className="font-display">
-              {activeBlocksCount} Active
+              {activeBlocksCount} {t('metrics.active')}
             </span>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-              ({megaBlocks.length} Total)
+              ({megaBlocks.length} {t('metrics.total')})
             </span>
           </div>
           <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-            Tamping, OHE wire maintenance, bridges
+            {t('metrics.blockWorkTypes')}
           </p>
         </div>
 
         {/* AI Efficiency Score */}
         <div className="metric-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.78rem', marginBottom: '6px' }}>
-            <span>AI Fleet Utilization</span>
-            <Sparkles size={15} color="var(--bms-cyan)" />
+            <span>{t('metrics.fleetUtilization')}</span>
+            <Sparkles size={15} color="var(--rx-blue)" />
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-            <span style={{ fontSize: '1.7rem', fontWeight: 800, color: 'var(--bms-red)' }} className="font-display">
+            <span style={{ fontSize: '1.7rem', fontWeight: 800, color: 'var(--rx-orange)' }} className="font-display">
               {metrics.afterOptimization.assetUtilizationPercent}%
             </span>
             <span className="badge badge-clear" style={{ fontSize: '0.65rem' }}>
-              +28% Optimized
+              +28% {t('metrics.optimized')}
             </span>
           </div>
           <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-            Constraint programming solver active
+            {t('metrics.solverActive')}
           </p>
         </div>
       </div>
 
-      {/* BookMyShow Style Category Tab Bar */}
+      {/* Category Tab Bar with fluid pill buttons */}
       <div style={{
-        background: '#FFFFFF',
-        border: '1px solid var(--border-light)',
-        borderRadius: '8px',
+        background: 'var(--rx-surface)',
+        borderRadius: 'var(--radius-pill)',
         padding: '6px',
         display: 'flex',
         alignItems: 'center',
@@ -136,110 +137,38 @@ export const PlannerDashboard: React.FC = () => {
         overflowX: 'auto',
         boxShadow: 'var(--shadow-card)'
       }}>
-        <button
-          onClick={() => setActiveTab('map')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '0.84rem',
-            fontWeight: 600,
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: activeTab === 'map' ? 'var(--bms-red)' : 'transparent',
-            color: activeTab === 'map' ? '#FFFFFF' : 'var(--text-dark)',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <Layers size={15} />
-          Corridor Track Radar
-        </button>
-
-        <button
-          onClick={() => setActiveTab('optimizer')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '0.84rem',
-            fontWeight: 600,
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: activeTab === 'optimizer' ? 'var(--bms-red)' : 'transparent',
-            color: activeTab === 'optimizer' ? '#FFFFFF' : 'var(--text-dark)',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <Cpu size={15} />
-          AI Auto-Block Solver Studio
-        </button>
-
-        <button
-          onClick={() => setActiveTab('megablock')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '0.84rem',
-            fontWeight: 600,
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: activeTab === 'megablock' ? 'var(--bms-red)' : 'transparent',
-            color: activeTab === 'megablock' ? '#FFFFFF' : 'var(--text-dark)',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <CalendarClock size={15} />
-          Mega Block Manager ({megaBlocks.length})
-        </button>
-
-        <button
-          onClick={() => setActiveTab('accidents')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '0.84rem',
-            fontWeight: 600,
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: activeTab === 'accidents' ? 'var(--bms-red)' : 'transparent',
-            color: activeTab === 'accidents' ? '#FFFFFF' : activeAccidentsCount > 0 ? 'var(--bms-red)' : 'var(--text-dark)',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <ShieldAlert size={15} />
-          Incident Command Feed {activeAccidentsCount > 0 && `(${activeAccidentsCount})`}
-        </button>
-
-        <button
-          onClick={() => setActiveTab('analytics')}
-          style={{
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '0.84rem',
-            fontWeight: 600,
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: activeTab === 'analytics' ? 'var(--bms-red)' : 'transparent',
-            color: activeTab === 'analytics' ? '#FFFFFF' : 'var(--text-dark)',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <BarChart3 size={15} />
-          Fleet Analytics & Reports
-        </button>
+        {[
+          { id: 'map', icon: <Layers size={15} />, label: t('tab.map') },
+          { id: 'optimizer', icon: <Cpu size={15} />, label: t('tab.optimizer') },
+          { id: 'megablock', icon: <CalendarClock size={15} />, label: `${t('tab.megablock')} (${megaBlocks.length})` },
+          { id: 'accidents', icon: <ShieldAlert size={15} />, label: `${t('tab.accidents')} ${activeAccidentsCount > 0 ? `(${activeAccidentsCount})` : ''}` },
+          { id: 'analytics', icon: <BarChart3 size={15} />, label: t('tab.analytics') }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            style={{
+              padding: '8px 18px',
+              borderRadius: 'var(--radius-pill)',
+              fontSize: '0.84rem',
+              fontWeight: 700,
+              border: 'none',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: activeTab === tab.id ? 'var(--rx-orange)' : 'transparent',
+              color: activeTab === tab.id ? '#FFFFFF' : 'var(--text-body)',
+              transition: 'all 0.18s ease',
+              whiteSpace: 'nowrap',
+              fontFamily: 'var(--font-sans)',
+              boxShadow: activeTab === tab.id ? '0 2px 10px var(--rx-orange-glow)' : 'none'
+            }}
+          >
+            {tab.icon}
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {/* Active Tab View */}

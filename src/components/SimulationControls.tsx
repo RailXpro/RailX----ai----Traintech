@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sparkles, ShieldAlert, CalendarClock, RotateCcw, Cpu, Loader2 } from 'lucide-react';
 import { useRailway } from '../context/RailwayContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export const SimulationControls: React.FC = () => {
   const { 
@@ -10,6 +11,7 @@ export const SimulationControls: React.FC = () => {
     triggerSimulatedMegaBlock, 
     resetSimulation 
   } = useRailway();
+  const { t } = useLanguage();
 
   return (
     <div
@@ -22,29 +24,30 @@ export const SimulationControls: React.FC = () => {
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '14px',
-        borderLeft: '4px solid var(--bms-red)'
+        borderLeft: '4px solid var(--rx-orange)',
+        borderRadius: 'var(--radius-sm)'
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{
-          width: '36px',
-          height: '36px',
-          borderRadius: '8px',
-          background: 'var(--bms-red-light)',
+          width: '38px',
+          height: '38px',
+          borderRadius: '10px',
+          background: 'var(--rx-orange-light)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: 'var(--bms-red)'
+          color: 'var(--rx-orange)'
         }}>
-          <Cpu size={19} />
+          <Cpu size={20} />
         </div>
         <div>
           <h4 style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-dark)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            TrainX.ai Scenario & Event Simulator
-            <span className="badge" style={{ background: '#F5F5FA', color: '#555555', border: '1px solid #DDDDDD' }}>SANDBOX</span>
+            {t('sim.title')}
+            <span className="badge" style={{ background: 'var(--rx-surface-alt)', color: 'var(--text-secondary)' }}>{t('sim.sandbox')}</span>
           </h4>
           <p style={{ fontSize: '0.73rem', color: 'var(--text-secondary)' }}>
-            Test live constraints, trigger incident interlocks, or run the AI optimization engine.
+            {t('sim.subtitle')}
           </p>
         </div>
       </div>
@@ -53,19 +56,19 @@ export const SimulationControls: React.FC = () => {
         <button
           onClick={triggerSimulatedEmergency}
           className="btn btn-secondary"
-          style={{ fontSize: '0.78rem', padding: '7px 14px', color: 'var(--bms-red)', borderColor: 'var(--bms-red-border)' }}
+          style={{ fontSize: '0.78rem', padding: '7px 14px', color: 'var(--rx-red)' }}
         >
-          <ShieldAlert size={14} color="var(--bms-red)" />
-          Simulate Incident (OHE Snap)
+          <ShieldAlert size={14} color="var(--rx-red)" />
+          {t('sim.triggerEmergency')}
         </button>
 
         <button
           onClick={triggerSimulatedMegaBlock}
           className="btn btn-secondary"
-          style={{ fontSize: '0.78rem', padding: '7px 14px', color: '#b7791f', borderColor: '#fed7aa' }}
+          style={{ fontSize: '0.78rem', padding: '7px 14px', color: '#92400E' }}
         >
-          <CalendarClock size={14} color="#f59e0b" />
-          Simulate Sunday Mega Block
+          <CalendarClock size={14} color="#D97706" />
+          {t('sim.triggerMegaBlock')}
         </button>
 
         <button
@@ -77,12 +80,12 @@ export const SimulationControls: React.FC = () => {
           {isOptimizing ? (
             <>
               <Loader2 size={15} className="pulse-radar" style={{ animation: 'radar-sweep 1s linear infinite' }} />
-              Solving Constraints...
+              {t('sim.solving')}
             </>
           ) : (
             <>
               <Sparkles size={15} />
-              Run AI Auto-Block Optimizer
+              {t('sim.runOptimizer')}
             </>
           )}
         </button>
@@ -91,10 +94,10 @@ export const SimulationControls: React.FC = () => {
           onClick={resetSimulation}
           className="btn btn-secondary"
           title="Reset Network to Default"
-          style={{ fontSize: '0.78rem', padding: '7px 12px' }}
+          style={{ fontSize: '0.78rem', padding: '7px 14px' }}
         >
           <RotateCcw size={14} />
-          Reset
+          {t('sim.reset')}
         </button>
       </div>
     </div>

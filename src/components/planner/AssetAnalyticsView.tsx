@@ -7,9 +7,11 @@ import {
   Wrench 
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
+import { useLanguage } from '../../context/LanguageContext';
 
 export const AssetAnalyticsView: React.FC = () => {
   const { assets, metrics, selectedDivision, trackSections, trains } = useRailway();
+  const { t } = useLanguage();
 
   const filteredAssets = assets.filter(a =>
     selectedDivision === 'All' || a.division === selectedDivision
@@ -38,17 +40,17 @@ export const AssetAnalyticsView: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Header & Export Toolbar */}
-      <div className="bms-card" style={{ padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="bms-card" style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '44px', height: '44px', borderRadius: '8px', background: '#F0F9FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0369A1' }}>
-            <BarChart3 size={22} />
+          <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: 'var(--rx-blue-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rx-blue)' }}>
+            <BarChart3 size={24} />
           </div>
           <div>
-            <h2 className="bms-section-title" style={{ fontSize: '1.2rem' }}>
-              Asset Utilization & Block Optimization Analytics
+            <h2 className="bms-section-title" style={{ fontSize: '1.2rem', fontFamily: 'var(--font-display)' }}>
+              {t('asset.title')}
             </h2>
             <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-              Comprehensive performance telemetry across locomotives, heavy track machinery & gang rosters
+              {t('asset.subtitle')}
             </p>
           </div>
         </div>
@@ -59,21 +61,21 @@ export const AssetAnalyticsView: React.FC = () => {
           style={{ padding: '9px 18px', fontSize: '0.85rem' }}
         >
           <Download size={15} />
-          Export Optimization Report (JSON)
+          {t('optimizer.downloadPlan')} (JSON)
         </button>
       </div>
 
-      {/* Before vs After Comparison Summary Table in BookMyShow Style */}
-      <div className="bms-card" style={{ padding: '22px' }}>
+      {/* Before vs After Comparison Summary Table */}
+      <div className="bms-card" style={{ padding: '24px' }}>
         <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <TrendingUp size={18} color="var(--bms-red)" />
-          AI Optimization Performance Benchmark (Before vs After)
+          <TrendingUp size={18} color="var(--rx-orange)" />
+          {t('optimizer.beforeVsAfter')}
         </h3>
 
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
             <thead>
-              <tr style={{ borderBottom: '2px solid var(--border-light)', color: 'var(--text-secondary)', background: '#F8F8FB' }}>
+              <tr style={{ borderBottom: '2px solid var(--border-light)', color: 'var(--text-secondary)', background: 'var(--rx-surface-alt)' }}>
                 <th style={{ padding: '12px 16px' }}>Operational Metric</th>
                 <th style={{ padding: '12px 16px' }}>Traditional Planning</th>
                 <th style={{ padding: '12px 16px' }}>TrainX.ai Optimizer</th>
@@ -83,12 +85,12 @@ export const AssetAnalyticsView: React.FC = () => {
             <tbody>
               <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
                 <td style={{ padding: '14px 16px', fontWeight: 700, color: 'var(--text-dark)' }}>
-                  Asset Availability & Fleet Utilization
+                  {t('optimizer.assetUtil')}
                 </td>
                 <td style={{ padding: '14px 16px', color: '#777777' }}>
                   {metrics.beforeOptimization.assetUtilizationPercent}%
                 </td>
-                <td style={{ padding: '14px 16px', color: 'var(--bms-red)', fontWeight: 800 }}>
+                <td style={{ padding: '14px 16px', color: 'var(--rx-orange)', fontWeight: 800 }}>
                   {metrics.afterOptimization.assetUtilizationPercent}%
                 </td>
                 <td style={{ padding: '14px 16px' }}>
@@ -99,12 +101,12 @@ export const AssetAnalyticsView: React.FC = () => {
               </tr>
               <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
                 <td style={{ padding: '14px 16px', fontWeight: 700, color: 'var(--text-dark)' }}>
-                  Average Train Delays per Corridor
+                  {t('optimizer.avgDelay')}
                 </td>
                 <td style={{ padding: '14px 16px', color: '#777777' }}>
                   {metrics.beforeOptimization.averageTrainDelayMins} minutes
                 </td>
-                <td style={{ padding: '14px 16px', color: '#0369A1', fontWeight: 800 }}>
+                <td style={{ padding: '14px 16px', color: 'var(--rx-blue)', fontWeight: 800 }}>
                   {metrics.afterOptimization.averageTrainDelayMins} minutes
                 </td>
                 <td style={{ padding: '14px 16px' }}>
@@ -115,12 +117,12 @@ export const AssetAnalyticsView: React.FC = () => {
               </tr>
               <tr style={{ borderBottom: '1px solid var(--border-light)' }}>
                 <td style={{ padding: '14px 16px', fontWeight: 700, color: 'var(--text-dark)' }}>
-                  Track Possession Schedule Conflicts
+                  {t('optimizer.conflicts')}
                 </td>
-                <td style={{ padding: '14px 16px', color: 'var(--bms-red)' }}>
+                <td style={{ padding: '14px 16px', color: 'var(--rx-red)' }}>
                   {metrics.beforeOptimization.conflictCount} Conflicts / Day
                 </td>
-                <td style={{ padding: '14px 16px', color: '#2e7d32', fontWeight: 800 }}>
+                <td style={{ padding: '14px 16px', color: '#15803D', fontWeight: 800 }}>
                   0 Conflicts (100% Conflict-Free)
                 </td>
                 <td style={{ padding: '14px 16px' }}>
@@ -131,7 +133,7 @@ export const AssetAnalyticsView: React.FC = () => {
               </tr>
               <tr>
                 <td style={{ padding: '14px 16px', fontWeight: 700, color: 'var(--text-dark)' }}>
-                  Traction Power Consumption Waste
+                  {t('optimizer.energySaved')}
                 </td>
                 <td style={{ padding: '14px 16px', color: '#777777' }}>
                   {metrics.beforeOptimization.energyWastageKwh} kWh / section
@@ -153,8 +155,8 @@ export const AssetAnalyticsView: React.FC = () => {
       {/* Asset Inventory Fleet Cards */}
       <div>
         <h3 className="bms-section-title" style={{ fontSize: '1.15rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Wrench size={18} color="var(--bms-red)" />
-          Railway Asset Fleet Status & Health Scores
+          <Wrench size={18} color="var(--rx-orange)" />
+          {t('asset.title')}
         </h3>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
@@ -165,8 +167,8 @@ export const AssetAnalyticsView: React.FC = () => {
               style={{
                 padding: '18px',
                 borderLeft: `4px solid ${
-                  asset.status === 'emergency_deployed' ? 'var(--bms-red)' :
-                  asset.status === 'in_use' ? 'var(--bms-green)' : 'var(--bms-cyan)'
+                  asset.status === 'emergency_deployed' ? 'var(--rx-red)' :
+                  asset.status === 'in_use' ? 'var(--rx-green)' : 'var(--rx-blue)'
                 }`
               }}
             >
@@ -193,27 +195,27 @@ export const AssetAnalyticsView: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span>Location / Section:</span>
-                  <strong style={{ color: 'var(--bms-cyan)' }}>{asset.locationSectionId}</strong>
+                  <strong style={{ color: 'var(--rx-blue)' }}>{asset.locationSectionId}</strong>
                 </div>
 
                 {/* Utilization meter */}
                 <div style={{ marginTop: '4px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', fontSize: '0.72rem' }}>
                     <span>Operational Utilization</span>
-                    <strong style={{ color: '#2e7d32' }}>{asset.utilizationRate}%</strong>
+                    <strong style={{ color: '#15803D' }}>{asset.utilizationRate}%</strong>
                   </div>
-                  <div style={{ height: '5px', background: '#EEEEEE', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${asset.utilizationRate}%`, background: 'var(--bms-green)' }} />
+                  <div style={{ height: '5px', background: 'var(--rx-surface-alt)', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${asset.utilizationRate}%`, background: 'var(--rx-green)' }} />
                   </div>
                 </div>
 
                 {/* Health Score */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <ShieldCheck size={13} color="var(--bms-green)" />
-                    Machine Health Score
+                    <ShieldCheck size={13} color="var(--rx-green)" />
+                    {t('asset.healthIndex')}
                   </span>
-                  <strong style={{ color: '#2e7d32' }}>{asset.healthScore}/100</strong>
+                  <strong style={{ color: '#15803D' }}>{asset.healthScore}/100</strong>
                 </div>
               </div>
             </div>

@@ -7,6 +7,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { TrackSection } from '../../types/railway';
 
 export const InteractiveTrackMap: React.FC = () => {
@@ -17,6 +18,7 @@ export const InteractiveTrackMap: React.FC = () => {
     selectedSectionId, 
     setSelectedSectionId
   } = useRailway();
+  const { t } = useLanguage();
 
   const [filterStatus, setFilterStatus] = useState<'all' | 'clear' | 'mega_block' | 'accident'>('all');
 
@@ -32,28 +34,28 @@ export const InteractiveTrackMap: React.FC = () => {
   const getSectionBadge = (status: TrackSection['status']) => {
     switch (status) {
       case 'clear': 
-        return <span className="badge badge-clear">★ 98% AVAILABLE</span>;
+        return <span className="badge badge-clear">{t('map.statusAvailable')}</span>;
       case 'mega_block': 
-        return <span className="badge badge-megablock">MEGA BLOCK ACTIVE</span>;
+        return <span className="badge badge-megablock">{t('map.statusMegaBlock')}</span>;
       case 'accident': 
-        return <span className="badge badge-accident">CORDONED OFF</span>;
+        return <span className="badge badge-accident">{t('map.statusCordoned')}</span>;
       case 'speed_restriction': 
-        return <span className="badge badge-cyan">TSR SPEED LIMIT</span>;
+        return <span className="badge badge-cyan">{t('map.statusTsr')}</span>;
       default: 
-        return <span className="badge badge-clear">NORMAL</span>;
+        return <span className="badge badge-clear">{t('map.statusAvailable')}</span>;
     }
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-      {/* BookMyShow Section Header */}
-      <div className="bms-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
+      {/* Section Header */}
+      <div className="bms-card" style={{ padding: '18px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
         <div>
           <h3 className="bms-section-title" style={{ fontSize: '1.2rem' }}>
-            Recommended Corridors & Track Possession Status
+            {t('map.title')}
           </h3>
           <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-            Real-time track occupancy, speed restrictions, and automated signal state
+            {t('map.subtitle')}
           </p>
         </div>
 
@@ -62,75 +64,71 @@ export const InteractiveTrackMap: React.FC = () => {
           <button
             onClick={() => setFilterStatus('all')}
             style={{
-              padding: '6px 14px',
-              borderRadius: '20px',
+              padding: '6px 16px',
+              borderRadius: 'var(--radius-pill)',
               fontSize: '0.75rem',
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: 'pointer',
-              border: '1px solid',
-              borderColor: filterStatus === 'all' ? 'var(--bms-red)' : '#E0E0E0',
-              background: filterStatus === 'all' ? 'var(--bms-red-light)' : '#FFFFFF',
-              color: filterStatus === 'all' ? 'var(--bms-red)' : 'var(--text-body)',
+              border: 'none',
+              background: filterStatus === 'all' ? 'var(--rx-orange)' : 'var(--rx-surface-alt)',
+              color: filterStatus === 'all' ? '#FFFFFF' : 'var(--text-body)',
               transition: 'all 0.15s ease'
             }}
           >
-            All Tracks ({trackSections.length})
+            {t('map.filterAll')} ({trackSections.length})
           </button>
           <button
             onClick={() => setFilterStatus('clear')}
             style={{
-              padding: '6px 14px',
-              borderRadius: '20px',
+              padding: '6px 16px',
+              borderRadius: 'var(--radius-pill)',
               fontSize: '0.75rem',
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: 'pointer',
-              border: '1px solid',
-              borderColor: filterStatus === 'clear' ? '#2e7d32' : '#E0E0E0',
-              background: filterStatus === 'clear' ? 'var(--bms-green-light)' : '#FFFFFF',
-              color: filterStatus === 'clear' ? '#2e7d32' : 'var(--text-body)',
+              border: 'none',
+              background: filterStatus === 'clear' ? 'var(--rx-green)' : 'var(--rx-surface-alt)',
+              color: filterStatus === 'clear' ? '#FFFFFF' : '#15803D',
               transition: 'all 0.15s ease'
             }}
           >
-            🟢 Available ({trackSections.filter(s => s.status === 'clear').length})
+            🟢 {t('map.filterClear')} ({trackSections.filter(s => s.status === 'clear').length})
           </button>
           <button
             onClick={() => setFilterStatus('mega_block')}
             style={{
-              padding: '6px 14px',
-              borderRadius: '20px',
+              padding: '6px 16px',
+              borderRadius: 'var(--radius-pill)',
               fontSize: '0.75rem',
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: 'pointer',
-              border: '1px solid',
-              borderColor: filterStatus === 'mega_block' ? '#b7791f' : '#E0E0E0',
-              background: filterStatus === 'mega_block' ? 'var(--bms-amber-light)' : '#FFFFFF',
-              color: filterStatus === 'mega_block' ? '#b7791f' : 'var(--text-body)',
+              border: 'none',
+              background: filterStatus === 'mega_block' ? 'var(--rx-amber)' : 'var(--rx-surface-alt)',
+              color: filterStatus === 'mega_block' ? '#FFFFFF' : '#92400E',
               transition: 'all 0.15s ease'
             }}
           >
-            🟡 Mega Block ({trackSections.filter(s => s.status === 'mega_block').length})
+            🟡 {t('map.filterBlock')} ({trackSections.filter(s => s.status === 'mega_block').length})
           </button>
           <button
             onClick={() => setFilterStatus('accident')}
             style={{
-              padding: '6px 14px',
-              borderRadius: '20px',
+              padding: '6px 16px',
+              borderRadius: 'var(--radius-pill)',
               fontSize: '0.75rem',
-              fontWeight: 600,
+              fontWeight: 700,
               cursor: 'pointer',
-              border: '1px solid',
-              borderColor: filterStatus === 'accident' ? 'var(--bms-red)' : '#E0E0E0',
-              background: filterStatus === 'accident' ? 'var(--bms-red-light)' : '#FFFFFF',
-              color: filterStatus === 'accident' ? 'var(--bms-red)' : 'var(--text-body)',
+              border: 'none',
+              background: filterStatus === 'accident' ? 'var(--rx-red)' : 'var(--rx-surface-alt)',
+              color: filterStatus === 'accident' ? '#FFFFFF' : 'var(--rx-red)',
               transition: 'all 0.15s ease'
             }}
           >
-            🔴 Incident ({trackSections.filter(s => s.status === 'accident').length})
+            🔴 {t('map.filterEmergency')} ({trackSections.filter(s => s.status === 'accident').length})
           </button>
         </div>
       </div>
 
-      {/* Grid of Track Cards in BookMyShow Poster/Event Style */}
+      {/* Grid of Track Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '18px' }}>
         {filteredSections.map(sec => {
           const isSelected = selectedSectionId === sec.id;
@@ -144,8 +142,8 @@ export const InteractiveTrackMap: React.FC = () => {
               style={{
                 padding: '18px',
                 cursor: 'pointer',
-                border: isSelected ? '2px solid var(--bms-red)' : '1px solid var(--border-light)',
-                boxShadow: isSelected ? '0 6px 20px rgba(248, 68, 100, 0.2)' : 'var(--shadow-card)',
+                border: isSelected ? '2px solid var(--rx-orange)' : 'none',
+                boxShadow: isSelected ? '0 8px 24px var(--rx-orange-glow)' : 'var(--shadow-card)',
                 transform: isSelected ? 'translateY(-2px)' : 'none'
               }}
             >
@@ -164,7 +162,7 @@ export const InteractiveTrackMap: React.FC = () => {
 
               {/* Stations Route */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-                <MapPin size={13} color="var(--bms-red)" />
+                <MapPin size={13} color="var(--rx-orange)" />
                 <span>{sec.fromStation}</span>
                 <span style={{ color: '#CCCCCC' }}>➔</span>
                 <span>{sec.toStation}</span>
@@ -176,12 +174,11 @@ export const InteractiveTrackMap: React.FC = () => {
               {/* Reason Banner if Blocked */}
               {sec.blockReason && (
                 <div style={{
-                  background: sec.status === 'accident' ? 'var(--bms-red-light)' : 'var(--bms-amber-light)',
-                  border: `1px solid ${sec.status === 'accident' ? 'var(--bms-red-border)' : '#fed7aa'}`,
-                  borderRadius: '6px',
+                  background: sec.status === 'accident' ? 'var(--rx-red-light)' : 'var(--rx-amber-light)',
+                  borderRadius: 'var(--radius-xs)',
                   padding: '8px 10px',
                   fontSize: '0.73rem',
-                  color: sec.status === 'accident' ? 'var(--bms-red)' : '#b7791f',
+                  color: sec.status === 'accident' ? 'var(--rx-red)' : '#92400E',
                   marginBottom: '12px',
                   lineHeight: '1.4'
                 }}>
@@ -192,32 +189,32 @@ export const InteractiveTrackMap: React.FC = () => {
               {/* Capacity Progress Bar */}
               <div style={{ marginBottom: '14px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.73rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  <span>Section Capacity Utilization</span>
-                  <strong style={{ color: sec.currentUtilizationPercent > 85 ? 'var(--bms-red)' : '#2e7d32' }}>
+                  <span>{t('map.utilization')}</span>
+                  <strong style={{ color: sec.currentUtilizationPercent > 85 ? 'var(--rx-red)' : '#15803D' }}>
                     {sec.currentUtilizationPercent}%
                   </strong>
                 </div>
-                <div style={{ height: '6px', background: '#F0F0F0', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ height: '6px', background: 'var(--rx-surface-alt)', borderRadius: '4px', overflow: 'hidden' }}>
                   <div style={{
                     height: '100%',
                     width: `${sec.currentUtilizationPercent}%`,
-                    background: sec.currentUtilizationPercent > 85 ? 'var(--bms-red)' : 'var(--bms-green)'
+                    background: sec.currentUtilizationPercent > 85 ? 'var(--rx-red)' : 'var(--rx-green)'
                   }} />
                 </div>
               </div>
 
               {/* Card Footer Telemetry & Action CTA */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)', borderTop: '1px solid #F0F0F0', paddingTop: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)', borderTop: '1px solid var(--border-light)', paddingTop: '10px' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Gauge size={13} color="var(--bms-cyan)" />
+                  <Gauge size={13} color="var(--rx-blue)" />
                   {sec.maxSpeedKmph} km/h
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <TrainIcon size={13} color="var(--bms-red)" />
-                  {secTrains.length} Active Trains
+                  <TrainIcon size={13} color="var(--rx-orange)" />
+                  {secTrains.length} {t('metrics.active')}
                 </span>
-                <span style={{ color: 'var(--bms-red)', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
-                  Inspect <ChevronRight size={14} />
+                <span style={{ color: 'var(--rx-orange)', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
+                  {t('map.selectedSection')} <ChevronRight size={14} />
                 </span>
               </div>
             </div>
@@ -227,47 +224,47 @@ export const InteractiveTrackMap: React.FC = () => {
 
       {/* Selected Section Inspector Drawer */}
       {activeSection && (
-        <div className="bms-card" style={{ padding: '22px', borderTop: '4px solid var(--bms-red)' }}>
+        <div className="bms-card" style={{ padding: '22px', borderTop: '4px solid var(--rx-orange)' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: 'var(--bms-red-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bms-red)' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'var(--rx-orange-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rx-orange)' }}>
                 <Info size={20} />
               </div>
               <div>
                 <h3 style={{ fontSize: '1.08rem', fontWeight: 700, color: 'var(--text-dark)' }}>
-                  Section Telemetry: {activeSection.name} ({activeSection.code})
+                  {t('map.selectedSection')}: {activeSection.name} ({activeSection.code})
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                  Division: {activeSection.division} • Electrification: {activeSection.electrification} • Length: {activeSection.lengthKm} KM
+                  Division: {activeSection.division} • Electrification: {activeSection.electrification} • {t('map.length')}: {activeSection.lengthKm} KM
                 </p>
               </div>
             </div>
             <button
               onClick={() => setSelectedSectionId(null)}
               className="btn btn-secondary"
-              style={{ padding: '5px 14px', fontSize: '0.78rem' }}
+              style={{ padding: '6px 16px', fontSize: '0.78rem' }}
             >
-              Close Inspector
+              ✕
             </button>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
             {/* Real-Time Trains on this section */}
-            <div style={{ background: '#F8F8FB', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
-              <h4 style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--bms-red)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ background: 'var(--rx-surface-alt)', padding: '16px', borderRadius: 'var(--radius-sm)' }}>
+              <h4 style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--rx-orange)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <TrainIcon size={15} />
-                Active Trains in Section ({trainsInSelectedSection.length})
+                {t('map.trainsOnSection')} ({trainsInSelectedSection.length})
               </h4>
               {trainsInSelectedSection.length === 0 ? (
-                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>No trains currently occupying this section block.</p>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('map.noTrains')}</p>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {trainsInSelectedSection.map(t => (
-                    <div key={t.id} style={{ background: '#FFFFFF', padding: '10px 12px', borderRadius: '6px', fontSize: '0.75rem', border: '1px solid #EAEAEA' }}>
+                    <div key={t.id} style={{ background: '#FFFFFF', padding: '10px 12px', borderRadius: '6px', fontSize: '0.75rem', boxShadow: 'var(--shadow-card)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
                         <span style={{ color: 'var(--text-dark)' }}>#{t.number} {t.name}</span>
-                        <span style={{ color: t.status === 'on_time' ? '#2e7d32' : 'var(--bms-red)' }}>
-                          {t.status.toUpperCase()} ({t.delayMinutes}m delay)
+                        <span style={{ color: t.status === 'on_time' ? '#15803D' : 'var(--rx-red)' }}>
+                          {t.status.toUpperCase()} ({t.delayMinutes}m)
                         </span>
                       </div>
                       <div style={{ color: 'var(--text-secondary)', marginTop: '3px' }}>
@@ -280,28 +277,28 @@ export const InteractiveTrackMap: React.FC = () => {
             </div>
 
             {/* Block & Safety Telemetry */}
-            <div style={{ background: '#F8F8FB', padding: '16px', borderRadius: '8px', border: '1px solid var(--border-light)' }}>
-              <h4 style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--bms-cyan)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ background: 'var(--rx-surface-alt)', padding: '16px', borderRadius: 'var(--radius-sm)' }}>
+              <h4 style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--rx-blue)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Gauge size={15} />
-                Track & Signal Specifications
+                {t('tab.fleet') || 'Track & Signal Specifications'}
               </h4>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.75rem' }}>
                 <div>
-                  <span style={{ color: 'var(--text-secondary)' }}>Max Permissible Speed:</span>
+                  <span style={{ color: 'var(--text-secondary)' }}>{t('map.speedLimit')}:</span>
                   <div style={{ fontWeight: 700, color: 'var(--text-dark)', marginTop: '2px' }}>{activeSection.maxSpeedKmph} km/h</div>
                 </div>
                 <div>
-                  <span style={{ color: 'var(--text-secondary)' }}>Current TSR (Restriction):</span>
-                  <div style={{ fontWeight: 700, color: activeSection.currentTsrKmph ? '#b7791f' : '#2e7d32', marginTop: '2px' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>TSR:</span>
+                  <div style={{ fontWeight: 700, color: activeSection.currentTsrKmph ? '#92400E' : '#15803D', marginTop: '2px' }}>
                     {activeSection.currentTsrKmph ? `${activeSection.currentTsrKmph} km/h` : 'No Restriction'}
                   </div>
                 </div>
                 <div>
-                  <span style={{ color: 'var(--text-secondary)' }}>Signal Blocks:</span>
+                  <span style={{ color: 'var(--text-secondary)' }}>Signals:</span>
                   <div style={{ fontWeight: 700, color: 'var(--text-dark)', marginTop: '2px' }}>{activeSection.signalsCount} Automatic Signals</div>
                 </div>
                 <div>
-                  <span style={{ color: 'var(--text-secondary)' }}>Corridor Track Lines:</span>
+                  <span style={{ color: 'var(--text-secondary)' }}>Lines:</span>
                   <div style={{ fontWeight: 700, color: 'var(--text-dark)', marginTop: '2px' }}>{activeSection.lines} Dedicated Lines</div>
                 </div>
               </div>
