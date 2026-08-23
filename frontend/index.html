@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RailX AI - Indian Railways Automatic Block Planning & Optimization Hub</title>
+    <meta name="description" content="AI-Powered Automatic Block Planning, Track Asset Utilization Optimizer, Downtime Predictor and Disaster Management for Indian Railways.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body class="dark-theme">
+    <!-- Top Command & Live Network Telemetry Bar -->
+    <header class="master-header">
+        <div class="header-left">
+            <div class="brand-badge">
+                <div class="brand-logo-ring">
+                    <i data-lucide="train-track" class="brand-icon"></i>
+                </div>
+                <div class="brand-titles">
+                    <div class="brand-title-wrap">
+                        <h1 class="brand-title">RailX <span>AI</span></h1>
+                        <span class="version-tag">v3.4 PRO</span>
+                    </div>
+                    <p class="brand-subtitle">Indian Railways Automatic Block Planning & Asset Optimization Command</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-center">
+            <div class="telemetry-pill-group">
+                <div class="telemetry-pill">
+                    <span class="pill-dot active-pulse"></span>
+                    <span class="pill-label">ABS SIGNALING</span>
+                    <span class="pill-val">4-Aspect Normal</span>
+                </div>
+                <div class="telemetry-pill">
+                    <span class="pill-dot active-cyan"></span>
+                    <span class="pill-label">KAVACH TCAS</span>
+                    <span class="pill-val">100% Armed</span>
+                </div>
+                <div class="telemetry-pill">
+                    <span class="pill-dot active-gold"></span>
+                    <span class="pill-label">25kV OHE GRID</span>
+                    <span class="pill-val">24.8 kV Stable</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <!-- Division Selector -->
+            <div class="division-selector-wrap">
+                <i data-lucide="map-pin" class="select-icon"></i>
+                <select id="divisionSelect" class="styled-select">
+                    <option value="CR_MUMBAI" selected>Central Railway (CR) - Mumbai Div</option>
+                    <option value="WR_MUMBAI">Western Railway (WR) - Mumbai Div</option>
+                    <option value="NR_DELHI">Northern Railway (NR) - Delhi Div</option>
+                    <option value="ER_HOWRAH">Eastern Railway (ER) - Howrah Div</option>
+                    <option value="SR_CHENNAI">Southern Railway (SR) - Chennai Div</option>
+                    <option value="ALL">All Indian Railways Corridors</option>
+                </select>
+            </div>
+
+            <!-- Live IST Clock -->
+            <div class="ist-clock-card">
+                <div class="clock-time" id="liveClock">15:30:00</div>
+                <div class="clock-label">IST (UTC+5:30) • LIVE NETWORK</div>
+            </div>
+
+            <!-- Quick Action: Emergency Accident Simulation -->
+            <button id="btnQuickIncident" class="btn-emergency-pulse">
+                <i data-lucide="alert-triangle"></i>
+                <span>Simulate Incident</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Master Navigation Tabs -->
+    <nav class="master-nav">
+        <button class="nav-tab active" data-tab="tab-optimizer">
+            <i data-lucide="cpu"></i>
+            <span>AI Optimization Panel</span>
+            <span class="badge-tab-status">Live Solver</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-corridor">
+            <i data-lucide="network"></i>
+            <span>Track Corridor Live Matrix</span>
+            <span class="badge-tab-count" id="activeTrackCount">5 Sections</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-timeline">
+            <i data-lucide="calendar-range"></i>
+            <span>Timetable & Slot Visualizer</span>
+            <span class="badge-tab-status">Before vs After</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-ml">
+            <i data-lucide="brain-circuit"></i>
+            <span>ML Downtime Forecaster</span>
+            <span class="badge-tab-ai">Scikit-Learn ML</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-disaster">
+            <i data-lucide="siren"></i>
+            <span>Disaster Hub & Mega Blocks</span>
+            <span class="badge-tab-alert" id="activeAlertBadge">1 Active Alert</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-reports">
+            <i data-lucide="bar-chart-3"></i>
+            <span>Optimization Analytics & KPIs</span>
+        </button>
+    </nav>
+
+    <!-- Main Workspace Container -->
+    <main class="master-content">
+
+        <!-- ==================== TAB 1: AI OPTIMIZER ==================== -->
+        <section id="tab-optimizer" class="tab-pane active">
+            <!-- Top Hero KPI Banner -->
+            <div class="kpi-grid">
+                <div class="kpi-card card-glow-emerald">
+                    <div class="kpi-icon-wrap bg-emerald-translucent">
+                        <i data-lucide="check-circle-2" class="text-emerald"></i>
+                    </div>
+                    <div class="kpi-meta">
+                        <span class="kpi-title">Asset Availability</span>
+                        <div class="kpi-value-row">
+                            <span class="kpi-val" id="kpiAssetAvail">95.8%</span>
+                            <span class="kpi-trend positive" id="kpiAssetTrend"><i data-lucide="trending-up"></i> +24.6%</span>
+                        </div>
+                        <span class="kpi-subtext">Before AI: 71.2% (Capacity freed for traffic)</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card card-glow-blue">
+                    <div class="kpi-icon-wrap bg-blue-translucent">
+                        <i data-lucide="clock" class="text-blue"></i>
+                    </div>
+                    <div class="kpi-meta">
+                        <span class="kpi-title">Passenger Delay Penalty</span>
+                        <div class="kpi-value-row">
+                            <span class="kpi-val" id="kpiDelay">4 Mins</span>
+                            <span class="kpi-trend positive" id="kpiDelayTrend"><i data-lucide="trending-down"></i> -88.5%</span>
+                        </div>
+                        <span class="kpi-subtext">Saved 42.0 min cumulative corridor wait</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card card-glow-amber">
+                    <div class="kpi-icon-wrap bg-amber-translucent">
+                        <i data-lucide="shield-alert" class="text-amber"></i>
+                    </div>
+                    <div class="kpi-meta">
+                        <span class="kpi-title">Mega Block Conflicts</span>
+                        <div class="kpi-value-row">
+                            <span class="kpi-val" id="kpiClashes">0 Clashes</span>
+                            <span class="kpi-tag-status">100% Resolved</span>
+                        </div>
+                        <span class="kpi-subtext">Rescheduled to Night & Off-Peak Valleys</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card card-glow-cyan">
+                    <div class="kpi-icon-wrap bg-cyan-translucent">
+                        <i data-lucide="boxes" class="text-cyan"></i>
+                    </div>
+                    <div class="kpi-meta">
+                        <span class="kpi-title">Freight Cargo Throughput</span>
+                        <div class="kpi-value-row">
+                            <span class="kpi-val" id="kpiFreight">98.4%</span>
+                            <span class="kpi-tag-optimal">Optimal</span>
+                        </div>
+                        <span class="kpi-subtext">Dedicated 5th/6th line paths secured</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Column Solver Dashboard -->
+            <div class="optimizer-layout">
+                <!-- Left Control Panel -->
+                <div class="panel-card control-panel">
+                    <div class="panel-header">
+                        <div class="panel-title-wrap">
+                            <i data-lucide="sliders" class="panel-icon text-cyan"></i>
+                            <div>
+                                <h3 class="panel-title">Optimization Strategy & Constraints</h3>
+                                <p class="panel-subtitle">Configure Mixed-Integer Linear Optimizer & Penalty Weights</p>
+                            </div>
+                        </div>
+                        <span class="engine-badge">PuLP + MILP CBC</span>
+                    </div>
+
+                    <!-- Strategy Selection Grid -->
+                    <div class="strategy-section">
+                        <label class="control-label">OPTIMIZATION OBJECTIVE PROFILE</label>
+                        <div class="strategy-selector-grid">
+                            <div class="strategy-card active" data-strategy="balanced">
+                                <div class="strategy-header">
+                                    <i data-lucide="scale"></i>
+                                    <h4>Balanced Indian Railways Ops</h4>
+                                </div>
+                                <p>Standard mode balancing maximum maintenance completion with high-speed passenger punctuality.</p>
+                            </div>
+
+                            <div class="strategy-card" data-strategy="asset_max">
+                                <div class="strategy-header">
+                                    <i data-lucide="zap"></i>
+                                    <h4>Max Asset Availability</h4>
+                                </div>
+                                <p>Consolidates Rolling Blocks to maximize open track hours and reduce maintenance turnaround.</p>
+                            </div>
+
+                            <div class="strategy-card" data-strategy="zero_delay">
+                                <div class="strategy-header">
+                                    <i data-lucide="gauge"></i>
+                                    <h4>Zero-Delay Priority</h4>
+                                </div>
+                                <p>Absolute protection for Platinum Rajdhani/Vande Bharat paths; shifts all blocks strictly to night valleys.</p>
+                            </div>
+
+                            <div class="strategy-card" data-strategy="emergency_reroute">
+                                <div class="strategy-header">
+                                    <i data-lucide="siren"></i>
+                                    <h4>Emergency Incident Response</h4>
+                                </div>
+                                <p>Dynamic loop switching & bi-directional single line working when sections suffer breakdown or accidents.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Constraint Weight Sliders -->
+                    <div class="sliders-section">
+                        <div class="slider-row">
+                            <div class="slider-header">
+                                <span class="slider-title"><i data-lucide="maximize-2"></i> Track Asset Availability Weight</span>
+                                <span class="slider-val" id="valAssetWeight">40%</span>
+                            </div>
+                            <input type="range" id="sliderAssetWeight" min="10" max="70" value="40" class="styled-range range-emerald">
+                        </div>
+
+                        <div class="slider-row">
+                            <div class="slider-header">
+                                <span class="slider-title"><i data-lucide="user-x"></i> Passenger Delay Penalty</span>
+                                <span class="slider-val" id="valDelayWeight">35%</span>
+                            </div>
+                            <input type="range" id="sliderDelayWeight" min="10" max="70" value="35" class="styled-range range-blue">
+                        </div>
+
+                        <div class="slider-row">
+                            <div class="slider-header">
+                                <span class="slider-title"><i data-lucide="calendar-check"></i> Mega Block Execution Efficiency</span>
+                                <span class="slider-val" id="valMbWeight">15%</span>
+                            </div>
+                            <input type="range" id="sliderMbWeight" min="5" max="50" value="15" class="styled-range range-amber">
+                        </div>
+
+                        <div class="slider-row">
+                            <div class="slider-header">
+                                <span class="slider-title"><i data-lucide="train"></i> Freight & Cargo Throughput</span>
+                                <span class="slider-val" id="valFreightWeight">10%</span>
+                            </div>
+                            <input type="range" id="sliderFreightWeight" min="5" max="40" value="10" class="styled-range range-purple">
+                        </div>
+                    </div>
+
+                    <!-- Action Trigger -->
+                    <div class="solver-actions-wrap">
+                        <button id="btnRunOptimizer" class="btn-execute-solver">
+                            <div class="btn-solver-glow"></div>
+                            <i data-lucide="play-circle" class="btn-icon"></i>
+                            <div class="btn-text-wrap">
+                                <span class="btn-primary-text">RUN AI OPTIMIZATION ENGINE</span>
+                                <span class="btn-sub-text">Solve Spatio-Temporal Constraint Network</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Telemetry & Solver Terminal -->
+                <div class="panel-card telemetry-panel">
+                    <div class="panel-header">
+                        <div class="panel-title-wrap">
+                            <i data-lucide="terminal" class="panel-icon text-emerald"></i>
+                            <div>
+                                <h3 class="panel-title">Real-Time Solver Telemetry & Execution Log</h3>
+                                <p class="panel-subtitle">Simplex Tableau pivots, conflict graphs & MILP convergence stream</p>
+                            </div>
+                        </div>
+                        <div class="solver-status-indicator">
+                            <span class="live-dot pulse-emerald"></span>
+                            <span id="solverLiveStatus">SOLVER READY</span>
+                        </div>
+                    </div>
+
+                    <!-- Live Terminal Output -->
+                    <div class="terminal-window" id="terminalOutput">
+                        <div class="terminal-line system-line">[15:30:00] RailX AI Optimization Engine initialized.</div>
+                        <div class="terminal-line info-line">[15:30:01] Ingested 5 track sections, 9 active trains, 3 scheduled mega blocks.</div>
+                        <div class="terminal-line info-line">[15:30:01] PuLP MILP Mathematical Model loaded in memory.</div>
+                        <div class="terminal-line success-line">[15:30:02] Ready to execute optimization algorithm. Click 'RUN AI OPTIMIZATION ENGINE'.</div>
+                    </div>
+
+                    <!-- Quick Optimization Diff Summary -->
+                    <div class="diff-summary-card">
+                        <h4 class="diff-title"><i data-lucide="check-check"></i> Latest Optimization Recommendations</h4>
+                        <div class="recommendations-list" id="recommendationsList">
+                            <div class="rec-item">
+                                <span class="rec-badge badge-reroute">DYNAMIC RE-ROUTE</span>
+                                <div class="rec-body">
+                                    <strong>Train 22221 Rajdhani & 11019 Konark</strong>: Diverted via Down Slow with zero-delay speed waiver while Dadar-Thane Up Fast undergoes OHE cantilever renewal.
+                                </div>
+                            </div>
+                            <div class="rec-item">
+                                <span class="rec-badge badge-reschedule">WINDOW SHIFT</span>
+                                <div class="rec-body">
+                                    <strong>Mega Block MB-2026-081</strong>: Rescheduled from Sunday 11:05 AM to optimal night valley window 01:15 AM - 05:45 AM (100% clash elimination).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: TRACK CORRIDOR MATRIX ==================== -->
+        <section id="tab-corridor" class="tab-pane">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div class="panel-title-wrap">
+                        <i data-lucide="git-merge" class="panel-icon text-blue"></i>
+                        <div>
+                            <h3 class="panel-title">Interactive Multi-Line Track Corridor Map</h3>
+                            <p class="panel-subtitle">Real-time occupancy, 4-aspect signal status, OHE power blocks & train locations</p>
+                        </div>
+                    </div>
+                    <div class="legend-group">
+                        <div class="legend-item"><span class="legend-dot bg-emerald"></span> Operational (Green)</div>
+                        <div class="legend-item"><span class="legend-dot bg-amber"></span> Mega Block (Yellow)</div>
+                        <div class="legend-item"><span class="legend-dot bg-crimson"></span> Incident Lockdown (Red)</div>
+                        <div class="legend-item"><span class="legend-dot bg-cyan"></span> AI Re-Routed Line (Cyan)</div>
+                    </div>
+                </div>
+
+                <!-- Interactive Linear Track Diagram -->
+                <div class="corridor-visualizer-container">
+                    <div class="corridor-visualizer-header">
+                        <div class="corridor-name" id="corridorDisplayTitle">Central Railway: Mumbai CSMT ➔ Kalyan Jn Corridor (Quad + 6th Line)</div>
+                        <div class="corridor-meta">Speed Limit: Up to 120 km/h | 25kV Traction | ABS Signaling</div>
+                    </div>
+
+                    <!-- Canvas / SVG Linear Multi-Track Matrix -->
+                    <div class="tracks-linear-matrix" id="tracksLinearMatrix">
+                        <!-- Dynamically populated via app.js -->
+                    </div>
+                </div>
+
+                <!-- Track Sections Detail Table -->
+                <div class="table-card-wrap">
+                    <h4 class="subtable-title"><i data-lucide="table"></i> Detailed Track Section Telemetry & Asset Health</h4>
+                    <div class="table-responsive">
+                        <table class="styled-table" id="tracksTable">
+                            <thead>
+                                <tr>
+                                    <th>Section ID</th>
+                                    <th>Corridor & Stations</th>
+                                    <th>Length & Lines</th>
+                                    <th>MPS</th>
+                                    <th>Signaling / TCAS</th>
+                                    <th>Load %</th>
+                                    <th>Asset Health</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tracksTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: TIMETABLE & GANTT VISUALIZER ==================== -->
+        <section id="tab-timeline" class="tab-pane">
+            <div class="panel-card">
+                <div class="panel-header">
+                    <div class="panel-title-wrap">
+                        <i data-lucide="clock-9" class="panel-icon text-cyan"></i>
+                        <div>
+                            <h3 class="panel-title">Timetable & Maintenance Block Slot Allocator</h3>
+                            <p class="panel-subtitle">Visualizing traffic valleys and how AI eliminates maintenance overlaps</p>
+                        </div>
+                    </div>
+                    <div class="timeline-controls">
+                        <button class="btn-timeline-filter active" data-filter="all">All Lines</button>
+                        <button class="btn-timeline-filter" data-filter="fast">Fast Lines</button>
+                        <button class="btn-timeline-filter" data-filter="slow">Slow Lines</button>
+                    </div>
+                </div>
+
+                <!-- Before vs After Gantt Comparison Container -->
+                <div class="gantt-master-container">
+                    <div class="gantt-lane-group">
+                        <div class="gantt-lane-label-wrap">
+                            <span class="lane-tag tag-before">BEFORE OPTIMIZATION</span>
+                            <span class="lane-sub">Unoptimized timetable has high passenger disruption during peak blocks</span>
+                        </div>
+                        <div class="gantt-timeline-bar" id="ganttBefore">
+                            <!-- Populated dynamically with slots -->
+                        </div>
+                    </div>
+
+                    <div class="gantt-lane-group">
+                        <div class="gantt-lane-label-wrap">
+                            <span class="lane-tag tag-after">AFTER AI OPTIMIZATION (RailX)</span>
+                            <span class="lane-sub">Blocks relocated to off-peak night valleys (01:00-05:00) with smooth bypasses</span>
+                        </div>
+                        <div class="gantt-timeline-bar" id="ganttAfter">
+                            <!-- Populated dynamically with slots -->
+                        </div>
+                    </div>
+
+                    <!-- Time Axis Legend -->
+                    <div class="gantt-axis">
+                        <span>00:00</span>
+                        <span>03:00</span>
+                        <span>06:00 (Morning Peak)</span>
+                        <span>09:00</span>
+                        <span>12:00 (Mid-day Valley)</span>
+                        <span>15:00</span>
+                        <span>18:00 (Evening Peak)</span>
+                        <span>21:00</span>
+                        <span>24:00 (Night Valley)</span>
+                    </div>
+                </div>
+
+                <!-- Train Rescheduling Matrix Table -->
+                <div class="table-card-wrap">
+                    <h4 class="subtable-title"><i data-lucide="train-track"></i> Scheduled Trains & AI Slot Allocation Status</h4>
+                    <div class="table-responsive">
+                        <table class="styled-table" id="trainsTable">
+                            <thead>
+                                <tr>
+                                    <th>Train No. & Name</th>
+                                    <th>Category / Priority</th>
+                                    <th>Rake & Loco</th>
+                                    <th>Origin ➔ Dest</th>
+                                    <th>Scheduled Slot</th>
+                                    <th>Assigned Line</th>
+                                    <th>Delay</th>
+                                    <th>AI Optimization Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trainsTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: ML DOWNTIME PREDICTOR ==================== -->
+        <section id="tab-ml" class="tab-pane">
+            <div class="ml-grid-layout">
+                <!-- Left ML Parameters Form -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-title-wrap">
+                            <i data-lucide="brain" class="panel-icon text-purple"></i>
+                            <div>
+                                <h3 class="panel-title">ML Maintenance Downtime Forecaster</h3>
+                                <p class="panel-subtitle">Random Forest Regression & Delay Propagation Classifier</p>
+                            </div>
+                        </div>
+                        <span class="engine-badge badge-purple">Trained on 1,200 IR Logs</span>
+                    </div>
+
+                    <form id="mlPredictForm" class="ml-form">
+                        <div class="form-row">
+                            <label class="form-label">Maintenance Work Type</label>
+                            <select id="mlWorkType" class="styled-select form-input">
+                                <option value="Track Relaying & Tamping" selected>Track Relaying & Tamping (CSM-09)</option>
+                                <option value="Overhead OHE Cantilever Renewal">Overhead OHE Cantilever & TRD Renewal</option>
+                                <option value="Turnout & Point Machine Overhaul">Turnout & Point Machine Overhaul</option>
+                                <option value="Deep Screening & Ballast Cleaning">Deep Screening & Ballast Cleaning (BCM)</option>
+                                <option value="Ultrasonic Flaw Detection (USFD)">Ultrasonic Rail Flaw Detection (USFD)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row-2col">
+                            <div>
+                                <label class="form-label">Requested Window Duration: <span id="valMlDuration" class="text-cyan font-bold">4.0 hrs</span></label>
+                                <input type="range" id="mlDuration" min="1.0" max="8.0" step="0.5" value="4.0" class="styled-range range-cyan">
+                            </div>
+                            <div>
+                                <label class="form-label">Corridor Traffic Density: <span id="valMlTraffic" class="text-blue font-bold">180 trains/day</span></label>
+                                <input type="range" id="mlTraffic" min="60" max="280" step="10" value="180" class="styled-range range-blue">
+                            </div>
+                        </div>
+
+                        <div class="form-row-2col">
+                            <div>
+                                <label class="form-label">Track Section Age: <span id="valMlAge" class="text-amber font-bold">12 years</span></label>
+                                <input type="range" id="mlAge" min="1" max="28" step="1" value="12" class="styled-range range-amber">
+                            </div>
+                            <div>
+                                <label class="form-label">Gang Crew Strength: <span id="valMlCrew" class="text-emerald font-bold">28 Personnel</span></label>
+                                <input type="range" id="mlCrew" min="10" max="60" step="2" value="28" class="styled-range range-emerald">
+                            </div>
+                        </div>
+
+                        <div class="form-row-2col">
+                            <div>
+                                <label class="form-label">Weather / Environmental Conditions</label>
+                                <select id="mlWeather" class="styled-select form-input">
+                                    <option value="Clear & Sunny">Clear & Sunny</option>
+                                    <option value="Light to Moderate Rain">Light to Moderate Rain</option>
+                                    <option value="Monsoon / Heavy Rain" selected>Monsoon / Heavy Rain (Ghat Section)</option>
+                                    <option value="Dense Winter Fog">Dense Winter Fog</option>
+                                    <option value="Extreme Summer Heat (>40°C)">Extreme Summer Heat (>40°C)</option>
+                                </select>
+                            </div>
+                            <div class="checkbox-group-wrap">
+                                <label class="form-label">Machinery Deployment</label>
+                                <label class="styled-checkbox-label">
+                                    <input type="checkbox" id="mlMachine" checked>
+                                    <span>Automated High-Speed Machine Assisted (CSM / BCM)</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-run-ml">
+                            <i data-lucide="sparkles"></i>
+                            <span>CALCULATE ML DOWNTIME & DELAY RISK</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right ML Output & Confidence Dashboard -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-title-wrap">
+                            <i data-lucide="activity" class="panel-icon text-cyan"></i>
+                            <div>
+                                <h3 class="panel-title">AI Predictive Forecast & Risk Analysis</h3>
+                                <p class="panel-subtitle">Estimated actual duration, 95% confidence bounds & cascade delay factor</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ml-result-dashboard" id="mlResultBox">
+                        <!-- Primary Predicted Downtime Gauge -->
+                        <div class="ml-primary-kpi-card">
+                            <div class="kpi-tag-sub">PREDICTED ACTUAL DOWNTIME</div>
+                            <div class="kpi-big-num" id="predDurationNum">4.35 <span class="unit">Hours</span></div>
+                            <div class="confidence-interval-text" id="predCiText">95% Confidence Bounds: <strong>4.12 hrs ➔ 4.58 hrs</strong></div>
+                        </div>
+
+                        <!-- 3-Pillar Risk Metrics -->
+                        <div class="risk-metrics-row">
+                            <div class="risk-metric-card">
+                                <span class="risk-card-label">Overrun Risk</span>
+                                <div class="risk-card-val text-amber" id="predOverrunProb">34.2%</div>
+                                <span class="risk-card-sub" id="predRiskIndex">Moderate Risk</span>
+                            </div>
+
+                            <div class="risk-metric-card">
+                                <span class="risk-card-label">Recommended Buffer</span>
+                                <div class="risk-card-val text-cyan" id="predBufferMins">+25 Mins</div>
+                                <span class="risk-card-sub">AI Timetable Padding</span>
+                            </div>
+
+                            <div class="risk-metric-card">
+                                <span class="risk-card-label">Pax Delay Prevented</span>
+                                <div class="risk-card-val text-emerald" id="predSavedPax">45 Mins</div>
+                                <span class="risk-card-sub">Downstream Protection</span>
+                            </div>
+                        </div>
+
+                        <!-- Contributing Risk Factors & Explanations -->
+                        <div class="contributing-factors-card">
+                            <h4 class="factor-heading"><i data-lucide="layers"></i> Key Delay Contributing Drivers (SHAP Feature Importance)</h4>
+                            <div class="factors-list" id="factorsList">
+                                <div class="factor-pill factor-high">
+                                    <span class="factor-name">Monsoon Weather Impact</span>
+                                    <span class="factor-imp">+40 mins safety clearance</span>
+                                </div>
+                                <div class="factor-pill factor-med">
+                                    <span class="factor-name">Aging Track Rail Metallurgy</span>
+                                    <span class="factor-imp">+20 mins fitting friction</span>
+                                </div>
+                                <div class="factor-pill factor-positive">
+                                    <span class="factor-name">CSM-09 Automated Tamper deployed</span>
+                                    <span class="factor-imp">-25 mins fast packing</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 5: DISASTER HUB & MEGA BLOCKS ==================== -->
+        <section id="tab-disaster" class="tab-pane">
+            <div class="disaster-grid-layout">
+                <!-- Active Incident Feed & Lockdown Manager -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-title-wrap">
+                            <i data-lucide="flame" class="panel-icon text-crimson"></i>
+                            <div>
+                                <h3 class="panel-title">Active Accidents & Emergency Track Disruptions</h3>
+                                <p class="panel-subtitle">Real-time incident reporting, automatic loop line diversion & emergency broadcast</p>
+                            </div>
+                        </div>
+                        <button id="btnOpenReportModal" class="btn-report-incident">
+                            <i data-lucide="plus-circle"></i>
+                            <span>Report New Incident</span>
+                        </button>
+                    </div>
+
+                    <div class="incidents-feed" id="incidentsFeed">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Mega Block Schedule & Clash Matrix -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-title-wrap">
+                            <i data-lucide="calendar" class="panel-icon text-amber"></i>
+                            <div>
+                                <h3 class="panel-title">Upcoming Mega Blocks (Planned Maintenance)</h3>
+                                <p class="panel-subtitle">Divisional Jumbo Blocks, OHE power cuts & automated timetable clash detection</p>
+                            </div>
+                        </div>
+                        <button id="btnOpenMegaBlockModal" class="btn-propose-block">
+                            <i data-lucide="plus"></i>
+                            <span>Schedule Mega Block</span>
+                        </button>
+                    </div>
+
+                    <div class="mega-blocks-list" id="megaBlocksList">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Passenger & Controller Broadcast Notice Feed -->
+            <div class="panel-card mt-4">
+                <div class="panel-header">
+                    <div class="panel-title-wrap">
+                        <i data-lucide="radio" class="panel-icon text-blue"></i>
+                        <div>
+                            <h3 class="panel-title">Real-Time Passenger & Station Controller Broadcast Notifications</h3>
+                            <p class="panel-subtitle">Push alerts dispatched via FCM, SMS Gateway & Indian Railways Control Dashboard</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="broadcasts-grid" id="broadcastsGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 6: REPORTS & ANALYTICS ==================== -->
+        <section id="tab-reports" class="tab-pane">
+            <div class="analytics-layout">
+                <!-- Chart 1: Asset Availability Comparison -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-title-wrap">
+                            <i data-lucide="bar-chart-2" class="panel-icon text-emerald"></i>
+                            <div>
+                                <h3 class="panel-title">Track Asset Utilization: Before vs After AI</h3>
+                                <p class="panel-subtitle">Comparison across key corridors (% asset open hours)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartUtilization"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Delay Reduction by Train Category -->
+                <div class="panel-card">
+                    <div class="panel-header">
+                        <div class="panel-title-wrap">
+                            <i data-lucide="line-chart" class="panel-icon text-blue"></i>
+                            <div>
+                                <h3 class="panel-title">Corridor Delay Minutes Saved by Category</h3>
+                                <p class="panel-subtitle">Impact of AI slotting on Rajdhani, Mail, Freight & Suburban trains</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="chartDelays"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Comparison Table -->
+            <div class="panel-card mt-4">
+                <div class="panel-header">
+                    <div class="panel-title-wrap">
+                        <i data-lucide="file-check" class="panel-icon text-cyan"></i>
+                        <div>
+                            <h3 class="panel-title">Comprehensive Optimization Audit Report</h3>
+                            <p class="panel-subtitle">Formal before-vs-after metrics for Chief Operations Manager (COM) submission</p>
+                        </div>
+                    </div>
+                    <button id="btnExportReport" class="btn-secondary-action">
+                        <i data-lucide="download"></i>
+                        <span>Export CSV / PDF Bulletin</span>
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Operational Metric</th>
+                                <th>Before Optimization</th>
+                                <th>After AI Optimization (RailX)</th>
+                                <th>Net Improvement</th>
+                                <th>Significance & Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Track Asset Availability</strong></td>
+                                <td>71.2%</td>
+                                <td class="text-emerald font-bold">95.8%</td>
+                                <td class="text-emerald font-bold">+24.6%</td>
+                                <td>Unlocks additional freight paths & reduces idle track machine time</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Passenger Delay Minutes (Corridor total)</strong></td>
+                                <td>46 Mins</td>
+                                <td class="text-emerald font-bold">4 Mins</td>
+                                <td class="text-emerald font-bold">-42 Mins (-91.3%)</td>
+                                <td>Prevents cascading delay on high-speed Rajdhani & suburban EMUs</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mega Block Timetable Clashes</strong></td>
+                                <td>1 Active Conflict</td>
+                                <td class="text-emerald font-bold">0 Clashes (Resolved)</td>
+                                <td class="text-emerald font-bold">100% Elimination</td>
+                                <td>Maintenance shifted to night valley (01:15 - 05:45 AM)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>High-Speed Punctuality Index</strong></td>
+                                <td>82.5%</td>
+                                <td class="text-emerald font-bold">99.4%</td>
+                                <td class="text-emerald font-bold">+16.9%</td>
+                                <td>Vande Bharat & Tejas Rajdhani maintain green signal headway</td>
+                            </tr>
+                            <tr>
+                                <td><strong>OHE Power Block Maintenance Hours Completed</strong></td>
+                                <td>4.8 Hours</td>
+                                <td class="text-emerald font-bold">4.8 Hours (100% Target)</td>
+                                <td class="text-emerald font-bold">0 Deficit Hours</td>
+                                <td>Safety maintenance fulfilled without compromising traffic</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Modal 1: Report Accident / Incident -->
+    <div class="modal-overlay" id="modalIncident">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i data-lucide="alert-octagon" class="text-crimson"></i>
+                    <h3>Emergency Track Incident & Accident Reporting</h3>
+                </div>
+                <button class="modal-close" data-close="modalIncident">&times;</button>
+            </div>
+            <form id="formReportIncident" class="modal-form">
+                <div class="form-row">
+                    <label class="form-label">Corridor Track Section</label>
+                    <select id="incSection" class="styled-select form-input" required>
+                        <option value="SEC-CR-01">Mumbai CSMT - Dadar (SEC-CR-01)</option>
+                        <option value="SEC-CR-02">Dadar - Thane (SEC-CR-02)</option>
+                        <option value="SEC-CR-03" selected>Thane - Kalyan Jn (SEC-CR-03)</option>
+                        <option value="SEC-CR-04">Kalyan - Kasara Thall Ghat (SEC-CR-04)</option>
+                        <option value="SEC-NR-01">New Delhi - Ghaziabad (SEC-NR-01)</option>
+                    </select>
+                </div>
+                <div class="form-row-2col">
+                    <div>
+                        <label class="form-label">Affected Line</label>
+                        <input type="text" id="incLine" class="form-input text-input" value="Down Fast (KM 42/18 near Diva)" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Severity Level</label>
+                        <select id="incSeverity" class="styled-select form-input">
+                            <option value="Moderate">Moderate (Speed Restriction)</option>
+                            <option value="High" selected>High (Track Blocked)</option>
+                            <option value="Critical">Critical / Disaster Lockdown</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row-2col">
+                    <div>
+                        <label class="form-label">Incident / Accident Type</label>
+                        <input type="text" id="incType" class="form-input text-input" value="OHE Pantograph Entanglement & Wire Break" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Affected Train No.</label>
+                        <input type="text" id="incTrain" class="form-input text-input" value="11019 (Konark Express)" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-close="modalIncident">Cancel</button>
+                    <button type="submit" class="btn-confirm-emergency">
+                        <i data-lucide="siren"></i>
+                        <span>Enforce Lockdown & Run AI Re-route</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Propose Mega Block -->
+    <div class="modal-overlay" id="modalMegaBlock">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i data-lucide="calendar-plus" class="text-amber"></i>
+                    <h3>Schedule Mega Block / Planned Maintenance</h3>
+                </div>
+                <button class="modal-close" data-close="modalMegaBlock">&times;</button>
+            </div>
+            <form id="formProposeMegaBlock" class="modal-form">
+                <div class="form-row-2col">
+                    <div>
+                        <label class="form-label">Division</label>
+                        <select id="mbDivision" class="styled-select form-input">
+                            <option value="CR_MUMBAI" selected>Central Railway - Mumbai</option>
+                            <option value="WR_MUMBAI">Western Railway - Mumbai</option>
+                            <option value="NR_DELHI">Northern Railway - Delhi</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Track Section</label>
+                        <select id="mbSection" class="styled-select form-input">
+                            <option value="SEC-CR-02" selected>Dadar - Thane (SEC-CR-02)</option>
+                            <option value="SEC-CR-03">Thane - Kalyan Jn (SEC-CR-03)</option>
+                            <option value="SEC-NR-01">New Delhi - Ghaziabad (SEC-NR-01)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label class="form-label">Work Type & Description</label>
+                    <input type="text" id="mbWorkType" class="form-input text-input" value="Track Relaying & Overhead OHE Cantilever Renewal" required>
+                </div>
+                <div class="form-row-2col">
+                    <div>
+                        <label class="form-label">Requested Time Window</label>
+                        <input type="text" id="mbWindow" class="form-input text-input" value="Sunday 11:05 - 15:55" required>
+                    </div>
+                    <div>
+                        <label class="form-label">Duration (Hours)</label>
+                        <input type="number" id="mbDuration" step="0.5" class="form-input text-input" value="4.8" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label class="form-label">Justification / Asset Reason</label>
+                    <input type="text" id="mbReason" class="form-input text-input" value="Monsoon Pre-cautionary Track Packing & TRD Overhaul" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" data-close="modalMegaBlock">Cancel</button>
+                    <button type="submit" class="btn-confirm-block">
+                        <i data-lucide="check"></i>
+                        <span>Validate Clashes & Schedule</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Track Section Detail Inspector -->
+    <div class="modal-overlay" id="modalSectionDetail">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <i data-lucide="info" class="text-cyan"></i>
+                    <h3 id="modalSecTitle">Section Detail Inspector</h3>
+                </div>
+                <button class="modal-close" data-close="modalSectionDetail">&times;</button>
+            </div>
+            <div class="section-modal-body" id="modalSecBody">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Application Controller Logic -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

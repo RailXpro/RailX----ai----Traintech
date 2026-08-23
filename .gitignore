@@ -65,3 +65,14 @@ Thumbs.db
 *.scm~
 *.scm#*
 .#*.scm
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+env/
+venv/
+.idea/
+.vscode/
