@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { SettingsPanel } from './settings/SettingsPanel';
 import { KavachModal } from './planner/KavachModal';
+import { GlobalSearchBar } from './search/GlobalSearchBar';
 import { useRailway } from '../context/RailwayContext';
 import { useLanguage } from '../context/LanguageContext';
 import { DivisionName } from '../types/railway';
@@ -127,15 +128,8 @@ export const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* Pill Search Bar */}
-          <div className="bms-search-box" style={{ flex: 1, maxWidth: '480px' }}>
-            <Search size={15} color="rgba(255,255,255,0.55)" style={{ flexShrink: 0 }} />
-            <input
-              type="text"
-              className="bms-search-input"
-              placeholder={t('nav.searchPlaceholder')}
-            />
-          </div>
+          {/* Global Smart Search Bar */}
+          <GlobalSearchBar />
 
           {/* Right Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
