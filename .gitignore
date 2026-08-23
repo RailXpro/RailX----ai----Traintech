@@ -1,9 +1,14 @@
 # Dependencies
 node_modules/
-dist/
-build/
 .pnp
 .pnp.js
+
+# Production & Build outputs
+dist/
+dist-ssr/
+build/
+out/
+*.tsbuildinfo
 
 # Python
 __pycache__/
@@ -15,9 +20,7 @@ env/
 venv/
 .venv/
 ENV/
-build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -35,13 +38,14 @@ share/python-wheels/
 *.db
 *.sqlite3
 
-# Environment Variables
+# Environment variables & secrets
 .env
 .env.local
 .env.*.local
 .env.development.local
 .env.test.local
 .env.production.local
+!.env.example
 
 # Logs
 logs/
@@ -49,14 +53,22 @@ logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# OS & Editor files
-.DS_Store
-Thumbs.db
-.vscode/
+# Editor & OS files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
-*.swp
-*.swo
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+Thumbs.db
+ehthumbs.db
 
 # Scheme / editor backup files
 *.ss~
@@ -66,13 +78,13 @@ Thumbs.db
 *.scm#*
 .#*.scm
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.env
-.venv/
-env/
-venv/
-.idea/
-.vscode/
+# Testing & Coverage
+coverage/
+.nyc_output/
+
+# Temporary / Cache
+.eslintcache
+.stylelintcache
+.cache/
+.temp/
+.tmp/
