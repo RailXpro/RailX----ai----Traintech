@@ -8,8 +8,11 @@
 [![PuLP MILP Solver](https://img.shields.io/badge/Constraint_Solver-PuLP_MILP-blue.svg)](https://coin-or.github.io/pulp/)
 [![Scikit-Learn ML](https://img.shields.io/badge/ML_Engine-Scikit--Learn_RF-f97316.svg)](https://scikit-learn.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRailXpro%2FRailX----ai----Traintech)
 
 > **RailX.ai (TrainTech)** is an enterprise-grade railway operations command system and passenger disruption management platform tailored for **Indian Railways (CRIS / IR-KAVACH)**. It maximizes track asset availability, automates maintenance block allocation, eliminates timetable clashes, estimates downtime through machine learning, and coordinates real-time emergency disaster re-routing with instant passenger/crew broadcast notifications.
+>
+> 🚀 **1-Click Live Deployment:** Click the **[Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRailXpro%2FRailX----ai----Traintech)** button above to launch your live instance with zero configuration.
 
 ---
 
