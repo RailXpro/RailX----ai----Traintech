@@ -1,6 +1,7 @@
 import React from 'react';
 import { RailwayProvider, useRailway } from './context/RailwayContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { SettingsProvider } from './context/SettingsContext';
 import { Header } from './components/Header';
 import { PlannerDashboard } from './components/planner/PlannerDashboard';
 import { PassengerPortal } from './components/passenger/PassengerPortal';
@@ -163,9 +164,11 @@ const MainView: React.FC = () => {
 export function App() {
   return (
     <LanguageProvider>
-      <RailwayProvider>
-        <MainView />
-      </RailwayProvider>
+      <SettingsProvider>
+        <RailwayProvider>
+          <MainView />
+        </RailwayProvider>
+      </SettingsProvider>
     </LanguageProvider>
   );
 }

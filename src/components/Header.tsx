@@ -9,8 +9,10 @@ import {
   User,
   ShieldCheck,
   RefreshCw,
-  Zap
+  Zap,
+  Settings
 } from 'lucide-react';
+import { SettingsPanel } from './settings/SettingsPanel';
 import { useRailway } from '../context/RailwayContext';
 import { useLanguage } from '../context/LanguageContext';
 import { DivisionName } from '../types/railway';
@@ -50,6 +52,7 @@ export const Header: React.FC = () => {
   const [currentTime, setCurrentTime] = useState('');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [divDropdownOpen, setDivDropdownOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const divDropRef  = useRef<HTMLDivElement>(null);
 
@@ -132,6 +135,25 @@ export const Header: React.FC = () => {
 
           {/* Right Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+
+            {/* Settings Gear */}
+            <button
+              onClick={() => setSettingsOpen(true)}
+              title={language === 'mr' ? 'सेटिंग्ज' : 'Settings'}
+              style={{
+                width: '36px', height: '36px',
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.14)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', color: '#FFFFFF',
+                transition: 'all 0.18s ease', flexShrink: 0
+              }}
+              onMouseEnter={e => { (e.currentTarget.style.background = 'var(--rx-orange)'); }}
+              onMouseLeave={e => { (e.currentTarget.style.background = 'rgba(255,255,255,0.08)'); }}
+            >
+              <Settings size={16} />
+            </button>
 
             {/* Division Picker */}
             <div ref={divDropRef} style={{ position: 'relative' }}>
@@ -375,6 +397,9 @@ export const Header: React.FC = () => {
 
       {/* ── Wavy Divider ── */}
       <WavyDivider />
+
+      {/* ── Settings Drawer ── */}
+      <SettingsPanel isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </header>
   );
 };

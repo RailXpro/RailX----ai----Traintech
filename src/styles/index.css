@@ -75,6 +75,46 @@
   --shadow-float:   0 16px 48px rgba(255, 107, 26, 0.14), 0 4px 16px rgba(15, 28, 61, 0.08);
 }
 
+/* ── Dark Mode Overrides ─────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --rx-cream:         #0A0F1D;
+  --rx-surface:       #111827;
+  --rx-surface-alt:   #1A2234;
+  --text-dark:        #F9FAFB;
+  --text-body:        #E2E8F0;
+  --text-secondary:   #94A3B8;
+  --text-muted:       #64748B;
+  --border-light:     rgba(255, 255, 255, 0.08);
+  --border-medium:    rgba(255, 255, 255, 0.14);
+  --border-dark:      rgba(255, 255, 255, 0.24);
+  --shadow-card:      0 4px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-hover:     0 12px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  --rx-orange-light:  rgba(255, 107, 26, 0.15);
+  --rx-blue-light:    rgba(26, 86, 219, 0.2);
+  --rx-green-light:   rgba(34, 197, 94, 0.18);
+  --rx-amber-light:   rgba(245, 158, 11, 0.18);
+  --rx-red-light:     rgba(239, 68, 68, 0.18);
+}
+
+[data-theme="dark"] body {
+  background-color: var(--rx-cream);
+  background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(255,107,26,0.12) 0%, transparent 70%);
+}
+
+[data-theme="dark"] .bms-card,
+[data-theme="dark"] .metric-card {
+  background: var(--rx-surface) !important;
+  border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--rx-surface-alt);
+  color: var(--text-dark);
+  border-color: var(--border-medium);
+}
+
 /* ── Reset ──────────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
