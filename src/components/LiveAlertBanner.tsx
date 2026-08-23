@@ -6,7 +6,7 @@ import { playEmergencyAlertSound } from '../utils/audioAlert';
 
 export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> = ({ onNavigateToIncidents }) => {
   const { accidents, megaBlocks, persona } = useRailway();
-  const { t } = useLanguage();
+  const { t, localize } = useLanguage();
 
   const activeAccidents = accidents.filter(a => a.status !== 'resolved');
   const activeMegaBlocks = megaBlocks.filter(b => b.status === 'active');
@@ -51,17 +51,17 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
                 <span className="badge badge-accident">
-                  {t('alert.critical')}: {incident.natureOfIncident.toUpperCase()}
+                  {t('alert.critical')}: {localize(incident.natureOfIncident).toUpperCase()}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                   {t('alert.reported')}: {incident.reportedAt}
                 </span>
               </div>
               <h3 style={{ fontSize: '0.98rem', fontWeight: 700, color: 'var(--text-dark)' }}>
-                Train #{incident.trainNumber} ({incident.trainName}) — {incident.sectionName}
+                {t('alert.train')} #{incident.trainNumber} ({localize(incident.trainName)}) — {localize(incident.sectionName)}
               </h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                {incident.description} • <strong>{t('alert.relief')}: {incident.reliefTrainStatus}</strong> ({incident.reliefTrainId || 'Dispatching'})
+                {localize(incident.description)} • <strong>{t('alert.relief')}: {localize(incident.reliefTrainStatus)}</strong> ({incident.reliefTrainId || 'Dispatching'})
               </p>
             </div>
           </div>
@@ -130,17 +130,17 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span className="badge badge-megablock" style={{ fontSize: '0.68rem' }}>
-                  {t('alert.activeMegaBlock')} • {block.linesAffected}
+                  {t('alert.activeMegaBlock')} • {localize(block.linesAffected)}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                  {t('alert.timeWindow')}: {block.startTime} – {block.endTime} ({block.division})
+                  {t('alert.timeWindow')}: {block.startTime} – {block.endTime} ({localize(block.division)})
                 </span>
               </div>
               <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-dark)', marginTop: '2px' }}>
-                {block.sectionName} — {block.reason}
+                {localize(block.sectionName)} — {localize(block.reason)}
               </h4>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                {block.publicAdvisory}
+                {localize(block.publicAdvisory)}
               </p>
             </div>
           </div>

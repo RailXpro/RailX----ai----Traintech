@@ -121,6 +121,7 @@ export const translations: TranslationMap = {
   'alert.helpline': { en: 'Helpline: 139', mr: 'हेल्पलाइन: १३९' },
   'alert.activeMegaBlock': { en: 'ACTIVE MEGA BLOCK', mr: 'सक्रिय मेगा ब्लॉक' },
   'alert.timeWindow': { en: 'Time Window', mr: 'वेळ कालावधी' },
+  'alert.train': { en: 'Train', mr: 'गाडी क्र.' },
 
   // ── Planner Dashboard Telemetry ─────────────────────────────────────────
   'metrics.networkAvailability': { en: 'Network Availability', mr: 'नेटवर्क उपलब्धता' },
@@ -278,7 +279,7 @@ export const translations: TranslationMap = {
   'footer.railMadad': { en: 'RailMadad 139 Integration', mr: 'RailMadad १३९ थेट एकीकरण' },
 };
 
-// ── Data Entities Translation Map (Sections, Stations, Divisions, Trains) ──
+// ── Complete Data Entities & Messages Translation Map ───────────────────────
 export const DATA_MARATHI_MAP: Record<string, string> = {
   // Divisions
   'Mumbai CR': 'मुंबई मध्य रेल्वे (CR)',
@@ -313,30 +314,72 @@ export const DATA_MARATHI_MAP: Record<string, string> = {
   // Section Names
   'CSMT to Byculla Slow & Fast Quad': 'सीएसएमटी ते भायखळा धीम्या व जलद मार्गिका',
   'Byculla to Dadar Central Junction': 'भायखळा ते दादर मध्य जंक्शन',
+  'Dadar to Thane 6-Line Corridor': 'दादर ते ठाणे ६-मार्गिका कॉरिडॉर',
   'Dadar to Thane 6-Line Express Corridor': 'दादर ते ठाणे ६-पदरी एक्सप्रेस मार्गिका',
   'Thane to Kalyan Jn Quad Line & Parsik Tunnel': 'ठाणे ते कल्याण जंक्शन व पारसिक बोगदा',
+  'Kalyan to Kasara Ghat Section': 'कल्याण ते कसारा घाट विभाग',
   'Kalyan to Kasara Thull Ghat Section': 'कल्याण ते कसारा थळ घाट विभाग',
   'Churchgate to Mumbai Central 4-Line Quad': 'चर्चगेट ते मुंबई सेंट्रल ४-पदरी मार्गिका',
   'Mumbai Central to Dadar Western': 'मुंबई सेंट्रल ते दादर पश्चिम',
   'Dadar to Borivali 6th Line Corridor': 'दादर ते बोरिवली ६ वी मार्गिका',
   'Borivali to Virar Quad & Vasai Creek Bridge': 'बोरिवली ते विरार व वसई खाडी पूल',
+  'Borivali to Virar (Vasai Creek Bridges 73 & 75)': 'बोरिवली ते विरार (वसई खाडी पूल ७३ आणि ७५)',
   'Virar to Dahanu Road High Speed Track': 'विरार ते डहाणू रोड हाय स्पीड ट्रॅक',
   'New Delhi to Ghaziabad 4-Line Trunk': 'नवी दिल्ली ते गाझियाबाद मुख्य मार्ग',
+  'Ghaziabad to Aligarh Trunk': 'गाझियाबाद ते अलीगढ मुख्य मार्ग',
   'Howrah to Bardhaman Main & Chord Lines': 'हावडा ते बर्धमान मुख्य व कॉर्ड मार्ग',
   'Chennai Central to Arakkonam Fast Quad': 'चेन्नई सेंट्रल ते अरक्कोणम जलद मार्ग',
   'KSR Bengaluru to Whitefield IT Corridor': 'केएसआर बंगळुरू ते व्हाइटफील्ड कॉरिडॉर',
 
-  // Block Reasons & Advisories
-  'Sunday Mega Block: Up & Down Slow Line Track Relaying & Tamping Machine': 'रविवार मेगा ब्लॉक: अप व डाउन धीम्या मार्गावर ट्रॅक रिलाइंग व टॅम्पिंग',
-  'Catenary wire sag detected near Vasai Bridge. Automatic emergency block triggered across Up/Down Fast tracks.': 'वसई पुलाजवळ ओएचई वायरमध्ये बिघाड. अप/डाउन जलद मार्गावर आपत्कालीन ब्लॉक.',
+  // Nature of Incidents
+  'OHE Wire Snap': 'ओएचई वायर तुटणे',
+  'OHE WIRE SNAP': 'ओएचई वायर तुटणे',
+  'Derailment': 'रूळावरून घसरणे (रुळभंग)',
+  'Signal Failure': 'सिग्नल बिघाड',
+  'Boulder Fall / Obstruction': 'दरड कोसळणे / मार्गात अडथळा',
+  'Cattle Run Over / Brake Defect': 'जनावरे आडवे येणे / ब्रेक बिघाड',
+  'Fire in Coach / Smoke': 'डब्यात आग / धूर निघणे',
+
+  // Relief statuses
+  'En Route': 'मार्गावर रवाना',
+  'Dispatched': 'रवाना झाले',
+  'On Site': 'घटनास्थळी पोहोचले',
+  'Standby': 'स्टँडबाय',
+
+  // Lines Affected
+  'Up Slow': 'अप धीमा मार्ग',
+  'Down Slow': 'डाउन धीमा मार्ग',
+  'Up Fast': 'अप जलद मार्ग',
+  'Down Fast': 'डाउन जलद मार्ग',
+  'Both Up/Down Lines': 'दोन्ही अप/डाउन मार्ग',
+  'All Lines': 'सर्व मार्गिका',
+  'UP SLOW': 'अप धीमा मार्ग',
+  'DOWN SLOW': 'डाउन धीमा मार्ग',
+  'UP FAST': 'अप जलद मार्ग',
+  'DOWN FAST': 'डाउन जलद मार्ग',
+
+  // Maintenance & Block Reasons
   'Track Relaying & Tamping': 'ट्रॅक रिलाइंग आणि टॅम्पिंग',
   'Overhead Wire (OHE) Maintenance': 'ओव्हरहेड वायर (OHE) देखभाल',
   'Electronic Interlocking (EI) Upgrade': 'इलेक्ट्रॉनिक इंटरलॉकिंग (EI) अपग्रेड',
   'Bridge Girder Inspection': 'पूल गर्डर तपासणी',
   'Point & Crossing Overhaul': 'पॉइंट व क्रॉसिंग ओव्हरहॉल',
   'Suburban Jumbo Block': 'उपनगरीय जंबो ब्लॉक',
+  'Sunday Mega Block: Up & Down Slow Line Track Relaying & Tamping Machine': 'रविवार मेगा ब्लॉक: अप व डाउन धीम्या मार्गावर ट्रॅक रिलाइंग व टॅम्पिंग',
+  'Catenary wire sag detected near Vasai Bridge. Automatic emergency block triggered across Up/Down Fast tracks.': 'वसई पुलाजवळ ओएचई वायरमध्ये बिघाड. अप/डाउन जलद मार्गावर आपत्कालीन ब्लॉक.',
+
+  // Live Incident Descriptions
+  'Overhead 25kV traction wire entanglement with pantograph. Section power auto-tripped by SCADA safety relay.': 'पँटोग्राफमध्ये २५kV ओएचई वायर अडकल्याने बिघाड. SCADA सुरक्षा रिलेद्वारे विभागाचा वीजपुरवठा स्वयंचलित खंडित करण्यात आला.',
+  'All passengers are safe inside air-conditioned coaches. Auxiliary power activated. Accident Relief Medical & Tower Wagon en route from Kalyan. Up Ghat line regulated.': 'सर्व प्रवासी डब्यांमध्ये सुरक्षित आहेत. आपत्कालीन वीज सुरू आहे. कल्याणहून मदत गाडी व टॉवर वॅगन रवाना झाली आहे.',
+
+  // Mega Block Public Advisories
+  'Up Slow Suburban Locals diverted on Up Fast Line between Thane & Matunga. Skipping halt at Vidyavihar, Kanjurmarg, and Nahur. Commuters permitted on Fast trains.': 'ठाणे ते माटुंगा दरम्यान अप धीम्या लोकल अप जलद मार्गावर वळवण्यात आल्या आहेत. विद्याविहार, कांजूरमार्ग आणि नाहूर येथे थांबा नाही. प्रवाशांना जलद गाड्यांमध्ये प्रवास करण्याची परवानगी आहे.',
+  'Night Jumbo Block for 4 hours on UP & DOWN Fast lines between Borivali and Bhayandar. No disruption to morning peak suburban services.': 'बोरिवली ते भाईंदर दरम्यान अप आणि डाउन जलद मार्गावर रात्री ४ तासांचा जंबो ब्लॉक. सकाळच्या गर्दीच्या लोकल सेवांवर कोणताही परिणाम नाही.',
+  'Signaling modernization for Kavach Collision Avoidance System. Express trains restricted to 80 km/h with 10-15 mins regulated delays.': 'कवच टक्कर-प्रतिबंधक यंत्रणेसाठी सिग्नल आधुनिकीकरण. एक्सप्रेस गाड्यांचा वेग ८० किमी/तास पर्यंत मर्यादित, १०-१५ मिनिटे विलंब अपेक्षित.',
 
   // Trains
+  '12137': '१२१३७',
+  'Punjab Mail Express': 'पंजाब मेल एक्सप्रेस',
   '12951 Mumbai Rajdhani Express': '१२९५१ मुंबई राजधानी एक्सप्रेस',
   '22221 CSMT Hazrat Nizamuddin Rajdhani': '२२२२१ सीएसएमटी हजरत निजामुद्दीन राजधानी',
   '12009 Mumbai Ahmedabad Shatabdi': '१२००९ मुंबई अहमदाबाद शताब्दी',

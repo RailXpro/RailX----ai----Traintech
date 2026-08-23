@@ -26,7 +26,7 @@ export const AccidentIncidentManager: React.FC = () => {
     resolveIncident, 
     selectedDivision 
   } = useRailway();
-  const { t } = useLanguage();
+  const { t, localize } = useLanguage();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [trainNumber, setTrainNumber] = useState<string>('12951');
@@ -133,10 +133,10 @@ export const AccidentIncidentManager: React.FC = () => {
             </div>
 
             <h3 style={{ fontSize: '1.12rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '6px' }}>
-              Train #{inc.trainNumber} ({inc.trainName}) — {inc.sectionName}
+              Train #{inc.trainNumber} ({localize(inc.trainName)}) — {localize(inc.sectionName)}
             </h3>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-body)', marginBottom: '14px', lineHeight: '1.5' }}>
-              {inc.description}
+              {localize(inc.description)}
             </p>
 
             {/* Emergency Protocols Strip */}
@@ -144,7 +144,7 @@ export const AccidentIncidentManager: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Truck size={15} color="var(--rx-orange)" />
                 <span>
-                  <strong>SP-ARME Relief Train:</strong> {inc.reliefTrainStatus} ({inc.reliefTrainId || 'None'})
+                  <strong>SP-ARME Relief Train:</strong> {localize(inc.reliefTrainStatus)} ({inc.reliefTrainId || 'None'})
                 </span>
               </div>
 
