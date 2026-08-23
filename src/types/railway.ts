@@ -1,5 +1,33 @@
 export type RailwayZone = 'CR' | 'WR' | 'NR' | 'ER' | 'SR' | 'SWR' | 'ECoR' | 'NCR';
 
+export type UserRole = 'consumer' | 'official';
+
+export type OfficialDesignation = 
+  | 'Chief Train Controller (DOM)'
+  | 'Senior Divisional Operations Manager'
+  | 'Traction Power Controller (TPC)'
+  | 'ASTE Signal & Telecom Engineer'
+  | 'Divisional Railway Manager (DRM)'
+  | 'Assistant Divisional Engineer (ADE)'
+  | 'Station Superintendent (SM)'
+  | 'Senior Divisional Operations Manager (Sr. DOM)'
+  | 'Section Signal & Telecom Engineer (ASTE)'
+  | 'Accident Relief Officer (ARO)';
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl: string;
+  role: UserRole;
+  officialDesignation?: OfficialDesignation;
+  employeeId?: string;
+  division?: DivisionName;
+  authProvider: 'google';
+  loginTimestamp: string;
+  securityClearanceLevel?: 'Level-3 Admin' | 'Level-2 Controller' | 'Standard Commuter';
+}
+
 export type DivisionName = 
   | 'Mumbai CR' 
   | 'Mumbai WR' 

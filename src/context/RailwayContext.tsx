@@ -8,7 +8,9 @@ import {
   RailwayAsset, 
   OptimizationMetrics,
   DivisionName,
-  AccidentSeverity
+  AccidentSeverity,
+  AuthUser,
+  UserRole
 } from '../types/railway';
 import { 
   INITIAL_TRACK_SECTIONS, 
@@ -23,6 +25,11 @@ import { playEmergencyAlertSound, playOptimizationChime } from '../utils/audioAl
 interface RailwayContextType {
   persona: 'planner' | 'passenger';
   setPersona: (p: 'planner' | 'passenger') => void;
+  currentUser: AuthUser | null;
+  isAuthModalOpen: boolean;
+  setIsAuthModalOpen: (open: boolean) => void;
+  loginWithGoogle: (role: UserRole, customDetails?: Partial<AuthUser>) => void;
+  logout: () => void;
   selectedDivision: 'All' | DivisionName;
   setSelectedDivision: (d: 'All' | DivisionName) => void;
   trackSections: TrackSection[];
@@ -55,7 +62,25 @@ interface RailwayContextType {
 const RailwayContext = createContext<RailwayContextType | undefined>(undefined);
 
 export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [persona, setPersona] = useState<'planner' | 'passenger'>('planner');
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
+    try {
+      const saved = localStorage.getItem('railx_user_session');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [persona, setPersona] = useState<'planner' | 'passenger'>(() => {
+    try {
+      const saved = localStorage.getItem('railx_user_session');
+      if (saved) {
+        const u = JSON.parse(saved);
+        return u.role === 'official' ? 'planner' : 'passenger';
+      }
+    } catch {}
+    return 'planner';
+  });
   const [selectedDivision, setSelectedDivision] = useState<'All' | DivisionName>('All');
   const [trackSections, setTrackSections] = useState<TrackSection[]>(INITIAL_TRACK_SECTIONS);
   const [trains, setTrains] = useState<Train[]>(INITIAL_TRAINS);
@@ -65,6 +90,41 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [metrics, setMetrics] = useState<OptimizationMetrics>(INITIAL_OPTIMIZATION_METRICS);
   const [isOptimizing, setIsOptimizing] = useState<boolean>(false);
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+
+  const loginWithGoogle = (role: UserRole, customDetails?: Partial<AuthUser>) => {
+    const isOfficial = role === 'official';
+    const newUser: AuthUser = {
+      id: `USR-${Date.now()}`,
+      name: customDetails?.name || (isOfficial ? 'Er. Rajesh Kumar Sharma' : 'Rohit V. Sharma'),
+      email: customDetails?.email || (isOfficial ? 'rajesh.sharma@railnet.gov.in' : 'rohit.sharma.mumbai@gmail.com'),
+      avatarUrl: isOfficial 
+        ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
+        : 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
+      role,
+      officialDesignation: isOfficial ? (customDetails?.officialDesignation || 'Chief Train Controller (DOM)') : undefined,
+      employeeId: isOfficial ? (customDetails?.employeeId || 'IR-CRIS-884920') : undefined,
+      division: customDetails?.division || 'Mumbai CR',
+      authProvider: 'google',
+      loginTimestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      securityClearanceLevel: isOfficial ? 'Level-3 Admin' : 'Standard Commuter',
+      ...customDetails
+    };
+
+    setCurrentUser(newUser);
+    try {
+      localStorage.setItem('railx_user_session', JSON.stringify(newUser));
+    } catch {}
+
+    setPersona(isOfficial ? 'planner' : 'passenger');
+    setIsAuthModalOpen(false);
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+    try {
+      localStorage.removeItem('railx_user_session');
+    } catch {}
+  };
 
   // Sync track section status based on active mega blocks & accidents
   useEffect(() => {
@@ -324,6 +384,11 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
       value={{
         persona,
         setPersona,
+        currentUser,
+        isAuthModalOpen,
+        setIsAuthModalOpen,
+        loginWithGoogle,
+        logout,
         selectedDivision,
         setSelectedDivision,
         trackSections,

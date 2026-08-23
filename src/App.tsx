@@ -3,6 +3,7 @@ import { RailwayProvider, useRailway } from './context/RailwayContext';
 import { Header } from './components/Header';
 import { PlannerDashboard } from './components/planner/PlannerDashboard';
 import { PassengerPortal } from './components/passenger/PassengerPortal';
+import { GmailAuthModal } from './components/auth/GmailAuthModal';
 import { Train, ShieldCheck, PhoneCall } from 'lucide-react';
 
 const MainView: React.FC = () => {
@@ -11,6 +12,7 @@ const MainView: React.FC = () => {
   return (
     <div className="app-container">
       <Header />
+      <GmailAuthModal />
 
       <main className="main-content">
         {persona === 'planner' ? <PlannerDashboard /> : <PassengerPortal />}
