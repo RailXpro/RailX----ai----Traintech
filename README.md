@@ -7,12 +7,9 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688.svg)](https://fastapi.tiangolo.com)
 [![PuLP MILP Solver](https://img.shields.io/badge/Constraint_Solver-PuLP_MILP-blue.svg)](https://coin-or.github.io/pulp/)
 [![Scikit-Learn ML](https://img.shields.io/badge/ML_Engine-Scikit--Learn_RF-f97316.svg)](https://scikit-learn.org)
-[![UI Integration](https://img.shields.io/badge/UI_Integration-Docs-purple.svg)](UI_INTEGRATION_README.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > **RailX.ai (TrainTech)** is an enterprise-grade railway operations command system and passenger disruption management platform tailored for **Indian Railways (CRIS / IR-KAVACH)**. It maximizes track asset availability, automates maintenance block allocation, eliminates timetable clashes, estimates downtime through machine learning, and coordinates real-time emergency disaster re-routing with instant passenger/crew broadcast notifications.
->
-> 📖 For a deep dive into frontend modules and visual components, check out the [UI Integration Guide](UI_INTEGRATION_README.md).
 
 ---
 
