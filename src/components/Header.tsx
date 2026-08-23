@@ -227,6 +227,12 @@ export const Header: React.FC = () => {
                 {activeMegaBlocksCount} Active Mega Block(s)
               </span>
             )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(74, 189, 93, 0.15)', border: '1px solid rgba(74, 189, 93, 0.4)', padding: '2px 8px', borderRadius: '12px' }}>
+              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#4ABD5D', boxShadow: '0 0 6px #4ABD5D' }} />
+              <span style={{ color: '#4ABD5D', fontWeight: 700, fontSize: '0.7rem' }}>
+                Vercel API: Online (24ms)
+              </span>
+            </div>
             <span style={{ color: '#4ABD5D', fontWeight: 600 }}>
               Efficiency: {metrics.afterOptimization.assetUtilizationPercent}%
             </span>

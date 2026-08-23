@@ -7,10 +7,14 @@ import {
   Bus, 
   Send, 
   X,
-  Clock
+  Clock,
+  Sparkles,
+  FileText,
+  UploadCloud
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
 import { BlockReason, DivisionName, MegaBlock } from '../../types/railway';
+import { railwayApi } from '../../services/apiClient';
 
 export const MegaBlockManager: React.FC = () => {
   const { 
@@ -22,6 +26,14 @@ export const MegaBlockManager: React.FC = () => {
   } = useRailway();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
+  const [isScanning, setIsScanning] = useState<boolean>(false);
+  const [circularRawText, setCircularRawText] = useState<string>(
+    `CENTRAL RAILWAY PRESS RELEASE (NO. 2026/08/30)
+MEGA BLOCK ON UP AND DOWN FAST LINES BETWEEN BYCULLA AND DADAR ON 30.08.2026 (SUNDAY)
+Central Railway will operate a Mega Block on its suburban section for carrying out essential track tamping, ballasting, and OHE maintenance work from 11.05 hrs to 16.05 hrs on Up & Down Fast lines between Byculla and Dadar stations.
+Diversion: Up & Down fast line services leaving CSMT Mumbai will be diverted onto Slow corridor. Mail/Express trains 22221 Rajdhani and 12137 Punjab Mail will arrive 15-20 minutes behind schedule. Special BEST feeder buses will operate between Byculla and Dadar.`
+  );
   const [selectedDivisionForm, setSelectedDivisionForm] = useState<DivisionName>('Mumbai CR');
   const [selectedSectionId, setSelectedSectionId] = useState<string>('SEC-CR-02');
   const [linesAffected, setLinesAffected] = useState<MegaBlock['linesAffected']>('Up Slow');
@@ -89,14 +101,26 @@ export const MegaBlockManager: React.FC = () => {
           </div>
         </div>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="btn btn-primary"
-          style={{ padding: '9px 18px', fontSize: '0.85rem' }}
-        >
-          <Plus size={16} />
-          Schedule New Mega Block
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button
+            onClick={() => {
+              setIsScannerOpen(true);
+            }}
+            className="btn btn-secondary"
+            style={{ padding: '9px 16px', fontSize: '0.85rem', color: 'var(--bms-red)', borderColor: 'var(--bms-red)' }}
+          >
+            <Sparkles size={16} />
+            AI Circular Scanner (NLP)
+          </button>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="btn btn-primary"
+            style={{ padding: '9px 18px', fontSize: '0.85rem' }}
+          >
+            <Plus size={16} />
+            Schedule New Mega Block
+          </button>
+        </div>
       </div>
 
       {/* Active & Scheduled Mega Blocks List in BookMyShow Event Style */}
@@ -402,6 +426,106 @@ export const MegaBlockManager: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* AI Circular NLP Scanner Modal */}
+      {isScannerOpen && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.75)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div className="bms-card" style={{
+            width: '100%',
+            maxWidth: '680px',
+            background: '#FFFFFF',
+            borderRadius: '12px',
+            padding: '24px',
+            maxHeight: '90vh',
+            overflowY: 'auto'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '1px solid #EEEEEE', paddingBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'rgba(248, 68, 100, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--bms-red)' }}>
+                  <Sparkles size={20} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#333333' }}>
+                    AI NLP Circular Scanner & Extractor
+                  </h3>
+                  <p style={{ fontSize: '0.75rem', color: '#666666' }}>
+                    Paste raw railway circulars or press releases for instant entity extraction & block generation
+                  </p>
+                </div>
+              </div>
+              <button onClick={() => setIsScannerOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#999999' }}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#444444', marginBottom: '6px' }}>
+                  Raw Circular / Press Release Text:
+                </label>
+                <textarea
+                  className="input-control"
+                  rows={6}
+                  value={circularRawText}
+                  onChange={(e) => setCircularRawText(e.target.value)}
+                  style={{ fontFamily: 'monospace', fontSize: '0.8rem', lineHeight: '1.4' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCircularRawText(
+                      `WESTERN RAILWAY NIGHT CORRIDOR BLOCK
+Possession on 5th and 6th lines between Churchgate and Mumbai Central from 00:30 hrs to 04:30 hrs for Electronic Interlocking (Kavach 2.0) testing. All long-distance trains arriving into Mumbai Central will run at 30 kmph with pilot escort. Passengers advised to check live status on 139.`
+                    );
+                  }}
+                  className="btn btn-secondary"
+                  style={{ fontSize: '0.75rem' }}
+                >
+                  <FileText size={14} />
+                  Load Sample WR Circular
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isScanning}
+                  onClick={async () => {
+                    setIsScanning(true);
+                    const res = await railwayApi.scanCircular(circularRawText);
+                    setIsScanning(false);
+                    if (res && res.extracted) {
+                      const ext = res.extracted;
+                      setLinesAffected(ext.linesAffected.includes('Slow') ? 'Up Slow' : 'Up & Down Fast Lines' as any);
+                      setStartTime(ext.startTime || '11:05');
+                      setEndTime(ext.endTime || '16:05');
+                      setBlockDate(ext.date || '2026-08-30 (Sunday)');
+                      setPublicAdvisory(ext.passengerAdvisories.join(' '));
+                      setIsScannerOpen(false);
+                      setIsModalOpen(true);
+                    }
+                  }}
+                  className="btn btn-primary"
+                  style={{ fontSize: '0.82rem', padding: '8px 18px' }}
+                >
+                  <Sparkles size={16} />
+                  {isScanning ? 'Extracting via AI...' : 'Scan & Pre-Fill Block'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
