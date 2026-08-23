@@ -16,10 +16,9 @@ import {
 } from 'lucide-react';
 
 export const PlannerDashboard: React.FC = () => {
-  const { trackSections, trains, megaBlocks, accidents, persona } = useRailway();
+  const { trackSections, trains, megaBlocks, accidents, persona, activeTab, setActiveTab } = useRailway();
   const { t } = useLanguage();
   const { mapStyle } = useSettings();
-  const [activeTab, setActiveTab] = useState<string>('map');
 
   const activeAccidents = accidents.filter(a => a.status !== 'resolved');
   const activeMegaBlocks = megaBlocks.filter(b => b.status === 'active');

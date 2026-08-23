@@ -41,6 +41,10 @@ interface RailwayContextType {
   isOptimizing: boolean;
   selectedSectionId: string | null;
   setSelectedSectionId: (id: string | null) => void;
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  isKavachModalOpen: boolean;
+  setIsKavachModalOpen: (open: boolean) => void;
   
   // Actions
   runAiOptimizer: () => Promise<void>;
@@ -90,6 +94,8 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [metrics, setMetrics] = useState<OptimizationMetrics>(INITIAL_OPTIMIZATION_METRICS);
   const [isOptimizing, setIsOptimizing] = useState<boolean>(false);
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<string>('map');
+  const [isKavachModalOpen, setIsKavachModalOpen] = useState<boolean>(false);
 
   const loginWithGoogle = (role: UserRole, customDetails?: Partial<AuthUser>) => {
     const isOfficial = role === 'official';
@@ -400,6 +406,10 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isOptimizing,
         selectedSectionId,
         setSelectedSectionId,
+        activeTab,
+        setActiveTab,
+        isKavachModalOpen,
+        setIsKavachModalOpen,
         runAiOptimizer,
         reportAccident,
         scheduleMegaBlock,

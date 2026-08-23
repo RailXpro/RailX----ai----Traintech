@@ -13,6 +13,7 @@ import {
   Settings
 } from 'lucide-react';
 import { SettingsPanel } from './settings/SettingsPanel';
+import { KavachModal } from './planner/KavachModal';
 import { useRailway } from '../context/RailwayContext';
 import { useLanguage } from '../context/LanguageContext';
 import { DivisionName } from '../types/railway';
@@ -44,7 +45,10 @@ export const Header: React.FC = () => {
     setSelectedDivision,
     accidents,
     megaBlocks,
-    metrics
+    metrics,
+    activeTab,
+    setActiveTab,
+    setIsKavachModalOpen
   } = useRailway();
 
   const { language, setLanguage, t } = useLanguage();
@@ -343,20 +347,65 @@ export const Header: React.FC = () => {
           padding: '6px 0'
         }}>
           {/* Pill nav links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
             {[
-              { key: 'nav.corridors', active: true },
-              { key: 'nav.megaBlocks', active: false },
-              { key: 'nav.aiOptimization', active: false },
-              { key: 'nav.incidents', active: false },
-              { key: 'nav.fleet', active: false },
-            ].map(({ key, active }) => (
-              <button key={key} className={`nav-tab-button${active ? ' active' : ''}`}>
-                {t(key)}
-              </button>
-            ))}
-            <button className="nav-tab-button" style={{ color: 'var(--rx-orange)', background: 'rgba(255,107,26,0.1)' }}>
-              <Zap size={11} style={{ display: 'inline' }} />
+              { key: 'nav.corridors', tabId: 'map' },
+              { key: 'nav.megaBlocks', tabId: 'megablock' },
+              { key: 'nav.aiOptimization', tabId: 'optimizer' },
+              { key: 'nav.incidents', tabId: 'accidents' },
+              { key: 'nav.fleet', tabId: 'analytics' },
+            ].map(({ key, tabId }) => {
+              const isActive = persona === 'planner' && activeTab === tabId;
+              return (
+                <button
+                  key={key}
+                  className={`nav-tab-button${isActive ? ' active' : ''}`}
+                  onClick={() => {
+                    setPersona('planner');
+                    setActiveTab(tabId);
+                  }}
+                  style={{
+                    cursor: 'pointer',
+                    background: isActive ? 'var(--rx-orange)' : 'rgba(255, 255, 255, 0.05)',
+                    color: isActive ? '#FFFFFF' : '#CBD5E1',
+                    fontWeight: isActive ? 700 : 500,
+                    transition: 'all 0.18s ease'
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)';
+                  }}
+                >
+                  {t(key)}
+                </button>
+              );
+            })}
+            <button
+              className="nav-tab-button"
+              onClick={() => setIsKavachModalOpen(true)}
+              style={{
+                color: 'var(--rx-orange)',
+                background: 'rgba(255,107,26,0.14)',
+                border: '1px solid rgba(255,107,26,0.3)',
+                cursor: 'pointer',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                transition: 'all 0.18s ease'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'var(--rx-orange)';
+                e.currentTarget.style.color = '#FFFFFF';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(255,107,26,0.14)';
+                e.currentTarget.style.color = 'var(--rx-orange)';
+              }}
+            >
+              <Zap size={12} style={{ display: 'inline' }} />
               {t('nav.kavach')}
             </button>
           </div>
@@ -364,13 +413,19 @@ export const Header: React.FC = () => {
           {/* Right Status */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.72rem', flexWrap: 'wrap' }}>
             {activeAccidentsCount > 0 && (
-              <span style={{ color: 'var(--rx-orange)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span
+                onClick={() => { setPersona('planner'); setActiveTab('accidents'); }}
+                style={{ color: 'var(--rx-orange)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}
+              >
                 <ShieldAlert size={12} className="pulse-radar" />
                 {activeAccidentsCount} {t('header.incidents')}
               </span>
             )}
             {activeMegaBlocksCount > 0 && (
-              <span style={{ color: 'var(--rx-amber)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span
+                onClick={() => { setPersona('planner'); setActiveTab('megablock'); }}
+                style={{ color: 'var(--rx-amber)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}
+              >
                 <CalendarClock size={12} />
                 {activeMegaBlocksCount} {t('header.activeBlocks')}
               </span>
@@ -400,6 +455,9 @@ export const Header: React.FC = () => {
 
       {/* ── Settings Drawer ── */}
       <SettingsPanel isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+
+      {/* ── Kavach 2.0 Telemetry Modal ── */}
+      <KavachModal />
     </header>
   );
 };
