@@ -16,9 +16,10 @@ export const InteractiveTrackMap: React.FC = () => {
     trains, 
     selectedDivision, 
     selectedSectionId, 
-    setSelectedSectionId
+    setSelectedSectionId,
+    openTripPlanner
   } = useRailway();
-  const { t, localize } = useLanguage();
+  const { t, localize, language } = useLanguage();
 
   const [filterStatus, setFilterStatus] = useState<'all' | 'clear' | 'mega_block' | 'accident'>('all');
 
@@ -160,12 +161,30 @@ export const InteractiveTrackMap: React.FC = () => {
                 {localize(sec.name)}
               </h4>
 
-              {/* Stations Route */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+              {/* Stations Route - Clickable */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '12px', flexWrap: 'wrap' }}>
                 <MapPin size={13} color="var(--rx-orange)" />
-                <span>{localize(sec.fromStation)}</span>
+                <span
+                  onClick={(e) => { e.stopPropagation(); openTripPlanner(sec.fromStation, sec.toStation); }}
+                  style={{
+                    fontWeight: 700, color: 'var(--rx-blue)', textDecoration: 'underline',
+                    textUnderlineOffset: '3px', cursor: 'pointer'
+                  }}
+                  title="Click to plan trip from this station"
+                >
+                  {localize(sec.fromStation)}
+                </span>
                 <span style={{ color: '#CCCCCC' }}>➔</span>
-                <span>{localize(sec.toStation)}</span>
+                <span
+                  onClick={(e) => { e.stopPropagation(); openTripPlanner(sec.fromStation, sec.toStation); }}
+                  style={{
+                    fontWeight: 700, color: 'var(--rx-blue)', textDecoration: 'underline',
+                    textUnderlineOffset: '3px', cursor: 'pointer'
+                  }}
+                  title="Click to plan trip to this station"
+                >
+                  {localize(sec.toStation)}
+                </span>
                 <span className="font-mono" style={{ color: 'var(--text-muted)', marginLeft: 'auto' }}>
                   {sec.lengthKm} {t('map.unitKm')}
                 </span>
@@ -303,6 +322,21 @@ export const InteractiveTrackMap: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Action to launch full Route & Trip Planner */}
+          <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              onClick={() => openTripPlanner(activeSection.fromStation, activeSection.toStation)}
+              className="btn btn-primary"
+              style={{
+                padding: '10px 22px', borderRadius: '12px', fontSize: '0.82rem',
+                display: 'flex', alignItems: 'center', gap: '8px',
+                boxShadow: '0 4px 14px var(--rx-orange-glow)'
+              }}
+            >
+              🧭 {language === 'mr' ? 'या मार्गावर संपूर्ण प्रवास व ट्रेन योजना तयार करा' : 'Plan Full Journey & Route Schematic'}
+            </button>
           </div>
         </div>
       )}

@@ -45,6 +45,13 @@ interface RailwayContextType {
   setActiveTab: (tab: string) => void;
   isKavachModalOpen: boolean;
   setIsKavachModalOpen: (open: boolean) => void;
+  tripPlannerModalOpen: boolean;
+  setTripPlannerModalOpen: (open: boolean) => void;
+  tripOrigin: string;
+  setTripOrigin: (origin: string) => void;
+  tripDest: string;
+  setTripDest: (dest: string) => void;
+  openTripPlanner: (origin?: string, dest?: string) => void;
   
   // Actions
   runAiOptimizer: () => Promise<void>;
@@ -96,6 +103,15 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>('map');
   const [isKavachModalOpen, setIsKavachModalOpen] = useState<boolean>(false);
+  const [tripPlannerModalOpen, setTripPlannerModalOpen] = useState<boolean>(false);
+  const [tripOrigin, setTripOrigin] = useState<string>('CSMT Mumbai');
+  const [tripDest, setTripDest] = useState<string>('Kalyan Junction');
+
+  const openTripPlanner = (origin?: string, dest?: string) => {
+    if (origin) setTripOrigin(origin);
+    if (dest) setTripDest(dest);
+    setTripPlannerModalOpen(true);
+  };
 
   const loginWithGoogle = (role: UserRole, customDetails?: Partial<AuthUser>) => {
     const isOfficial = role === 'official';
@@ -410,6 +426,13 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setActiveTab,
         isKavachModalOpen,
         setIsKavachModalOpen,
+        tripPlannerModalOpen,
+        setTripPlannerModalOpen,
+        tripOrigin,
+        setTripOrigin,
+        tripDest,
+        setTripDest,
+        openTripPlanner,
         runAiOptimizer,
         reportAccident,
         scheduleMegaBlock,

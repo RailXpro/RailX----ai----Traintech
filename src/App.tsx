@@ -6,6 +6,7 @@ import { Header } from './components/Header';
 import { PlannerDashboard } from './components/planner/PlannerDashboard';
 import { PassengerPortal } from './components/passenger/PassengerPortal';
 import { GmailAuthModal } from './components/auth/GmailAuthModal';
+import { IndianRailwaysTripPlanner } from './components/planner/IndianRailwaysTripPlanner';
 import { Train, ShieldCheck, PhoneCall } from 'lucide-react';
 
 const MainView: React.FC = () => {
@@ -16,6 +17,7 @@ const MainView: React.FC = () => {
     <div className="app-container">
       <Header />
       <GmailAuthModal />
+      <IndianRailwaysTripPlanner />
 
       <main className="main-content">
         {persona === 'planner' ? <PlannerDashboard /> : <PassengerPortal />}

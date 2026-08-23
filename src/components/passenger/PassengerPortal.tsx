@@ -16,7 +16,7 @@ import { LiveAlertBanner } from '../LiveAlertBanner';
 import { SimulationControls } from '../SimulationControls';
 
 export const PassengerPortal: React.FC = () => {
-  const { megaBlocks, accidents, selectedDivision } = useRailway();
+  const { megaBlocks, accidents, selectedDivision, openTripPlanner } = useRailway();
   const { t, localize } = useLanguage();
 
   const [searchOrigin, setSearchOrigin] = useState<string>('CSMT Mumbai');
@@ -137,7 +137,10 @@ export const PassengerPortal: React.FC = () => {
 
           <div style={{ display: 'flex', alignItems: 'flex-end' }}>
             <button
-              onClick={() => setSearched(true)}
+              onClick={() => {
+                setSearched(true);
+                openTripPlanner(searchOrigin, searchDest);
+              }}
               className="btn btn-primary"
               style={{ width: '100%', padding: '11px 18px', borderRadius: 'var(--radius-sm)' }}
             >
@@ -186,7 +189,11 @@ export const PassengerPortal: React.FC = () => {
                   <ArrowRight size={13} color="#999999" />
                   <span>To: <strong>Kalyan Platform 3</strong> (15:28)</span>
                 </div>
-                <button className="btn btn-primary" style={{ padding: '6px 16px', fontSize: '0.75rem' }}>
+                <button
+                  onClick={() => openTripPlanner('CSMT Mumbai', 'Kalyan Junction')}
+                  className="btn btn-primary"
+                  style={{ padding: '6px 16px', fontSize: '0.75rem' }}
+                >
                   {t('passenger.selectTrain')}
                 </button>
               </div>

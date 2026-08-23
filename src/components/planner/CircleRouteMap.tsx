@@ -49,7 +49,7 @@ interface ArcSection {
 }
 
 export const CircleRouteMap: React.FC = () => {
-  const { trackSections, trains } = useRailway();
+  const { trackSections, trains, openTripPlanner } = useRailway();
   const { t, localize, language } = useLanguage();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
@@ -284,6 +284,17 @@ export const CircleRouteMap: React.FC = () => {
                    hovered.status === 'mega_block' ? (language === 'mr' ? '⚠ मेगा ब्लॉक सक्रिय' : '⚠ Mega Block') :
                    (language === 'mr' ? '🚨 आपत्कालीन बंद' : '🚨 Cordoned Off')}
                 </div>
+                <button
+                  onClick={() => openTripPlanner(hovered.fromStation, hovered.toStation)}
+                  className="btn btn-primary"
+                  style={{
+                    marginTop: '8px', width: '100%', padding: '7px 12px',
+                    fontSize: '0.74rem', borderRadius: '8px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
+                  }}
+                >
+                  🧭 {language === 'mr' ? 'प्रवास योजना तयार करा' : 'Plan Trip Route'}
+                </button>
               </div>
             </div>
           ) : (
