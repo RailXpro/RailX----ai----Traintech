@@ -18,7 +18,7 @@ export const InteractiveTrackMap: React.FC = () => {
     selectedSectionId, 
     setSelectedSectionId
   } = useRailway();
-  const { t } = useLanguage();
+  const { t, localize } = useLanguage();
 
   const [filterStatus, setFilterStatus] = useState<'all' | 'clear' | 'mega_block' | 'accident'>('all');
 
@@ -150,24 +150,24 @@ export const InteractiveTrackMap: React.FC = () => {
               {/* Header Badge */}
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px' }}>
                 <span className="font-mono" style={{ fontSize: '0.72rem', color: '#666666', fontWeight: 600 }}>
-                  [{sec.zone}] {sec.code} • {sec.division}
+                  [{sec.zone}] {sec.code} • {localize(sec.division)}
                 </span>
                 {getSectionBadge(sec.status)}
               </div>
 
               {/* Title */}
               <h4 style={{ fontSize: '1.02rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '6px' }}>
-                {sec.name}
+                {localize(sec.name)}
               </h4>
 
               {/* Stations Route */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
                 <MapPin size={13} color="var(--rx-orange)" />
-                <span>{sec.fromStation}</span>
+                <span>{localize(sec.fromStation)}</span>
                 <span style={{ color: '#CCCCCC' }}>➔</span>
-                <span>{sec.toStation}</span>
+                <span>{localize(sec.toStation)}</span>
                 <span className="font-mono" style={{ color: 'var(--text-muted)', marginLeft: 'auto' }}>
-                  {sec.lengthKm} km
+                  {sec.lengthKm} {t('map.unitKm')}
                 </span>
               </div>
 
@@ -182,7 +182,7 @@ export const InteractiveTrackMap: React.FC = () => {
                   marginBottom: '12px',
                   lineHeight: '1.4'
                 }}>
-                  {sec.blockReason}
+                  {localize(sec.blockReason)}
                 </div>
               )}
 
@@ -207,14 +207,14 @@ export const InteractiveTrackMap: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)', borderTop: '1px solid var(--border-light)', paddingTop: '10px' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <Gauge size={13} color="var(--rx-blue)" />
-                  {sec.maxSpeedKmph} km/h
+                  {sec.maxSpeedKmph} {t('map.unitKmph')}
                 </span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <TrainIcon size={13} color="var(--rx-orange)" />
-                  {secTrains.length} {t('metrics.active')}
+                  {secTrains.length} {t('map.activeTrainsCount')}
                 </span>
                 <span style={{ color: 'var(--rx-orange)', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-                  {t('map.selectedSection')} <ChevronRight size={14} />
+                  {t('map.inspectCTA')} <ChevronRight size={14} />
                 </span>
               </div>
             </div>
@@ -232,10 +232,10 @@ export const InteractiveTrackMap: React.FC = () => {
               </div>
               <div>
                 <h3 style={{ fontSize: '1.08rem', fontWeight: 700, color: 'var(--text-dark)' }}>
-                  {t('map.selectedSection')}: {activeSection.name} ({activeSection.code})
+                  {t('map.selectedSection')}: {localize(activeSection.name)} ({activeSection.code})
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                  Division: {activeSection.division} • Electrification: {activeSection.electrification} • {t('map.length')}: {activeSection.lengthKm} KM
+                  Division: {localize(activeSection.division)} • Electrification: {activeSection.electrification} • {t('map.length')}: {activeSection.lengthKm} {t('map.unitKm')}
                 </p>
               </div>
             </div>
@@ -259,16 +259,16 @@ export const InteractiveTrackMap: React.FC = () => {
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('map.noTrains')}</p>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {trainsInSelectedSection.map(t => (
-                    <div key={t.id} style={{ background: '#FFFFFF', padding: '10px 12px', borderRadius: '6px', fontSize: '0.75rem', boxShadow: 'var(--shadow-card)' }}>
+                  {trainsInSelectedSection.map(tItem => (
+                    <div key={tItem.id} style={{ background: '#FFFFFF', padding: '10px 12px', borderRadius: '6px', fontSize: '0.75rem', boxShadow: 'var(--shadow-card)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
-                        <span style={{ color: 'var(--text-dark)' }}>#{t.number} {t.name}</span>
-                        <span style={{ color: t.status === 'on_time' ? '#15803D' : 'var(--rx-red)' }}>
-                          {t.status.toUpperCase()} ({t.delayMinutes}m)
+                        <span style={{ color: 'var(--text-dark)' }}>#{tItem.number} {localize(tItem.name)}</span>
+                        <span style={{ color: tItem.status === 'on_time' ? '#15803D' : 'var(--rx-red)' }}>
+                          {tItem.status.toUpperCase()} ({tItem.delayMinutes}m)
                         </span>
                       </div>
                       <div style={{ color: 'var(--text-secondary)', marginTop: '3px' }}>
-                        Speed: {t.speedKmph} km/h • Loco: {t.locomotiveId} • Crew: {t.crewId}
+                        Speed: {tItem.speedKmph} {t('map.unitKmph')} • Loco: {tItem.locomotiveId} • Crew: {tItem.crewId}
                       </div>
                     </div>
                   ))}
@@ -285,12 +285,12 @@ export const InteractiveTrackMap: React.FC = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '0.75rem' }}>
                 <div>
                   <span style={{ color: 'var(--text-secondary)' }}>{t('map.speedLimit')}:</span>
-                  <div style={{ fontWeight: 700, color: 'var(--text-dark)', marginTop: '2px' }}>{activeSection.maxSpeedKmph} km/h</div>
+                  <div style={{ fontWeight: 700, color: 'var(--text-dark)', marginTop: '2px' }}>{activeSection.maxSpeedKmph} {t('map.unitKmph')}</div>
                 </div>
                 <div>
                   <span style={{ color: 'var(--text-secondary)' }}>TSR:</span>
                   <div style={{ fontWeight: 700, color: activeSection.currentTsrKmph ? '#92400E' : '#15803D', marginTop: '2px' }}>
-                    {activeSection.currentTsrKmph ? `${activeSection.currentTsrKmph} km/h` : 'No Restriction'}
+                    {activeSection.currentTsrKmph ? `${activeSection.currentTsrKmph} ${t('map.unitKmph')}` : 'No Restriction'}
                   </div>
                 </div>
                 <div>

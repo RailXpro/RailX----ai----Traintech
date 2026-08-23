@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState } from 'react';
-import { Lang, t as translate } from '../i18n/translations';
+import { Lang, t as translate, localizeText } from '../i18n/translations';
 
 interface LanguageContextType {
   language: Lang;
   setLanguage: (l: Lang) => void;
   t: (key: string, fallback?: string) => string;
+  localize: (text?: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -27,9 +28,10 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const t = (key: string, fallback?: string) => translate(language, key, fallback);
+  const localize = (text?: string) => localizeText(language, text);
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, localize }}>
       {children}
     </LanguageContext.Provider>
   );

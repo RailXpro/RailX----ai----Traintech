@@ -17,7 +17,7 @@ import { SimulationControls } from '../SimulationControls';
 
 export const PassengerPortal: React.FC = () => {
   const { megaBlocks, accidents, selectedDivision } = useRailway();
-  const { t } = useLanguage();
+  const { t, localize } = useLanguage();
 
   const [searchOrigin, setSearchOrigin] = useState<string>('CSMT Mumbai');
   const [searchDest, setSearchDest] = useState<string>('Kalyan Junction');
@@ -262,7 +262,7 @@ export const PassengerPortal: React.FC = () => {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                   <span className="font-mono" style={{ fontSize: '0.72rem', color: '#888888', fontWeight: 600 }}>
-                    {block.division}
+                    {localize(block.division)}
                   </span>
                   <span className={`badge ${block.status === 'active' ? 'badge-megablock' : 'badge-cyan'}`} style={{ fontSize: '0.62rem' }}>
                     {block.status === 'active' ? t('passenger.inProgressNow') : t('passenger.upcoming')}
@@ -270,7 +270,7 @@ export const PassengerPortal: React.FC = () => {
                 </div>
 
                 <h4 style={{ fontSize: '1.02rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '4px' }}>
-                  {block.sectionName}
+                  {localize(block.sectionName)}
                 </h4>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#92400E', marginBottom: '10px' }}>
@@ -280,7 +280,7 @@ export const PassengerPortal: React.FC = () => {
 
                 <div style={{ background: 'var(--rx-surface-alt)', padding: '10px 12px', borderRadius: 'var(--radius-xs)', fontSize: '0.73rem', color: 'var(--text-secondary)', marginBottom: '10px' }}>
                   <div><strong>{t('passenger.linesAffected')}:</strong> {block.linesAffected}</div>
-                  <div><strong>{t('passenger.maintenanceWork')}:</strong> {block.reason}</div>
+                  <div><strong>{t('passenger.maintenanceWork')}:</strong> {localize(block.reason)}</div>
                 </div>
 
                 <p style={{ fontSize: '0.76rem', color: '#475569', lineHeight: '1.45' }}>

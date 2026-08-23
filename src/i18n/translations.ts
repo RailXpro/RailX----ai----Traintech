@@ -1,5 +1,5 @@
 // ─── TrainX.ai Complete Bilingual Translation Map ───────────────────────────
-// Comprehensive support for English ('en') & Marathi ('mr') across ALL features!
+// Comprehensive support for English ('en') & Marathi ('mr') across ALL UI & data!
 
 export type Lang = 'en' | 'mr';
 
@@ -152,6 +152,7 @@ export const translations: TranslationMap = {
   'map.filterBlock': { en: 'Under Mega Block', mr: 'मेगा ब्लॉक अंतर्गत' },
   'map.filterEmergency': { en: 'Emergency Halts', mr: 'आपत्कालीन थांबलेले' },
   'map.selectedSection': { en: 'Selected Corridor Details', mr: 'निवडलेल्या मार्गाचे तपशील' },
+  'map.inspectCTA': { en: 'Inspect Corridor Details', mr: 'मार्गाची पाहणी करा' },
   'map.speedLimit': { en: 'Section Max Speed', mr: 'विभागाचा कमाल वेग' },
   'map.utilization': { en: 'Corridor Utilization', mr: 'मार्ग वापर' },
   'map.length': { en: 'Length', mr: 'लांबी' },
@@ -161,6 +162,9 @@ export const translations: TranslationMap = {
   'map.statusMegaBlock': { en: 'MEGA BLOCK ACTIVE', mr: 'मेगा ब्लॉक सक्रिय' },
   'map.statusCordoned': { en: 'CORDONED OFF', mr: 'सुरक्षेसाठी बंद (कॉर्डन)' },
   'map.statusTsr': { en: 'TSR SPEED LIMIT', mr: 'TSR वेग मर्यादा' },
+  'map.unitKm': { en: 'km', mr: 'किमी' },
+  'map.unitKmph': { en: 'km/h', mr: 'किमी/तास' },
+  'map.activeTrainsCount': { en: 'Active Trains', mr: 'सक्रिय गाड्या' },
 
   // ── AI Auto-Block Optimizer ─────────────────────────────────────────────
   'optimizer.title': { en: 'TrainX.ai Auto-Block Optimization Engine', mr: 'TrainX.ai ऑटो-ब्लॉक ऑप्टिमायझेशन इंजिन' },
@@ -274,8 +278,84 @@ export const translations: TranslationMap = {
   'footer.railMadad': { en: 'RailMadad 139 Integration', mr: 'RailMadad १३९ थेट एकीकरण' },
 };
 
+// ── Data Entities Translation Map (Sections, Stations, Divisions, Trains) ──
+export const DATA_MARATHI_MAP: Record<string, string> = {
+  // Divisions
+  'Mumbai CR': 'मुंबई मध्य रेल्वे (CR)',
+  'Mumbai WR': 'मुंबई पश्चिम रेल्वे (WR)',
+  'Delhi NR': 'दिल्ली उत्तर रेल्वे (NR)',
+  'Howrah ER': 'हावडा पूर्व रेल्वे (ER)',
+  'Chennai SR': 'चेन्नई दक्षिण रेल्वे (SR)',
+  'Bengaluru SWR': 'बंगळुरू दक्षिण-पश्चिम रेल्वे (SWR)',
+
+  // Stations
+  'CSMT Mumbai': 'सीएसएमटी मुंबई',
+  'Byculla': 'भायखळा',
+  'Dadar CR': 'दादर मध्य',
+  'Thane': 'ठाणे',
+  'Kalyan Junction': 'कल्याण जंक्शन',
+  'Kasara': 'कसारा',
+  'Churchgate': 'चर्चगेट',
+  'Mumbai Central': 'मुंबई सेंट्रल',
+  'Dadar WR': 'दादर पश्चिम',
+  'Borivali': 'बोरिवली',
+  'Virar': 'विरार',
+  'Dahanu Road': 'डहाणू रोड',
+  'New Delhi (NDLS)': 'नवी दिल्ली (NDLS)',
+  'Ghaziabad Junction': 'गाझियाबाद जंक्शन',
+  'Howrah Junction': 'हावडा जंक्शन',
+  'Bardhaman Junction': 'बर्धमान जंक्शन',
+  'Chennai Central': 'चेन्नई सेंट्रल',
+  'Arakkonam Junction': 'अरक्कोणम जंक्शन',
+  'KSR Bengaluru': 'केएसआर बंगळुरू',
+  'Whitefield': 'व्हाइटफील्ड',
+
+  // Section Names
+  'CSMT to Byculla Slow & Fast Quad': 'सीएसएमटी ते भायखळा धीम्या व जलद मार्गिका',
+  'Byculla to Dadar Central Junction': 'भायखळा ते दादर मध्य जंक्शन',
+  'Dadar to Thane 6-Line Express Corridor': 'दादर ते ठाणे ६-पदरी एक्सप्रेस मार्गिका',
+  'Thane to Kalyan Jn Quad Line & Parsik Tunnel': 'ठाणे ते कल्याण जंक्शन व पारसिक बोगदा',
+  'Kalyan to Kasara Thull Ghat Section': 'कल्याण ते कसारा थळ घाट विभाग',
+  'Churchgate to Mumbai Central 4-Line Quad': 'चर्चगेट ते मुंबई सेंट्रल ४-पदरी मार्गिका',
+  'Mumbai Central to Dadar Western': 'मुंबई सेंट्रल ते दादर पश्चिम',
+  'Dadar to Borivali 6th Line Corridor': 'दादर ते बोरिवली ६ वी मार्गिका',
+  'Borivali to Virar Quad & Vasai Creek Bridge': 'बोरिवली ते विरार व वसई खाडी पूल',
+  'Virar to Dahanu Road High Speed Track': 'विरार ते डहाणू रोड हाय स्पीड ट्रॅक',
+  'New Delhi to Ghaziabad 4-Line Trunk': 'नवी दिल्ली ते गाझियाबाद मुख्य मार्ग',
+  'Howrah to Bardhaman Main & Chord Lines': 'हावडा ते बर्धमान मुख्य व कॉर्ड मार्ग',
+  'Chennai Central to Arakkonam Fast Quad': 'चेन्नई सेंट्रल ते अरक्कोणम जलद मार्ग',
+  'KSR Bengaluru to Whitefield IT Corridor': 'केएसआर बंगळुरू ते व्हाइटफील्ड कॉरिडॉर',
+
+  // Block Reasons & Advisories
+  'Sunday Mega Block: Up & Down Slow Line Track Relaying & Tamping Machine': 'रविवार मेगा ब्लॉक: अप व डाउन धीम्या मार्गावर ट्रॅक रिलाइंग व टॅम्पिंग',
+  'Catenary wire sag detected near Vasai Bridge. Automatic emergency block triggered across Up/Down Fast tracks.': 'वसई पुलाजवळ ओएचई वायरमध्ये बिघाड. अप/डाउन जलद मार्गावर आपत्कालीन ब्लॉक.',
+  'Track Relaying & Tamping': 'ट्रॅक रिलाइंग आणि टॅम्पिंग',
+  'Overhead Wire (OHE) Maintenance': 'ओव्हरहेड वायर (OHE) देखभाल',
+  'Electronic Interlocking (EI) Upgrade': 'इलेक्ट्रॉनिक इंटरलॉकिंग (EI) अपग्रेड',
+  'Bridge Girder Inspection': 'पूल गर्डर तपासणी',
+  'Point & Crossing Overhaul': 'पॉइंट व क्रॉसिंग ओव्हरहॉल',
+  'Suburban Jumbo Block': 'उपनगरीय जंबो ब्लॉक',
+
+  // Trains
+  '12951 Mumbai Rajdhani Express': '१२९५१ मुंबई राजधानी एक्सप्रेस',
+  '22221 CSMT Hazrat Nizamuddin Rajdhani': '२२२२१ सीएसएमटी हजरत निजामुद्दीन राजधानी',
+  '12009 Mumbai Ahmedabad Shatabdi': '१२००९ मुंबई अहमदाबाद शताब्दी',
+  '12137 Punjab Mail': '१२१३७ पंजाब मेल',
+  '20901 Vande Bharat Express (Mumbai-Gandhinagar)': '२०९०१ वंदे भारत एक्सप्रेस (मुंबई-गांधीनगर)',
+  '95401 Suburban Local': '९५४०१ उपनगरीय लोकल',
+  '95104 Suburban Local': '९५१०४ उपनगरीय लोकल',
+  'CSMT to Kalyan Fast Local (15-Car Rake)': 'सीएसएमटी ते कल्याण जलद लोकल (१५ डब्बे)',
+  'Metro Line 3 / Line 4 + Municipal Feeder Bus Shuttle': 'मेट्रो मार्ग ३ / मार्ग ४ + पालिकेची फीडर बस शटल'
+};
+
 export const t = (lang: Lang, key: string, fallback?: string): string => {
   const entry = translations[key];
   if (!entry) return fallback ?? key;
   return entry[lang] ?? entry['en'] ?? fallback ?? key;
+};
+
+export const localizeText = (lang: Lang, text?: string): string => {
+  if (!text) return '';
+  if (lang === 'en') return text;
+  return DATA_MARATHI_MAP[text] ?? text;
 };

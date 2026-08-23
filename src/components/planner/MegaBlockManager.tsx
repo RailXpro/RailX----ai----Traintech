@@ -24,7 +24,7 @@ export const MegaBlockManager: React.FC = () => {
     completeMegaBlock, 
     selectedDivision 
   } = useRailway();
-  const { t } = useLanguage();
+  const { t, localize } = useLanguage();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isScannerOpen, setIsScannerOpen] = useState<boolean>(false);
@@ -142,7 +142,7 @@ Diversion: Up & Down fast line services leaving CSMT Mumbai will be diverted ont
               {/* Header Badge */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                 <span className="font-mono" style={{ fontSize: '0.72rem', color: '#666666' }}>
-                  {block.id} • {block.division}
+                  {block.id} • {localize(block.division)}
                 </span>
                 <span className={`badge ${
                   block.status === 'active' ? 'badge-megablock' :
@@ -154,7 +154,7 @@ Diversion: Up & Down fast line services leaving CSMT Mumbai will be diverted ont
 
               {/* Title & Section */}
               <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '4px' }}>
-                {block.sectionName}
+                {localize(block.sectionName)}
               </h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
                 <Clock size={13} color="var(--rx-amber)" />
@@ -169,7 +169,7 @@ Diversion: Up & Down fast line services leaving CSMT Mumbai will be diverted ont
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>{t('passenger.maintenanceWork')}:</span>
-                  <span style={{ color: 'var(--text-dark)', fontWeight: 600 }}>{block.reason}</span>
+                  <span style={{ color: 'var(--text-dark)', fontWeight: 600 }}>{localize(block.reason)}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Gang:</span>
