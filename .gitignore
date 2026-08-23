@@ -1,5 +1,10 @@
 # Dependencies
 node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+*.db
+*.sqlite3
 
 # Environment Variables
 .env
@@ -18,3 +23,11 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Scheme / General
+*.ss~
+*.ss#*
+.#*.ss
+*.scm~
+*.scm#*
+.#*.scm
