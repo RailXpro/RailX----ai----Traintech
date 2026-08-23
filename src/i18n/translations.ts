@@ -298,12 +298,18 @@ export const DATA_MARATHI_MAP: Record<string, string> = {
   'Kasara': 'कसारा',
   'Churchgate': 'चर्चगेट',
   'Mumbai Central': 'मुंबई सेंट्रल',
+  'Mumbai Central (MMCT)': 'मुंबई सेंट्रल (MMCT)',
   'Dadar WR': 'दादर पश्चिम',
   'Borivali': 'बोरिवली',
   'Virar': 'विरार',
   'Dahanu Road': 'डहाणू रोड',
   'New Delhi (NDLS)': 'नवी दिल्ली (NDLS)',
   'Ghaziabad Junction': 'गाझियाबाद जंक्शन',
+  'Aligarh Junction': 'अलीगढ जंक्शन',
+  'Kanpur Central': 'कानपूर सेंट्रल',
+  'Gandhinagar Cap (GNC)': 'गांधीनगर कॅपिटल (GNC)',
+  'Hazrat Nizamuddin (NZM)': 'हजरत निजामुद्दीन (NZM)',
+  'Varanasi Junction (BSB)': 'वाराणसी जंक्शन (BSB)',
   'Howrah Junction': 'हावडा जंक्शन',
   'Bardhaman Junction': 'बर्धमान जंक्शन',
   'Chennai Central': 'चेन्नई सेंट्रल',
@@ -311,7 +317,7 @@ export const DATA_MARATHI_MAP: Record<string, string> = {
   'KSR Bengaluru': 'केएसआर बंगळुरू',
   'Whitefield': 'व्हाइटफील्ड',
 
-  // Section Names
+  // Section Names (Exact Matches)
   'CSMT to Byculla Slow & Fast Quad': 'सीएसएमटी ते भायखळा धीम्या व जलद मार्गिका',
   'Byculla to Dadar Central Junction': 'भायखळा ते दादर मध्य जंक्शन',
   'Dadar to Thane 6-Line Corridor': 'दादर ते ठाणे ६-मार्गिका कॉरिडॉर',
@@ -326,7 +332,9 @@ export const DATA_MARATHI_MAP: Record<string, string> = {
   'Borivali to Virar (Vasai Creek Bridges 73 & 75)': 'बोरिवली ते विरार (वसई खाडी पूल ७३ आणि ७५)',
   'Virar to Dahanu Road High Speed Track': 'विरार ते डहाणू रोड हाय स्पीड ट्रॅक',
   'New Delhi to Ghaziabad 4-Line Trunk': 'नवी दिल्ली ते गाझियाबाद मुख्य मार्ग',
-  'Ghaziabad to Aligarh Trunk': 'गाझियाबाद ते अलीगढ मुख्य मार्ग',
+  'Ghaziabad to Aligarh Trunk Section': 'गाझियाबाद ते अलीगढ मुख्य ट्रंक विभाग',
+  'Ghaziabad to Aligarh Trunk': 'गाझियाबाद ते अलीगढ मुख्य ट्रंक विभाग',
+  'Aligarh to Kanpur Central Semi-High Speed Section': 'अलीगढ ते कानपूर सेंट्रल सेमी-हायस्पीड विभाग',
   'Howrah to Bardhaman Main & Chord Lines': 'हावडा ते बर्धमान मुख्य व कॉर्ड मार्ग',
   'Chennai Central to Arakkonam Fast Quad': 'चेन्नई सेंट्रल ते अरक्कोणम जलद मार्ग',
   'KSR Bengaluru to Whitefield IT Corridor': 'केएसआर बंगळुरू ते व्हाइटफील्ड कॉरिडॉर',
@@ -388,7 +396,14 @@ export const DATA_MARATHI_MAP: Record<string, string> = {
   '95401 Suburban Local': '९५४०१ उपनगरीय लोकल',
   '95104 Suburban Local': '९५१०४ उपनगरीय लोकल',
   'CSMT to Kalyan Fast Local (15-Car Rake)': 'सीएसएमटी ते कल्याण जलद लोकल (१५ डब्बे)',
-  'Metro Line 3 / Line 4 + Municipal Feeder Bus Shuttle': 'मेट्रो मार्ग ३ / मार्ग ४ + पालिकेची फीडर बस शटल'
+  'Metro Line 3 / Line 4 + Municipal Feeder Bus Shuttle': 'मेट्रो मार्ग ३ / मार्ग ४ + पालिकेची फीडर बस शटल',
+  'Mumbai Central - Gandhinagar Capital Vande Bharat Express': 'मुंबई सेंट्रल - गांधीनगर कॅपिटल वंदे भारत एक्सप्रेस',
+  'Mumbai Central - New Delhi Tejas Rajdhani Express': 'मुंबई सेंट्रल - नवी दिल्ली तेजस राजधानी एक्सप्रेस',
+  'CSMT - Hazrat Nizamuddin Rajdhani Express': 'सीएसएमटी - हजरत निजामुद्दीन राजधानी एक्सप्रेस',
+  'CSMT - Kalyan Fast 15-Car Suburban EMU': 'सीएसएमटी - कल्याण जलद १५-डब्बे उपनगरीय ईएमयू',
+  'Churchgate - Borivali Slow EMU Local': 'चर्चगेट - बोरिवली धीम्या मार्गाची ईएमयू लोकल',
+  'JNPT Port to Dadri Inland Container Depot Freight': 'जेएनपीटी बंदर ते दादरी कंटेनर डेपो मालगाडी',
+  'New Delhi - Varanasi Vande Bharat Express': 'नवी दिल्ली - वाराणसी वंदे भारत एक्सप्रेस'
 };
 
 export const t = (lang: Lang, key: string, fallback?: string): string => {
@@ -400,5 +415,29 @@ export const t = (lang: Lang, key: string, fallback?: string): string => {
 export const localizeText = (lang: Lang, text?: string): string => {
   if (!text) return '';
   if (lang === 'en') return text;
-  return DATA_MARATHI_MAP[text] ?? text;
+  
+  // 1. Direct dictionary match
+  if (DATA_MARATHI_MAP[text]) return DATA_MARATHI_MAP[text];
+
+  // 2. Sub-phrase replace for station routes "StationA to StationB [suffix]"
+  let result = text;
+  for (const [enKey, mrVal] of Object.entries(DATA_MARATHI_MAP)) {
+    if (result.includes(enKey)) {
+      result = result.split(enKey).join(mrVal);
+    }
+  }
+
+  // 3. Connective word translations if still partially English
+  result = result
+    .replace(/\bto\b/g, 'ते')
+    .replace(/\bSection\b/g, 'विभाग')
+    .replace(/\bCorridor\b/g, 'मार्गिका')
+    .replace(/\bTrunk\b/g, 'मुख्य ट्रंक')
+    .replace(/\bExpress\b/g, 'एक्सप्रेस')
+    .replace(/\bFast\b/g, 'जलद')
+    .replace(/\bSlow\b/g, 'धीमी')
+    .replace(/\bQuad\b/g, 'चौपदरी')
+    .replace(/\bJunction\b/g, 'जंक्शन');
+
+  return result;
 };
