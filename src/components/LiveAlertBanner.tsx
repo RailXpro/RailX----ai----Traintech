@@ -44,7 +44,6 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
         seenSosIds.current.add(report.id);
 
         if (report.severity === 'CRITICAL_SOS') {
-          // In passenger view: auto-open the notification drawer immediately
           if (persona === 'passenger') {
             setTimeout(() => setNotificationsDrawerOpen(true), 600);
           }
@@ -94,145 +93,151 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
   }
 
   return (
-    <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+    <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
 
-      {/* ── SOS Problem Report Banners (always shown at top) ────────────── */}
+      {/* ── SOS Problem Report Banners (High-Contrast Theme-Safe Emergency Card) ────────────── */}
       {activeSosReports.map(report => (
         <div
           key={report.id}
+          className="bms-card"
           style={{
-            background: 'linear-gradient(135deg, rgba(127,0,0,0.25) 0%, rgba(69,10,10,0.18) 100%)',
-            border: '2px solid rgba(239, 68, 68, 0.6)',
-            borderLeft: '6px solid #EF4444',
+            background: 'var(--rx-red-light)',
+            border: '2px solid rgba(239, 68, 68, 0.45)',
+            borderLeft: '6px solid var(--rx-red)',
             borderRadius: 'var(--radius-sm)',
-            padding: '16px 18px',
-            boxShadow: '0 0 24px rgba(239,68,68,0.2)',
-            animation: 'pulse 2s infinite'
+            padding: '18px 20px',
+            boxShadow: '0 4px 20px rgba(239, 68, 68, 0.15)',
+            position: 'relative'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', marginBottom: '12px' }}>
             <div style={{
               width: '42px', height: '42px', borderRadius: '10px',
-              background: 'rgba(239,68,68,0.25)',
-              border: '1px solid rgba(239,68,68,0.5)',
+              background: 'var(--rx-red)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#EF4444', flexShrink: 0,
-              animation: 'pulse 1s infinite'
+              color: '#FFFFFF', flexShrink: 0,
+              boxShadow: '0 2px 10px rgba(239, 68, 68, 0.4)'
             }}>
               <Zap size={22} />
             </div>
+
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
-                <span style={{
-                  background: '#EF4444', color: '#fff',
-                  fontSize: '0.65rem', fontWeight: 900,
-                  padding: '2px 9px', borderRadius: '20px',
-                  letterSpacing: '0.08em', textTransform: 'uppercase'
-                }}>
+              {/* Badges strip */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                <span className="badge badge-accident" style={{ fontSize: '0.68rem', fontWeight: 900, whiteSpace: 'nowrap' }}>
                   🆘 SOS EMERGENCY
                 </span>
                 <span style={{
-                  fontSize: '0.65rem', fontWeight: 800,
-                  fontFamily: 'var(--font-mono)', color: '#FCA5A5'
+                  fontSize: '0.72rem', fontWeight: 800,
+                  fontFamily: 'var(--font-mono)', color: 'var(--rx-red)'
                 }}>
                   Ref: {report.id}
                 </span>
-                <span style={{ fontSize: '0.68rem', color: '#FDA4A4', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '3px' }}>
-                  <Clock size={11} /> {report.timestamp}
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Clock size={12} /> {report.timestamp}
                 </span>
               </div>
 
+              {/* Title */}
               <h3 style={{
-                fontSize: '0.95rem', fontWeight: 900,
-                color: '#FCA5A5', marginBottom: '4px',
-                wordBreak: 'break-word'
+                fontSize: '1.02rem', fontWeight: 800,
+                color: 'var(--text-dark)', marginBottom: '5px',
+                wordBreak: 'break-word', lineHeight: 1.35
               }}>
                 {report.title}
               </h3>
-              <p style={{ fontSize: '0.78rem', color: '#FDA4A4', lineHeight: 1.45, wordBreak: 'break-word' }}>
+
+              {/* Description */}
+              <p style={{
+                fontSize: '0.82rem', color: 'var(--text-body)',
+                lineHeight: 1.5, wordBreak: 'break-word', margin: '0 0 6px 0'
+              }}>
                 {report.description}
               </p>
+
+              {/* Location and Train */}
               {report.stationOrSection && (
-                <div style={{ fontSize: '0.74rem', color: '#FCA5A5', marginTop: '4px', fontWeight: 600 }}>
-                  📍 {report.stationOrSection}
-                  {report.trainNumber && ` • Train #${report.trainNumber}`}
+                <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                  <span>📍 <strong>Location:</strong> {report.stationOrSection}</span>
+                  {report.trainNumber && <span>• 🚆 <strong>Train:</strong> #{report.trainNumber}</span>}
                 </div>
               )}
             </div>
+
+            {/* Top right dismiss button */}
+            <button
+              onClick={() => dismissSos(report.id)}
+              title="Dismiss Alert Banner"
+              style={{
+                background: 'rgba(0,0,0,0.05)', border: 'none',
+                color: 'var(--text-muted)', fontSize: '0.9rem',
+                cursor: 'pointer', padding: '4px 8px', borderRadius: '6px',
+                lineHeight: 1, fontWeight: 700
+              }}
+            >
+              ✕
+            </button>
           </div>
 
-          {/* Action row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          {/* Action Buttons Row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', paddingTop: '4px' }}>
             <a
               href="tel:139"
+              className="btn"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '7px',
                 background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-                color: '#fff', padding: '7px 16px',
+                color: '#FFFFFF', padding: '8px 18px',
                 borderRadius: 'var(--radius-pill)',
-                fontSize: '0.78rem', fontWeight: 800,
-                textDecoration: 'none',
-                boxShadow: '0 2px 10px rgba(5, 150, 105, 0.35)',
-                border: '1px solid rgba(255,255,255,0.18)'
+                fontSize: '0.8rem', fontWeight: 800, textDecoration: 'none',
+                boxShadow: '0 2px 10px rgba(5, 150, 105, 0.3)'
               }}
             >
-              <PhoneCall size={13} /> Helpline: 139
+              <PhoneCall size={14} color="#FFFFFF" />
+              <span>Helpline: 139</span>
             </a>
 
             <button
-              onClick={() => { setIsProblemModalOpen(true); }}
+              onClick={() => setIsProblemModalOpen(true)}
+              className="btn btn-secondary"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
-                background: 'rgba(239,68,68,0.2)',
-                border: '1px solid rgba(239,68,68,0.4)',
-                borderRadius: 'var(--radius-pill)',
-                padding: '6px 14px', color: '#FCA5A5',
-                fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer'
+                padding: '8px 16px', fontSize: '0.8rem', fontWeight: 700,
+                color: 'var(--rx-red)', borderColor: 'rgba(239, 68, 68, 0.35)',
+                background: 'var(--rx-surface)'
               }}
             >
-              <LifeBuoy size={13} /> Track Status
+              <LifeBuoy size={14} />
+              <span>Track Grievance Status</span>
             </button>
 
             <button
               onClick={() => setNotificationsDrawerOpen(true)}
+              className="btn btn-secondary"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: 'var(--radius-pill)',
-                padding: '6px 14px', color: '#FCA5A5',
-                fontSize: '0.78rem', fontWeight: 700, cursor: 'pointer'
+                padding: '8px 16px', fontSize: '0.8rem', fontWeight: 700,
+                color: 'var(--text-dark)', borderColor: 'var(--border-medium)',
+                background: 'var(--rx-surface)'
               }}
             >
-              All Alerts →
-            </button>
-
-            <button
-              onClick={() => dismissSos(report.id)}
-              style={{
-                marginLeft: 'auto',
-                background: 'transparent', border: 'none',
-                color: '#FCA5A5', fontSize: '0.7rem', fontWeight: 600,
-                cursor: 'pointer', opacity: 0.7
-              }}
-            >
-              ✕ Dismiss
+              <span>View All Notifications →</span>
             </button>
           </div>
 
-          {/* AI action taken strip */}
+          {/* AI Action Status Strip */}
           {report.actionTaken && (
             <div style={{
-              marginTop: '10px',
-              background: 'rgba(239,68,68,0.12)',
-              border: '1px solid rgba(239,68,68,0.25)',
+              marginTop: '12px',
+              background: 'rgba(239, 68, 68, 0.08)',
+              border: '1px solid rgba(239, 68, 68, 0.25)',
               borderRadius: 'var(--radius-xs)',
-              padding: '8px 12px',
-              fontSize: '0.73rem', color: '#FCA5A5',
-              display: 'flex', alignItems: 'center', gap: '6px'
+              padding: '10px 14px',
+              fontSize: '0.78rem', color: 'var(--text-dark)',
+              display: 'flex', alignItems: 'center', gap: '8px'
             }}>
-              <Radio size={13} style={{ flexShrink: 0, animation: 'pulse 1.5s infinite' } as React.CSSProperties} />
-              <span><strong>AI Action:</strong> {report.actionTaken}</span>
+              <Radio size={14} color="var(--rx-red)" style={{ flexShrink: 0 }} />
+              <span><strong style={{ color: 'var(--rx-red)' }}>AI Real-time Action:</strong> {report.actionTaken}</span>
             </div>
           )}
         </div>
@@ -246,12 +251,13 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
         return (
           <div
             key={report.id}
+            className="bms-card"
             style={{
               background: isHigh ? 'var(--rx-amber-light)' : 'var(--rx-surface)',
               border: isHigh ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid var(--border-medium)',
               borderLeft: `5px solid ${isHigh ? 'var(--rx-amber)' : 'var(--rx-blue)'}`,
               borderRadius: 'var(--radius-sm)',
-              padding: '14px 16px',
+              padding: '16px 18px',
               boxShadow: 'var(--shadow-card)'
             }}
           >
@@ -269,9 +275,8 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
                   {isJustNow && (
                     <span style={{
                       background: 'var(--rx-green)', color: '#fff',
-                      fontSize: '0.6rem', fontWeight: 900,
-                      padding: '2px 7px', borderRadius: '20px', letterSpacing: '0.06em',
-                      animation: 'pulse 1.2s infinite'
+                      fontSize: '0.62rem', fontWeight: 900,
+                      padding: '2px 7px', borderRadius: '20px', letterSpacing: '0.06em'
                     }}>
                       ⚡ NEW LIVE REPORT
                     </span>
@@ -284,25 +289,25 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
                   }}>
                     {isHigh ? '🚨 HIGH PRIORITY' : '📋 RAILMADAD REPORT'}
                   </span>
-                  <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--rx-orange)', fontWeight: 700 }}>
+                  <span style={{ fontSize: '0.68rem', fontFamily: 'var(--font-mono)', color: 'var(--rx-orange)', fontWeight: 700 }}>
                     {report.id}
                   </span>
-                  <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                    • Status: {report.status.replace('_', ' ')}
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
+                    • Status: <strong>{report.status.replace('_', ' ')}</strong>
                   </span>
                 </div>
-                <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '3px' }}>
+                <h4 style={{ fontSize: '0.96rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '3px' }}>
                   {report.title}
                 </h4>
-                <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.4, margin: '0 0 6px 0' }}>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-body)', lineHeight: 1.45, margin: '0 0 8px 0' }}>
                   {report.description}
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', fontSize: '0.72rem' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', fontSize: '0.75rem' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>
                     📍 {report.stationOrSection || 'Mumbai Corridor'}
                   </span>
                   {report.trainNumber && (
-                    <span style={{ color: 'var(--text-muted)' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>
                       🚆 Train #{report.trainNumber}
                     </span>
                   )}
@@ -311,7 +316,7 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
                     style={{
                       background: 'transparent', border: 'none',
                       color: 'var(--rx-green-deep)', fontWeight: 700,
-                      cursor: 'pointer', padding: 0, fontSize: '0.72rem'
+                      cursor: 'pointer', padding: 0, fontSize: '0.75rem'
                     }}
                   >
                     View in Notification Center →
