@@ -101,12 +101,12 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
           key={report.id}
           className="bms-card"
           style={{
-            background: 'var(--rx-red-light)',
-            border: '2px solid rgba(239, 68, 68, 0.45)',
+            background: 'var(--rx-surface)',
+            border: '1.5px solid rgba(225, 29, 72, 0.4)',
             borderLeft: '6px solid var(--rx-red)',
             borderRadius: 'var(--radius-sm)',
             padding: '18px 20px',
-            boxShadow: '0 4px 20px rgba(239, 68, 68, 0.15)',
+            boxShadow: 'var(--shadow-card)',
             position: 'relative'
           }}
         >
@@ -116,7 +116,7 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
               background: 'var(--rx-red)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: '#FFFFFF', flexShrink: 0,
-              boxShadow: '0 2px 10px rgba(239, 68, 68, 0.4)'
+              boxShadow: '0 2px 10px rgba(225, 29, 72, 0.4)'
             }}>
               <Zap size={22} />
             </div>
@@ -128,7 +128,7 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
                   🆘 SOS EMERGENCY
                 </span>
                 <span style={{
-                  fontSize: '0.72rem', fontWeight: 800,
+                  fontSize: '0.74rem', fontWeight: 800,
                   fontFamily: 'var(--font-mono)', color: 'var(--rx-red)'
                 }}>
                   Ref: {report.id}
@@ -140,7 +140,7 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
 
               {/* Title */}
               <h3 style={{
-                fontSize: '1.02rem', fontWeight: 800,
+                fontSize: '1.05rem', fontWeight: 800,
                 color: 'var(--text-dark)', marginBottom: '5px',
                 wordBreak: 'break-word', lineHeight: 1.35
               }}>
@@ -149,15 +149,15 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
 
               {/* Description */}
               <p style={{
-                fontSize: '0.82rem', color: 'var(--text-body)',
-                lineHeight: 1.5, wordBreak: 'break-word', margin: '0 0 6px 0'
+                fontSize: '0.84rem', color: 'var(--text-body)',
+                lineHeight: 1.55, wordBreak: 'break-word', margin: '0 0 6px 0'
               }}>
                 {report.description}
               </p>
 
               {/* Location and Train */}
               {report.stationOrSection && (
-                <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <span>📍 <strong>Location:</strong> {report.stationOrSection}</span>
                   {report.trainNumber && <span>• 🚆 <strong>Train:</strong> #{report.trainNumber}</span>}
                 </div>
@@ -169,7 +169,7 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
               onClick={() => dismissSos(report.id)}
               title="Dismiss Alert Banner"
               style={{
-                background: 'rgba(0,0,0,0.05)', border: 'none',
+                background: 'var(--rx-surface-alt)', border: '1px solid var(--border-light)',
                 color: 'var(--text-muted)', fontSize: '0.9rem',
                 cursor: 'pointer', padding: '4px 8px', borderRadius: '6px',
                 lineHeight: 1, fontWeight: 700
@@ -203,7 +203,7 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
                 padding: '8px 16px', fontSize: '0.8rem', fontWeight: 700,
-                color: 'var(--rx-red)', borderColor: 'rgba(239, 68, 68, 0.35)',
+                color: 'var(--rx-red)', borderColor: 'rgba(225, 29, 72, 0.35)',
                 background: 'var(--rx-surface)'
               }}
             >
@@ -229,8 +229,8 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
           {report.actionTaken && (
             <div style={{
               marginTop: '12px',
-              background: 'rgba(239, 68, 68, 0.08)',
-              border: '1px solid rgba(239, 68, 68, 0.25)',
+              background: 'var(--rx-surface-alt)',
+              border: '1px solid rgba(225, 29, 72, 0.25)',
               borderRadius: 'var(--radius-xs)',
               padding: '10px 14px',
               fontSize: '0.78rem', color: 'var(--text-dark)',
@@ -253,8 +253,8 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
             key={report.id}
             className="bms-card"
             style={{
-              background: isHigh ? 'var(--rx-amber-light)' : 'var(--rx-surface)',
-              border: isHigh ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid var(--border-medium)',
+              background: 'var(--rx-surface)',
+              border: isHigh ? '1.5px solid rgba(217, 119, 6, 0.4)' : '1px solid var(--border-medium)',
               borderLeft: `5px solid ${isHigh ? 'var(--rx-amber)' : 'var(--rx-blue)'}`,
               borderRadius: 'var(--radius-sm)',
               padding: '16px 18px',
@@ -299,7 +299,7 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
                 <h4 style={{ fontSize: '0.96rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '3px' }}>
                   {report.title}
                 </h4>
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-body)', lineHeight: 1.45, margin: '0 0 8px 0' }}>
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-body)', lineHeight: 1.5, margin: '0 0 8px 0' }}>
                   {report.description}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', fontSize: '0.75rem' }}>
@@ -326,9 +326,9 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
               <button
                 onClick={() => dismissSos(report.id)}
                 style={{
-                  background: 'transparent', border: 'none',
-                  color: 'var(--text-muted)', fontSize: '1rem', cursor: 'pointer',
-                  flexShrink: 0, opacity: 0.6, lineHeight: 1
+                  background: 'var(--rx-surface-alt)', border: '1px solid var(--border-light)',
+                  color: 'var(--text-muted)', fontSize: '0.9rem', cursor: 'pointer',
+                  flexShrink: 0, padding: '3px 7px', borderRadius: '6px', lineHeight: 1
                 }}
               >✕</button>
             </div>
@@ -346,8 +346,8 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
             key={incident.id}
             className="bms-card"
             style={{
-              background: 'var(--rx-red-light)',
-              borderColor: 'rgba(239, 68, 68, 0.35)',
+              background: 'var(--rx-surface)',
+              borderColor: 'rgba(225, 29, 72, 0.35)',
               borderLeft: '5px solid var(--rx-red)',
               padding: '16px 18px',
               borderRadius: 'var(--radius-sm)',
@@ -375,13 +375,13 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
                   </span>
                 </div>
 
-                <h3 style={{ fontSize: '0.94rem', fontWeight: 800, color: 'var(--text-dark)', wordBreak: 'break-word', lineHeight: 1.35, marginBottom: '3px' }}>
+                <h3 style={{ fontSize: '0.96rem', fontWeight: 800, color: 'var(--text-dark)', wordBreak: 'break-word', lineHeight: 1.35, marginBottom: '3px' }}>
                   {t('alert.train')} #{incident.trainNumber} ({localize(incident.trainName)})
                 </h3>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600, marginBottom: '4px', wordBreak: 'break-word' }}>
                   {localize(incident.sectionName)}
                 </div>
-                <p style={{ fontSize: '0.76rem', color: 'var(--text-body)', lineHeight: 1.45, wordBreak: 'break-word' }}>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-body)', lineHeight: 1.5, wordBreak: 'break-word' }}>
                   {localize(incident.description)} • <strong style={{ color: 'var(--text-dark)' }}>{t('alert.relief')}: {localize(incident.reliefTrainStatus)}</strong> ({incident.reliefTrainId || 'Dispatching'})
                 </p>
               </div>
@@ -464,8 +464,8 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
           key={block.id}
           className="bms-card"
           style={{
-            background: 'var(--rx-amber-light)',
-            borderColor: 'rgba(245, 158, 11, 0.3)',
+            background: 'var(--rx-surface)',
+            borderColor: 'rgba(217, 119, 6, 0.3)',
             borderLeft: '5px solid var(--rx-amber)',
             padding: '14px 16px',
             borderRadius: 'var(--radius-sm)',
@@ -496,7 +496,7 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
               <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '3px', wordBreak: 'break-word' }}>
                 {localize(block.reason)}
               </div>
-              <p style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', lineHeight: 1.4, wordBreak: 'break-word' }}>
+              <p style={{ fontSize: '0.76rem', color: 'var(--text-body)', lineHeight: 1.45, wordBreak: 'break-word' }}>
                 {localize(block.publicAdvisory)}
               </p>
             </div>

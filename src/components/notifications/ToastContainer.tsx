@@ -75,14 +75,12 @@ export const ToastContainer: React.FC = () => {
             key={toast.id}
             style={{
               pointerEvents: 'auto',
-              background: isSos
-                ? 'linear-gradient(135deg, #1a0505 0%, #1f0808 100%)'
-                : 'var(--rx-surface)',
+              background: 'var(--rx-surface)',
               borderRadius: '16px',
               padding: '14px 16px',
               boxShadow: isSos
-                ? '0 0 0 2px rgba(239,68,68,0.3), 0 16px 48px rgba(239,68,68,0.25)'
-                : '0 12px 36px rgba(12, 19, 34, 0.25), 0 0 0 1px rgba(255,255,255,0.08)',
+                ? '0 8px 32px rgba(239,68,68,0.25), 0 0 0 1px rgba(239,68,68,0.3)'
+                : '0 12px 36px rgba(12, 19, 34, 0.18), 0 0 0 1px rgba(148,163,184,0.15)',
               border: getBorder(),
               display: 'flex',
               alignItems: 'flex-start',
@@ -105,18 +103,18 @@ export const ToastContainer: React.FC = () => {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
                 <div style={{
-                  fontSize: '0.84rem', fontWeight: 800,
-                  color: isSos ? '#FCA5A5' : 'var(--text-dark)',
+                  fontSize: '0.86rem', fontWeight: 800,
+                  color: isSos ? 'var(--rx-red)' : 'var(--text-dark)',
                   lineHeight: 1.3
                 }}>
                   {toast.title}
                 </div>
-                <span style={{ fontSize: '0.63rem', color: 'var(--text-muted)', flexShrink: 0 }}>
+                <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', flexShrink: 0 }}>
                   {toast.timestamp}
                 </span>
               </div>
 
-              <div style={{ fontSize: '0.73rem', color: isSos ? '#FDA4A4' : 'var(--text-secondary)', marginTop: '4px', lineHeight: 1.4 }}>
+              <div style={{ fontSize: '0.76rem', color: 'var(--text-body)', marginTop: '4px', lineHeight: 1.45 }}>
                 {toast.message}
               </div>
 
@@ -127,12 +125,12 @@ export const ToastContainer: React.FC = () => {
                     removeToast(toast.id);
                   }}
                   style={{
-                    background: isSos ? 'rgba(239,68,68,0.2)' : 'transparent',
-                    border: isSos ? '1px solid rgba(239,68,68,0.4)' : 'none',
+                    background: isSos ? 'rgba(239,68,68,0.12)' : 'transparent',
+                    border: isSos ? '1px solid rgba(239,68,68,0.35)' : 'none',
                     borderRadius: '6px',
-                    padding: isSos ? '3px 9px' : '0',
-                    color: isSos ? '#FCA5A5' : 'var(--rx-green-deep)',
-                    fontSize: '0.72rem',
+                    padding: isSos ? '4px 10px' : '0',
+                    color: isSos ? 'var(--rx-red)' : 'var(--rx-green-deep)',
+                    fontSize: '0.74rem',
                     fontWeight: 800,
                     cursor: 'pointer'
                   }}
