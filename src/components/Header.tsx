@@ -96,6 +96,8 @@ export const Header: React.FC = () => {
 
   const activeAccidentsCount  = accidents.filter(a => a.status !== 'resolved').length;
   const activeMegaBlocksCount = megaBlocks.filter(b => b.status === 'active').length;
+  const activeSosReports      = problemReports.filter(p => p.severity === 'CRITICAL_SOS' && p.status !== 'RESOLVED').length;
+  const totalBellCount = activeAccidentsCount + activeMegaBlocksCount + activeSosReports;
 
   const divLabel = selectedDivision === 'All' ? t('header.division.all') : selectedDivision;
 
@@ -164,8 +166,8 @@ export const Header: React.FC = () => {
               onMouseEnter={e => { (e.currentTarget.style.background = 'rgba(5, 150, 105, 0.4)'); }}
               onMouseLeave={e => { (e.currentTarget.style.background = 'rgba(255,255,255,0.08)'); }}
             >
-              <Bell size={16} />
-              {(activeAccidentsCount + activeMegaBlocksCount) > 0 && (
+              <Bell size={16} style={{ animation: activeSosReports > 0 ? 'pulse 1s infinite' : undefined }} />
+              {totalBellCount > 0 && (
                 <span style={{
                   position: 'absolute',
                   top: '-2px',
@@ -174,17 +176,18 @@ export const Header: React.FC = () => {
                   height: '16px',
                   padding: '0 4px',
                   borderRadius: '8px',
-                  background: activeAccidentsCount > 0 ? '#EF4444' : 'var(--rx-orange)',
+                  background: (activeAccidentsCount > 0 || activeSosReports > 0) ? '#EF4444' : 'var(--rx-orange)',
                   color: '#FFFFFF',
                   fontSize: '0.62rem',
                   fontWeight: 900,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.35)',
-                  border: '1.5px solid var(--rx-header)'
+                  boxShadow: activeSosReports > 0 ? '0 0 8px #EF4444' : '0 2px 6px rgba(0,0,0,0.35)',
+                  border: '1.5px solid var(--rx-header)',
+                  animation: activeSosReports > 0 ? 'pulse 1s infinite' : undefined
                 }}>
-                  {activeAccidentsCount + activeMegaBlocksCount}
+                  {totalBellCount}
                 </span>
               )}
             </button>

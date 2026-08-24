@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   X, Bell, Train, Zap, ShieldCheck, AlertTriangle,
-  Clock, CheckCheck, ChevronRight, ExternalLink, Filter, Sparkles
+  Clock, CheckCheck, ChevronRight, Filter, Sparkles,
+  LifeBuoy, PhoneCall, MapPin, Radio
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -13,7 +14,10 @@ interface NotificationsDrawerProps {
 }
 
 export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen, onClose }) => {
-  const { accidents, megaBlocks, setActiveTab, setIsKavachModalOpen, setPersona } = useRailway();
+  const {
+    accidents, megaBlocks, problemReports,
+    setActiveTab, setIsKavachModalOpen, setPersona, setIsProblemModalOpen
+  } = useRailway();
   const { language, t } = useLanguage();
   const {
     megaBlockAlerts,
@@ -22,14 +26,33 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
     toggleNotification
   } = useSettings();
 
-  const [activeFilter, setActiveFilter] = useState<'all' | 'megablock' | 'sos' | 'kavach'>('all');
+  type FilterType = 'all' | 'megablock' | 'sos' | 'kavach' | 'railmadad';
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [readIds, setReadIds] = useState<Set<string>>(new Set());
+  const prevProblemCount = useRef(problemReports.length);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll & flash when new SOS problem arrives
+  useEffect(() => {
+    if (problemReports.length > prevProblemCount.current) {
+      const newest = problemReports[0];
+      if (newest && (newest.severity === 'CRITICAL_SOS' || newest.severity === 'HIGH')) {
+        // Switch filter to railmadad so user sees it immediately
+        setActiveFilter('railmadad');
+        // Scroll to top of list
+        if (listRef.current) {
+          listRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+    }
+    prevProblemCount.current = problemReports.length;
+  }, [problemReports]);
 
   if (!isOpen) return null;
 
   // Build live notification stream from system events
   const notificationItems = [
-    // Emergency SOS / Accidents
+    // ── Emergency SOS / Accidents ──────────────────────────────────────────
     ...accidents.map(acc => ({
       id: `acc_${acc.id}`,
       type: 'sos' as const,
@@ -38,6 +61,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
       time: acc.reportedAt || 'Live Telemetry',
       severity: acc.severity,
       enabled: emergencySosAlerts,
+      isSos: acc.severity === 'critical',
       onClick: () => {
         setPersona('planner');
         setActiveTab('accidents');
@@ -45,7 +69,31 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
       }
     })),
 
-    // Mega Blocks
+    // ── RailMadad Problem Reports (passengers + controllers) ───────────────
+    ...problemReports.map(pr => {
+      const isCritical = pr.severity === 'CRITICAL_SOS';
+      const isHigh = pr.severity === 'HIGH';
+      return {
+        id: `pr_${pr.id}`,
+        type: 'railmadad' as const,
+        title: isCritical
+          ? `🆘 SOS EMERGENCY: ${pr.id}`
+          : isHigh
+          ? `🚨 HIGH PRIORITY: ${pr.id}`
+          : `📋 RailMadad: ${pr.id}`,
+        desc: `${pr.title || pr.category} • ${pr.description?.slice(0, 80) || ''}${(pr.description?.length ?? 0) > 80 ? '…' : ''} • Status: ${pr.status}`,
+        time: pr.timestamp || 'Just now',
+        severity: isCritical ? 'critical' : isHigh ? 'high' : 'medium',
+        enabled: true,
+        isSos: isCritical,
+        onClick: () => {
+          setIsProblemModalOpen(true);
+          onClose();
+        }
+      };
+    }),
+
+    // ── Mega Blocks ─────────────────────────────────────────────────────────
     ...megaBlocks.map(mb => ({
       id: `mb_${mb.id}`,
       type: 'megablock' as const,
@@ -54,6 +102,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
       time: mb.date || 'Sunday Block',
       severity: mb.status === 'active' ? 'high' : 'medium',
       enabled: megaBlockAlerts,
+      isSos: false,
       onClick: () => {
         setPersona('planner');
         setActiveTab('blocks');
@@ -61,7 +110,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
       }
     })),
 
-    // Kavach SIL-4 Updates
+    // ── Kavach SIL-4 Updates ─────────────────────────────────────────────
     {
       id: 'kavach_live_1',
       type: 'kavach' as const,
@@ -70,6 +119,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
       time: 'Continuous Health Check',
       severity: 'info',
       enabled: kavachAlerts,
+      isSos: false,
       onClick: () => {
         setIsKavachModalOpen(true);
         onClose();
@@ -82,17 +132,49 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
     return item.type === activeFilter;
   });
 
+  // Sort: SOS first, then unread, then by type
+  const sortedItems = [...filteredItems].sort((a, b) => {
+    if (a.isSos && !b.isSos) return -1;
+    if (!a.isSos && b.isSos) return 1;
+    const aRead = readIds.has(a.id);
+    const bRead = readIds.has(b.id);
+    if (!aRead && bRead) return -1;
+    if (aRead && !bRead) return 1;
+    return 0;
+  });
+
   const unreadCount = filteredItems.filter(i => !readIds.has(i.id)).length;
+  const sosProblemCount = problemReports.filter(p =>
+    p.severity === 'CRITICAL_SOS' && p.status !== 'RESOLVED'
+  ).length;
 
   const markAllRead = () => {
     setReadIds(new Set(notificationItems.map(i => i.id)));
+  };
+
+  const getSeverityStyle = (severity: string, isSos: boolean) => {
+    if (isSos || severity === 'critical') return {
+      border: '1.5px solid rgba(239, 68, 68, 0.6)',
+      background: 'rgba(239, 68, 68, 0.08)',
+      boxShadow: '0 0 0 2px rgba(239,68,68,0.12), 0 6px 20px rgba(0,0,0,0.2)'
+    };
+    if (severity === 'high') return {
+      border: '1.5px solid rgba(245, 158, 11, 0.5)',
+      background: 'rgba(245, 158, 11, 0.06)',
+      boxShadow: 'var(--shadow-card)'
+    };
+    return {
+      border: '1px solid var(--border-light)',
+      background: 'var(--rx-surface)',
+      boxShadow: 'none'
+    };
   };
 
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 1000,
       display: 'flex', justifyContent: 'flex-end',
-      background: 'rgba(12, 19, 34, 0.45)',
+      background: 'rgba(12, 19, 34, 0.55)',
       backdropFilter: 'blur(6px)',
       animation: 'authFadeIn 0.2s ease'
     }}
@@ -100,7 +182,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
     >
       <div
         style={{
-          width: '100%', maxWidth: '440px', height: '100%',
+          width: '100%', maxWidth: '460px', height: '100%',
           background: 'var(--rx-surface)',
           borderLeft: '1px solid var(--border-light)',
           display: 'flex', flexDirection: 'column',
@@ -109,7 +191,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
         }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Header */}
+        {/* ── Header ── */}
         <div style={{
           padding: '18px 20px',
           borderBottom: '1px solid var(--border-light)',
@@ -120,31 +202,34 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
               width: '36px', height: '36px', borderRadius: '10px',
-              background: 'rgba(234, 88, 12, 0.2)',
-              border: '1px solid rgba(234, 88, 12, 0.4)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center'
+              background: sosProblemCount > 0 ? 'rgba(239, 68, 68, 0.25)' : 'rgba(234, 88, 12, 0.2)',
+              border: sosProblemCount > 0 ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(234, 88, 12, 0.4)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              animation: sosProblemCount > 0 ? 'pulse 1.4s infinite' : undefined
             }}>
-              <Bell size={18} color="var(--rx-orange)" />
+              {sosProblemCount > 0 ? <Zap size={18} color="#EF4444" /> : <Bell size={18} color="var(--rx-orange)" />}
             </div>
             <div>
               <div style={{ fontSize: '1rem', fontWeight: 900, fontFamily: 'var(--font-display)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 {language === 'mr' ? 'सूचना केंद्र' : 'Notifications Center'}
-                <span style={{
-                  background: 'rgba(245, 158, 11, 0.25)',
-                  border: '1px solid rgba(245, 158, 11, 0.5)',
-                  color: '#FCD34D',
-                  fontSize: '0.6rem',
-                  fontWeight: 900,
-                  padding: '2px 7px',
-                  borderRadius: '20px',
-                  letterSpacing: '0.08em',
-                  animation: 'pulse 2s infinite'
-                }}>
-                  ⚠ DEMO DATA
-                </span>
+                {sosProblemCount > 0 && (
+                  <span style={{
+                    background: 'rgba(239, 68, 68, 0.3)',
+                    border: '1px solid rgba(239, 68, 68, 0.6)',
+                    color: '#FCA5A5',
+                    fontSize: '0.6rem',
+                    fontWeight: 900,
+                    padding: '2px 7px',
+                    borderRadius: '20px',
+                    letterSpacing: '0.08em',
+                    animation: 'pulse 1s infinite'
+                  }}>
+                    🆘 {sosProblemCount} SOS ACTIVE
+                  </span>
+                )}
               </div>
               <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.6)' }}>
-                {unreadCount} {language === 'mr' ? 'नवीन सूचना' : 'simulated alerts'} • Not real IR feeds
+                {unreadCount} unread • Real-time from context state
               </div>
             </div>
           </div>
@@ -186,27 +271,38 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
           </div>
         </div>
 
-        {/* Filter Tabs */}
+        {/* ── Filter Tabs ── */}
         <div style={{
-          padding: '12px 18px',
+          padding: '10px 16px',
           background: 'var(--rx-surface-alt)',
           borderBottom: '1px solid var(--border-light)',
           display: 'flex', gap: '6px', overflowX: 'auto'
         }}>
           {[
-            { key: 'all', label: 'All', icon: <Filter size={12} /> },
-            { key: 'sos', label: 'Emergency SOS', icon: <Zap size={12} color="#EF4444" /> },
-            { key: 'megablock', label: 'Mega Blocks', icon: <Train size={12} color="#3B82F6" /> },
-            { key: 'kavach', label: 'Kavach', icon: <ShieldCheck size={12} color="#10B981" /> }
+            { key: 'all', label: 'All', icon: <Filter size={12} />, count: notificationItems.length },
+            {
+              key: 'railmadad',
+              label: '🆘 RailMadad',
+              icon: <LifeBuoy size={12} color={sosProblemCount > 0 ? '#EF4444' : '#F59E0B'} />,
+              count: problemReports.length,
+              pulse: sosProblemCount > 0
+            },
+            { key: 'sos', label: 'SOS Incidents', icon: <Zap size={12} color="#EF4444" />, count: accidents.length },
+            { key: 'megablock', label: 'Mega Blocks', icon: <Train size={12} color="#3B82F6" />, count: megaBlocks.length },
+            { key: 'kavach', label: 'Kavach', icon: <ShieldCheck size={12} color="#10B981" />, count: 1 }
           ].map(tab => (
             <button
               key={tab.key}
-              onClick={() => setActiveFilter(tab.key as any)}
+              onClick={() => setActiveFilter(tab.key as FilterType)}
               style={{
                 padding: '5px 10px',
                 borderRadius: 'var(--radius-pill)',
-                border: activeFilter === tab.key ? '1px solid var(--rx-green)' : '1px solid var(--border-light)',
-                background: activeFilter === tab.key ? 'var(--rx-green)' : 'var(--rx-surface)',
+                border: activeFilter === tab.key
+                  ? (tab.key === 'railmadad' && sosProblemCount > 0 ? '1px solid #EF4444' : '1px solid var(--rx-green)')
+                  : '1px solid var(--border-light)',
+                background: activeFilter === tab.key
+                  ? (tab.key === 'railmadad' && sosProblemCount > 0 ? '#EF4444' : 'var(--rx-green)')
+                  : 'var(--rx-surface)',
                 color: activeFilter === tab.key ? '#FFFFFF' : 'var(--text-secondary)',
                 fontSize: '0.72rem',
                 fontWeight: 700,
@@ -215,16 +311,63 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                 alignItems: 'center',
                 gap: '5px',
                 whiteSpace: 'nowrap',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.15s ease',
+                animation: (tab as any).pulse ? 'pulse 1.5s infinite' : undefined,
+                position: 'relative'
               }}
             >
               {tab.icon}
               <span>{tab.label}</span>
+              {(tab.count ?? 0) > 0 && (
+                <span style={{
+                  background: activeFilter === tab.key ? 'rgba(255,255,255,0.25)' : 'rgba(239,68,68,0.2)',
+                  color: activeFilter === tab.key ? '#fff' : '#EF4444',
+                  borderRadius: '8px',
+                  padding: '0 5px',
+                  fontSize: '0.58rem',
+                  fontWeight: 900,
+                  minWidth: '16px',
+                  textAlign: 'center'
+                }}>
+                  {tab.count}
+                </span>
+              )}
             </button>
           ))}
         </div>
 
-        {/* Muted Alert Warning Banner (if user turned off a category) */}
+        {/* ── SOS Active Banner ── */}
+        {sosProblemCount > 0 && (
+          <div style={{
+            padding: '10px 16px',
+            background: 'linear-gradient(90deg, rgba(239,68,68,0.18) 0%, rgba(220,38,38,0.08) 100%)',
+            borderBottom: '2px solid rgba(239,68,68,0.4)',
+            display: 'flex', alignItems: 'center', gap: '10px',
+            animation: 'pulse 2s infinite'
+          }}>
+            <Radio size={16} color="#EF4444" style={{ flexShrink: 0 }} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 900, color: '#FCA5A5' }}>
+                🆘 {sosProblemCount} CRITICAL SOS REPORT{sosProblemCount > 1 ? 'S' : ''} ACTIVE
+              </div>
+              <div style={{ fontSize: '0.66rem', color: '#FDA4A4' }}>
+                Emergency alerts dispatched to Section Controller & Station Master
+              </div>
+            </div>
+            <button
+              onClick={() => { setIsProblemModalOpen(true); onClose(); }}
+              style={{
+                background: '#EF4444', border: 'none', borderRadius: '8px',
+                color: '#fff', padding: '5px 10px', fontSize: '0.7rem',
+                fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap'
+              }}
+            >
+              View SOS →
+            </button>
+          </div>
+        )}
+
+        {/* ── Muted Alert Warning ── */}
         {((activeFilter === 'sos' && !emergencySosAlerts) ||
           (activeFilter === 'megablock' && !megaBlockAlerts) ||
           (activeFilter === 'kavach' && !kavachAlerts)) && (
@@ -241,14 +384,9 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
             <button
               onClick={() => toggleNotification(activeFilter as any)}
               style={{
-                background: 'var(--rx-orange)',
-                border: 'none',
-                color: '#fff',
-                padding: '3px 8px',
-                borderRadius: '6px',
-                fontSize: '0.68rem',
-                fontWeight: 800,
-                cursor: 'pointer'
+                background: 'var(--rx-orange)', border: 'none', color: '#fff',
+                padding: '3px 8px', borderRadius: '6px', fontSize: '0.68rem',
+                fontWeight: 800, cursor: 'pointer'
               }}
             >
               Enable
@@ -256,46 +394,37 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
           </div>
         )}
 
-        {/* Demo Data Banner */}
-        <div style={{
-          padding: '8px 16px',
-          background: 'linear-gradient(90deg, rgba(245, 158, 11, 0.12) 0%, rgba(234, 88, 12, 0.08) 100%)',
-          borderBottom: '1px solid rgba(245, 158, 11, 0.2)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          <span style={{ fontSize: '0.72rem' }}>🧪</span>
-          <span style={{ fontSize: '0.7rem', color: '#D97706', fontWeight: 700 }}>
-            These are <strong>simulated demo alerts</strong> generated from mock data. Not connected to real Indian Railways live feeds.
-          </span>
-        </div>
-
-        {/* Notifications List */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {filteredItems.length === 0 ? (
+        {/* ── Notification List ── */}
+        <div
+          ref={listRef}
+          style={{ flex: 1, overflowY: 'auto', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '10px' }}
+        >
+          {sortedItems.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
               <Bell size={32} style={{ opacity: 0.3, marginBottom: '10px' }} />
               <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>No notifications in this filter</div>
-              <div style={{ fontSize: '0.72rem' }}>All Indian Railways operations are running smoothly.</div>
+              <div style={{ fontSize: '0.72rem' }}>All operations running normally.</div>
             </div>
           ) : (
-            filteredItems.map(item => {
+            sortedItems.map(item => {
               const isRead = readIds.has(item.id);
+              const severityStyle = getSeverityStyle(item.severity, item.isSos);
               return (
                 <div
                   key={item.id}
-                  onClick={item.onClick}
+                  onClick={() => {
+                    setReadIds(prev => new Set([...prev, item.id]));
+                    item.onClick();
+                  }}
                   style={{
-                    background: isRead ? 'var(--rx-surface-alt)' : 'var(--rx-surface)',
-                    border: isRead ? '1px solid var(--border-light)' : '1.5px solid rgba(5, 150, 105, 0.3)',
+                    ...severityStyle,
                     borderRadius: '14px',
                     padding: '14px',
                     cursor: 'pointer',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '6px',
-                    boxShadow: isRead ? 'none' : 'var(--shadow-card)',
+                    opacity: isRead ? 0.75 : 1,
                     transition: 'all 0.18s ease'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.transform = 'translateX(-3px)'; }}
@@ -305,15 +434,21 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                     <div style={{
                       fontSize: '0.82rem',
                       fontWeight: isRead ? 700 : 900,
-                      color: 'var(--text-dark)',
+                      color: item.isSos ? '#FCA5A5' : 'var(--text-dark)',
                       display: 'flex', alignItems: 'center', gap: '6px'
                     }}>
                       {!isRead && (
-                        <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'var(--rx-green)', flexShrink: 0 }} />
+                        <span style={{
+                          width: '7px', height: '7px', borderRadius: '50%',
+                          background: item.isSos ? '#EF4444' : 'var(--rx-green)',
+                          flexShrink: 0,
+                          animation: item.isSos ? 'pulse 1s infinite' : undefined
+                        }} />
                       )}
                       <span>{item.title}</span>
                     </div>
-                    <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '0.63rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                      <Clock size={10} style={{ display: 'inline', marginRight: '3px' }} />
                       {item.time}
                     </span>
                   </div>
@@ -322,25 +457,33 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                     {item.desc}
                   </div>
 
+                  {/* Type Badge + Action */}
                   <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    marginTop: '4px', paddingTop: '6px', borderTop: '1px solid var(--border-light)'
+                    marginTop: '4px', paddingTop: '6px', borderTop: '1px solid rgba(255,255,255,0.06)'
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--rx-green-deep)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                        Tap to open details →
-                      </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{
-                        fontSize: '0.58rem',
-                        fontWeight: 900,
-                        background: 'rgba(245, 158, 11, 0.15)',
-                        color: '#B45309',
-                        border: '1px solid rgba(245, 158, 11, 0.3)',
-                        padding: '1px 6px',
-                        borderRadius: '10px',
-                        letterSpacing: '0.05em'
+                        fontSize: '0.62rem', fontWeight: 900,
+                        background: item.type === 'railmadad'
+                          ? (item.isSos ? 'rgba(239,68,68,0.2)' : 'rgba(245,158,11,0.15)')
+                          : item.type === 'sos'
+                          ? 'rgba(239,68,68,0.15)'
+                          : item.type === 'megablock'
+                          ? 'rgba(59,130,246,0.15)'
+                          : 'rgba(16,185,129,0.15)',
+                        color: item.type === 'railmadad'
+                          ? (item.isSos ? '#FCA5A5' : '#D97706')
+                          : item.type === 'sos' ? '#FCA5A5'
+                          : item.type === 'megablock' ? '#93C5FD'
+                          : '#6EE7B7',
+                        padding: '2px 7px', borderRadius: '10px',
+                        letterSpacing: '0.04em', textTransform: 'uppercase' as const
                       }}>
-                        SIMULATED
+                        {item.type === 'railmadad' ? '🆘 RailMadad'
+                          : item.type === 'sos' ? '🔴 SOS Incident'
+                          : item.type === 'megablock' ? '🚧 Mega Block'
+                          : '🛡️ Kavach'}
                       </span>
                     </div>
                     <ChevronRight size={14} color="var(--text-muted)" />
@@ -351,7 +494,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
           )}
         </div>
 
-        {/* Footer */}
+        {/* ── Footer ── */}
         <div style={{
           padding: '12px 18px',
           borderTop: '1px solid var(--border-light)',
@@ -362,25 +505,21 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
             <span style={{
               display: 'inline-block',
               width: '6px', height: '6px', borderRadius: '50%',
-              background: '#F59E0B',
-              boxShadow: '0 0 6px #F59E0B'
+              background: sosProblemCount > 0 ? '#EF4444' : '#10B981',
+              boxShadow: `0 0 6px ${sosProblemCount > 0 ? '#EF4444' : '#10B981'}`
             }} />
-            TrainX Demo Data • Not Live
+            {sosProblemCount > 0 ? `${sosProblemCount} SOS Active` : 'Live — RailwayContext'}
           </div>
           <button
-            onClick={() => {
-              toggleNotification('sos');
-            }}
+            onClick={() => { setIsProblemModalOpen(true); onClose(); }}
             style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--rx-green)',
-              fontSize: '0.72rem',
-              fontWeight: 800,
-              cursor: 'pointer'
+              background: 'transparent', border: 'none',
+              color: 'var(--rx-orange)', fontSize: '0.72rem',
+              fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px'
             }}
           >
-            Test Alert ⚡
+            <LifeBuoy size={13} />
+            Report Issue
           </button>
         </div>
       </div>
