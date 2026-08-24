@@ -22,6 +22,7 @@ import { useRailway } from '../../context/RailwayContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { LiveAlertBanner } from '../LiveAlertBanner';
 import { SimulationControls } from '../SimulationControls';
+import { AiLiveNotificationBar } from '../notifications/AiLiveNotificationBar';
 import { PersonalizedAlertCard } from './PersonalizedAlertCard';
 import { AccidentRerouteAdvisorModal } from './AccidentRerouteAdvisorModal';
 import { railwayApi } from '../../services/apiClient';
@@ -76,6 +77,9 @@ export const PassengerPortal: React.FC = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Quick Simulation Bar */}
       <SimulationControls />
+
+      {/* AI Live Real-Time Disruption & Problem Notification Bar */}
+      <AiLiveNotificationBar />
 
       {/* Emergency Alerts Banner */}
       <LiveAlertBanner />

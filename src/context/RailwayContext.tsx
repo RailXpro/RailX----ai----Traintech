@@ -117,8 +117,33 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [tripPlannerModalOpen, setTripPlannerModalOpen] = useState<boolean>(false);
   const [tripOrigin, setTripOrigin] = useState<string>('CSMT Mumbai');
   const [tripDest, setTripDest] = useState<string>('Kalyan Junction');
-  const [problemReports, setProblemReports] = useState<ProblemReport[]>(INITIAL_PROBLEM_REPORTS);
+  const [problemReports, setProblemReports] = useState<ProblemReport[]>(() => {
+    try {
+      const saved = localStorage.getItem('railx_problem_reports');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return INITIAL_PROBLEM_REPORTS;
+  });
   const [isProblemModalOpen, setIsProblemModalOpen] = useState<boolean>(false);
+
+  // Sync problem reports across browser tabs / windows in real time
+  useEffect(() => {
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'railx_problem_reports' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed)) {
+            setProblemReports(parsed);
+          }
+        } catch {}
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
 
   const openTripPlanner = (origin?: string, dest?: string) => {
     if (origin) setTripOrigin(origin);
@@ -433,7 +458,30 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
         : 'AI Ticket Logged: Assigned to field maintenance queue.'
     };
 
-    setProblemReports(prev => [newReport, ...prev]);
+    setProblemReports(prev => {
+      const next = [newReport, ...prev];
+      try {
+        localStorage.setItem('railx_problem_reports', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+
+    // Background sync to serverless API
+    try {
+      fetch('/api/problems', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          referenceId: id,
+          category: reportData.category,
+          severity: reportData.severity,
+          title: reportData.title,
+          description: reportData.description,
+          trainNumber: reportData.trainNumber,
+          stationOrKm: reportData.stationOrSection
+        })
+      }).catch(() => {});
+    } catch {}
 
     // If critical, trigger emergency audio sound
     if (reportData.severity === 'CRITICAL_SOS') {
