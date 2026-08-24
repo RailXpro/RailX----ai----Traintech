@@ -214,7 +214,7 @@ export const GlobalSearchBar: React.FC = () => {
   };
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', flex: 1, maxWidth: '480px' }}>
+    <div ref={containerRef} style={{ position: 'relative', flex: '1 1 240px', maxWidth: '480px', minWidth: '180px' }}>
       {/* Search Input Box */}
       <div className="bms-search-box" style={{ width: '100%' }}>
         <Search size={15} color="rgba(255,255,255,0.55)" style={{ flexShrink: 0 }} />

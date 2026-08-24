@@ -1,4 +1,4 @@
-// ─── TrainX.ai Complete Bilingual Translation Map ───────────────────────────
+// ─── TrainX Complete Bilingual Translation Map ───────────────────────────────
 // Comprehensive support for English ('en') & Marathi ('mr') across ALL UI & data!
 
 export type Lang = 'en' | 'mr';
@@ -7,7 +7,7 @@ type TranslationMap = Record<string, Record<Lang, string>>;
 
 export const translations: TranslationMap = {
   // ── Brand ──────────────────────────────────────────────────────────────
-  'brand.name': { en: 'TrainX.ai', mr: 'ट्रेनX.ai' },
+  'brand.name': { en: 'TrainX', mr: 'ट्रेनX' },
   'brand.tagline': { en: 'Rail Intelligence Platform', mr: 'रेल बुद्धिमत्ता मंच' },
 
   // ── Header Nav & Controls ──────────────────────────────────────────────
@@ -103,7 +103,7 @@ export const translations: TranslationMap = {
   'hero.slide3.cta': { en: 'Incident Command', mr: 'घटना नियंत्रण' },
 
   // ── Simulation Controls ─────────────────────────────────────────────────
-  'sim.title': { en: 'TrainX.ai Scenario & Event Simulator', mr: 'TrainX.ai परिस्थिती व घटना सिम्युलेटर' },
+  'sim.title': { en: 'TrainX Scenario & Event Simulator', mr: 'TrainX परिस्थिती व घटना सिम्युलेटर' },
   'sim.sandbox': { en: 'SANDBOX', mr: 'सँडबॉक्स' },
   'sim.subtitle': { en: 'Test live constraints, trigger incident interlocks, or run the AI optimization engine.', mr: 'थेट मर्यादांची चाचणी घ्या, आपत्कालीन इंटरलॉक सुरू करा किंवा AI ऑप्टिमायझेशन इंजिन चालवा.' },
   'sim.triggerEmergency': { en: 'Simulate Incident (OHE Snap)', mr: 'आपत्कालीन घटना सिम्युलेट करा (OHE वायर)' },
@@ -116,9 +116,12 @@ export const translations: TranslationMap = {
   'alert.critical': { en: 'CRITICAL', mr: 'अति-गंभीर' },
   'alert.reported': { en: 'Reported', mr: 'नोंदणी वेळ' },
   'alert.relief': { en: 'Relief', mr: 'मदत पथक' },
-  'alert.siren': { en: 'Siren', mr: 'सायरन वाजवा' },
+  'alert.siren': { en: 'Siren', mr: 'सायरन' },
+  'alert.sirenActive': { en: 'Siren Sounding', mr: 'सायरन वाजत आहे' },
   'alert.manageIncident': { en: 'Manage Incident & ART', mr: 'घटना व मदत गाडी व्यवस्थापित करा' },
   'alert.helpline': { en: 'Helpline: 139', mr: 'हेल्पलाइन: १३९' },
+  'alert.callHelpline': { en: 'Call Helpline: 139', mr: 'हेल्पलाइन कॉल: १३९' },
+  'alert.alternateRoute': { en: 'Find Alternate Route', mr: 'पर्यायी मार्ग शोधा' },
   'alert.activeMegaBlock': { en: 'ACTIVE MEGA BLOCK', mr: 'सक्रिय मेगा ब्लॉक' },
   'alert.timeWindow': { en: 'Time Window', mr: 'वेळ कालावधी' },
   'alert.train': { en: 'Train', mr: 'गाडी क्र.' },
@@ -168,7 +171,7 @@ export const translations: TranslationMap = {
   'map.activeTrainsCount': { en: 'Active Trains', mr: 'सक्रिय गाड्या' },
 
   // ── AI Auto-Block Optimizer ─────────────────────────────────────────────
-  'optimizer.title': { en: 'TrainX.ai Auto-Block Optimization Engine', mr: 'TrainX.ai ऑटो-ब्लॉक ऑप्टिमायझेशन इंजिन' },
+  'optimizer.title': { en: 'TrainX Auto-Block Optimization Engine', mr: 'TrainX ऑटो-ब्लॉक ऑप्टिमायझेशन इंजिन' },
   'optimizer.subtitle': { en: 'Solves multi-commodity track possession constraints, predicts downtime, and eliminates train timetable clashes.', mr: 'विविध ट्रॅक ताबा मर्यादा सोडवते, डाउनटाइमचा अंदाज लावते आणि गाड्यांचे वेळापत्रक संघर्ष दूर करते.' },
   'optimizer.execute': { en: 'Execute AI Solver & Reroute Engine', mr: 'AI सोल्व्हर आणि रीरूट इंजिन चालवा' },
   'optimizer.constraints': { en: 'Optimization Objective Constraints & Weights (Interactive)', mr: 'ऑप्टिमायझेशन उद्दिष्ट मर्यादा आणि महत्त्व (इंटरॅक्टिव्ह)' },
@@ -223,10 +226,10 @@ export const translations: TranslationMap = {
   'asset.divisionRankings': { en: 'Division Asset Efficiency Ranking', mr: 'विभाग मालमत्ता कार्यक्षमता क्रमवारी' },
 
   // ── Passenger Portal ────────────────────────────────────────────────────
-  'passenger.heroBadge1': { en: 'TRAINX.AI • COMMUTER LIVE PORTAL', mr: 'TRAINX.AI • प्रवासी थेट पोर्टल' },
+  'passenger.heroBadge1': { en: 'TRAINX • COMMUTER LIVE PORTAL', mr: 'TRAINX • प्रवासी थेट पोर्टल' },
   'passenger.heroBadge2': { en: 'SUNDAY MEGA BLOCK RADAR', mr: 'रविवार मेगा ब्लॉक रडार' },
   'passenger.heroTitle': { en: 'Live Sunday Mega Block & Disruption Bulletins', mr: 'थेट रविवार मेगा ब्लॉक आणि व्यत्यय बुलेटिन' },
-  'passenger.heroSubtitle': { en: 'Stay ahead of planned maintenance diversions, track possessions, and real-time safety advisories. Plan smooth commutes with TrainX.ai smart rerouting.', mr: 'नियोजित देखभाल फेरबदल, ट्रॅक ताबा आणि रिअल-टाइम सुरक्षा सल्ल्यांची आधीच माहिती मिळवा. TrainX.ai स्मार्ट मार्गांसह सुखकर प्रवास करा.' },
+  'passenger.heroSubtitle': { en: 'Stay ahead of planned maintenance diversions, track possessions, and real-time safety advisories. Plan smooth commutes with TrainX smart rerouting.', mr: 'नियोजित देखभाल फेरबदल, ट्रॅक ताबा आणि रिअल-टाइम सुरक्षा सल्ल्यांची आधीच माहिती मिळवा. TrainX स्मार्ट मार्गांसह सुखकर प्रवास करा.' },
   'passenger.helpline139': { en: '139 (24x7 RailMadad Helpline)', mr: '१३९ (२४x७ रेलमदत हेल्पलाइन)' },
   'passenger.grpHelp': { en: 'GRP Emergency', mr: 'GRP आपत्कालीन' },
   'passenger.womenSafety': { en: 'Women Safety', mr: 'महिला सुरक्षा' },
@@ -266,8 +269,8 @@ export const translations: TranslationMap = {
   'footer.disruption': { en: 'Disruption & Safety', mr: 'व्यत्यय व्यवस्थापन आणि सुरक्षा' },
   'footer.divisions': { en: 'Divisions Covered', mr: 'समाविष्ट रेल्वे विभाग' },
   'footer.copyright': {
-    en: 'Copyright 2026 © TrainX.ai • Indian Railways (भारतीय रेल) & CRIS. All Rights Reserved.',
-    mr: 'कॉपीराइट २०२६ © ट्रेनX.ai • भारतीय रेल आणि CRIS. सर्व हक्क राखीव.',
+    en: 'Copyright 2026 © TrainX • Indian Railways (भारतीय रेल) & CRIS. All Rights Reserved.',
+    mr: 'कॉपीराइट २०२६ © ट्रेनX • भारतीय रेल आणि CRIS. सर्व हक्क राखीव.',
   },
   'footer.aiBlock': { en: 'Automatic Block Planning (AI Solver)', mr: 'स्वयंचलित ब्लॉक नियोजन (AI सोल्व्हर)' },
   'footer.trackPossession': { en: 'Track Possession Scheduling', mr: 'ट्रॅक ताबा वेळापत्रक' },

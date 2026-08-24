@@ -12,6 +12,28 @@ interface CorridorInspectorModalProps {
   onClose: () => void;
 }
 
+const IR_STATION_META: Record<string, { code: string; hiMr: string; msl: string }> = {
+  'CSMT Mumbai': { code: 'CSMT', hiMr: 'छत्रपती शिवाजी महाराज टर्मिनस', msl: '14.2m' },
+  'Byculla': { code: 'BY', hiMr: 'भायखळा', msl: '11.5m' },
+  'Dadar CR': { code: 'DR', hiMr: 'दादर मध्य', msl: '12.8m' },
+  'Thane': { code: 'TNA', hiMr: 'ठाणे', msl: '16.0m' },
+  'Kalyan Junction': { code: 'KYN', hiMr: 'कल्याण जंक्शन', msl: '19.4m' },
+  'Kasara': { code: 'KSRA', hiMr: 'कसारा', msl: '280.0m' },
+  'Churchgate': { code: 'CCG', hiMr: 'चर्चगेट', msl: '10.2m' },
+  'Mumbai Central': { code: 'MMCT', hiMr: 'मुंबई सेंट्रल', msl: '12.0m' },
+  'Dadar WR': { code: 'DDR', hiMr: 'दादर पश्चिम', msl: '12.8m' },
+  'Borivali': { code: 'BVI', hiMr: 'बोरिवली', msl: '14.5m' },
+  'Virar': { code: 'VR', hiMr: 'विरार', msl: '18.2m' },
+  'Dahanu Road': { code: 'DRD', hiMr: 'डहाणू रोड', msl: '22.0m' },
+  'New Delhi': { code: 'NDLS', hiMr: 'नई दिल्ली', msl: '216.0m' },
+  'New Delhi (NDLS)': { code: 'NDLS', hiMr: 'नई दिल्ली', msl: '216.0m' },
+  'Ghaziabad Junction': { code: 'GZB', hiMr: 'गाजियाबाद जंक्शन', msl: '217.0m' },
+  'Aligarh Junction': { code: 'ALJN', hiMr: 'अलीगढ़ जंक्शन', msl: '186.0m' },
+  'Kanpur Central': { code: 'CNB', hiMr: 'कानपुर सेंट्रल', msl: '132.0m' },
+  'Howrah Junction': { code: 'HWH', hiMr: 'हावड़ा जंक्शन', msl: '12.0m' },
+  'Bardhaman Junction': { code: 'BWN', hiMr: 'बर्धमान जंक्शन', msl: '36.0m' },
+};
+
 export const CorridorInspectorModal: React.FC<CorridorInspectorModalProps> = ({ section, onClose }) => {
   const {
     trains,
@@ -31,6 +53,9 @@ export const CorridorInspectorModal: React.FC<CorridorInspectorModalProps> = ({ 
   const activeBlock = megaBlocks.find(b => b.sectionId === section.id && b.status === 'active');
   const sectionAccident = accidents.find(a => a.sectionId === section.id && a.status !== 'resolved');
 
+  const fromMeta = IR_STATION_META[section.fromStation] || { code: 'DEP', hiMr: section.fromStation, msl: '15m' };
+  const toMeta = IR_STATION_META[section.toStation] || { code: 'ARR', hiMr: section.toStation, msl: '15m' };
+
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 10000,
@@ -43,7 +68,7 @@ export const CorridorInspectorModal: React.FC<CorridorInspectorModalProps> = ({ 
       <div style={{
         background: 'var(--rx-surface)',
         borderRadius: '24px',
-        maxWidth: '840px',
+        maxWidth: '860px',
         width: '100%',
         maxHeight: '90vh',
         overflowY: 'auto',
@@ -53,46 +78,52 @@ export const CorridorInspectorModal: React.FC<CorridorInspectorModalProps> = ({ 
         flexDirection: 'column'
       }}>
 
-        {/* Header */}
+        {/* ── Official Indian Railways Station Signboard Header ─────── */}
         <div style={{
-          background: 'linear-gradient(135deg, #0F1C3D 0%, #162B60 100%)',
-          padding: '22px 28px',
+          background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF08A 100%)',
+          borderBottom: '3px solid #000000',
+          padding: '18px 24px',
           borderRadius: '24px 24px 0 0',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+          gap: '14px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{
-              width: '46px', height: '46px', borderRadius: '14px',
-              background: 'linear-gradient(135deg, var(--rx-orange) 0%, #FF8F45 100%)',
+              width: '48px', height: '48px', borderRadius: '12px',
+              background: '#000000', color: '#FFCC00',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 18px var(--rx-orange-glow)'
+              fontWeight: 900, fontSize: '1rem',
+              boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+              flexShrink: 0
             }}>
-              <Gauge size={24} color="#FFF" />
+              IR
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
                 <span style={{
-                  background: 'rgba(255, 255, 255, 0.12)', color: '#CBD5E1',
-                  fontSize: '0.68rem', fontWeight: 800, padding: '2px 7px', borderRadius: '6px'
+                  background: '#000000', color: '#FFCC00',
+                  fontSize: '0.68rem', fontWeight: 900, padding: '2px 8px', borderRadius: '4px'
                 }}>
-                  [{section.zone}] {section.code}
+                  [{section.zone} / {section.code}]
                 </span>
-                <h2 style={{ fontSize: '1.2rem', fontWeight: 900, color: '#FFF', margin: 0 }}>
-                  {localize(section.name)}
-                </h2>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#1E293B' }}>
+                  {localize(section.division)} • 1676mm Broad Gauge
+                </span>
               </div>
-              <p style={{ fontSize: '0.74rem', color: '#94A3B8', margin: '4px 0 0' }}>
-                {localize(section.division)} Division • {localize(section.fromStation)} ➔ {localize(section.toStation)} ({section.lengthKm} KM)
-              </p>
+              <div style={{ fontSize: '1.05rem', fontWeight: 900, color: '#000000', fontFamily: 'serif' }}>
+                [{fromMeta.code}] {fromMeta.hiMr} ➔ [{toMeta.code}] {toMeta.hiMr}
+              </div>
+              <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#334155', marginTop: '1px' }}>
+                {localize(section.name)} • {section.lengthKm} KM
+              </div>
             </div>
           </div>
           <button
             onClick={onClose}
             style={{
-              background: 'rgba(255, 255, 255, 0.08)', border: 'none', borderRadius: '12px',
+              background: '#000000', border: 'none', borderRadius: '10px',
               color: '#FFF', width: '36px', height: '36px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer'
@@ -108,16 +139,16 @@ export const CorridorInspectorModal: React.FC<CorridorInspectorModalProps> = ({ 
           {/* Alert if Mega Block or Accident */}
           {activeBlock && (
             <div style={{
-              background: 'var(--rx-amber-light)', border: '1px solid rgba(245, 158, 11, 0.4)',
+              background: 'var(--rx-amber-light)', border: '1.5px solid rgba(245, 158, 11, 0.5)',
               borderRadius: '14px', padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: '12px'
             }}>
               <AlertTriangle size={20} color="var(--rx-amber)" style={{ flexShrink: 0, marginTop: '2px' }} />
               <div>
-                <strong style={{ fontSize: '0.82rem', color: '#92400E' }}>
-                  {language === 'mr' ? 'सक्रिय मेगा ब्लॉक' : 'Active Mega Block Scheduled'}
+                <strong style={{ fontSize: '0.84rem', color: '#92400E' }}>
+                  {language === 'mr' ? 'सक्रिय मेगा ब्लॉक (Traffic Possession)' : 'Active Engineering Mega Block Possession'}
                 </strong>
-                <p style={{ fontSize: '0.74rem', color: '#78350F', margin: '3px 0 0', lineHeight: 1.45 }}>
-                  {localize(activeBlock.reason)} ({activeBlock.startTime} - {activeBlock.endTime}) • {activeBlock.linesAffected}
+                <p style={{ fontSize: '0.75rem', color: '#78350F', margin: '3px 0 0', lineHeight: 1.45 }}>
+                  {localize(activeBlock.reason)} ({activeBlock.startTime} - {activeBlock.endTime}) • Lines: {activeBlock.linesAffected}
                 </p>
               </div>
             </div>
@@ -125,47 +156,47 @@ export const CorridorInspectorModal: React.FC<CorridorInspectorModalProps> = ({ 
 
           {sectionAccident && (
             <div style={{
-              background: 'var(--rx-red-light)', border: '1px solid rgba(239, 68, 68, 0.4)',
+              background: 'var(--rx-red-light)', border: '1.5px solid rgba(239, 68, 68, 0.5)',
               borderRadius: '14px', padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: '12px'
             }}>
               <AlertTriangle size={20} color="var(--rx-red)" style={{ flexShrink: 0, marginTop: '2px' }} />
               <div>
-                <strong style={{ fontSize: '0.82rem', color: 'var(--rx-red)' }}>
-                  {language === 'mr' ? 'आपत्कालीन घटना अहवाल' : 'Emergency Incident Reported'}
+                <strong style={{ fontSize: '0.84rem', color: 'var(--rx-red)' }}>
+                  {language === 'mr' ? 'आपत्कालीन घटना अहवाल (Incident Command)' : 'Emergency Disruption & Track Cordon Notice'}
                 </strong>
-                <p style={{ fontSize: '0.74rem', color: '#991B1B', margin: '3px 0 0', lineHeight: 1.45 }}>
-                  {localize(sectionAccident.natureOfIncident)} • #{sectionAccident.trainNumber} ({localize(sectionAccident.description)})
+                <p style={{ fontSize: '0.75rem', color: '#991B1B', margin: '3px 0 0', lineHeight: 1.45 }}>
+                  {localize(sectionAccident.natureOfIncident)} • Train #{sectionAccident.trainNumber} ({localize(sectionAccident.description)})
                 </p>
               </div>
             </div>
           )}
 
           {/* Key Metric Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '12px' }}>
             {[
               {
                 icon: <Gauge size={18} color="var(--rx-blue)" />,
-                label: language === 'mr' ? 'कमाल वेग मर्यादा' : 'Max Permissible Speed',
+                label: language === 'mr' ? 'कमाल वेग मर्यादा (MPS)' : 'Section MPS Speed',
                 value: `${section.maxSpeedKmph} km/h`,
-                sub: section.currentTsrKmph ? `TSR: ${section.currentTsrKmph} km/h` : 'No Speed Restrictions'
+                sub: section.currentTsrKmph ? `Caution TSR: ${section.currentTsrKmph} km/h` : 'No Speed Restrictions'
               },
               {
                 icon: <Activity size={18} color="var(--rx-orange)" />,
-                label: language === 'mr' ? 'कॉरिडॉर वापर' : 'Corridor Utilization',
+                label: language === 'mr' ? 'लाईन सॅच्युरेशन इंडेक्स' : 'Line Saturation Index',
                 value: `${section.currentUtilizationPercent}%`,
-                sub: `${section.lines} Dedicated Lines`
+                sub: `${section.lines} BG Tracks (${section.signalsCount} ABS Signals)`
               },
               {
                 icon: <Train size={18} color="var(--rx-green)" />,
-                label: language === 'mr' ? 'थेट धावणाऱ्या गाड्या' : 'Active Trains on Line',
+                label: language === 'mr' ? 'थेट धावणाऱ्या गाड्या' : 'Live Active Trains',
                 value: `${sectionTrains.length} Trains`,
-                sub: `Automatic Signals: ${section.signalsCount}`
+                sub: `WAP-7 / WAG-9 / EMU 3-Phase`
               },
               {
                 icon: <ShieldCheck size={18} color="#A855F7" />,
                 label: language === 'mr' ? 'कवच सुरक्षा व कर्षण' : 'Kavach & Traction',
                 value: 'SIL-4 Armed',
-                sub: section.electrification
+                sub: `${section.electrification} OHE`
               }
             ].map((stat, i) => (
               <div key={i} style={{
@@ -234,7 +265,7 @@ export const CorridorInspectorModal: React.FC<CorridorInspectorModalProps> = ({ 
                           {train.speedKmph} km/h
                         </span>
                         <span style={{ fontSize: '0.62rem', color: 'var(--text-muted)', display: 'block' }}>
-                          Loco: {train.locomotiveId}
+                          Loco: {train.locomotiveId} (WAP-7)
                         </span>
                       </div>
                       <span style={{

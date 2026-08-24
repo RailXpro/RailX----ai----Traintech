@@ -235,10 +235,9 @@ export const CircleRouteMap: React.FC = () => {
 
             {/* Centre hub */}
             <circle cx={cx} cy={cy} r={44} fill="var(--rx-header)" />
-            <circle cx={cx} cy={cy} r={40} fill="none" stroke="var(--rx-orange)" strokeWidth="2.5" />
-            <text x={cx} y={cy - 8} textAnchor="middle" fill="#FFFFFF" fontSize="10" fontWeight="900">TrainX</text>
-            <text x={cx} y={cy + 6} textAnchor="middle" fill="var(--rx-orange)" fontSize="9" fontWeight="700">.ai</text>
-            <text x={cx} y={cy + 19} textAnchor="middle" fill="#6B7A99" fontSize="6.5">
+            <circle cx={cx} cy={cy} r={40} fill="none" stroke="var(--rx-orange)" strokeWidth="2" />
+            <text x={cx} y={cy + 1} textAnchor="middle" fill="#FFFFFF" fontSize="11" fontWeight="900" letterSpacing="-0.3">TrainX</text>
+            <text x={cx} y={cy + 15} textAnchor="middle" fill="#94A3B8" fontSize="6.5" fontWeight="700" letterSpacing="0.08em">
               {language === 'mr' ? 'रेल ग्रिड' : 'RAIL GRID'}
             </text>
 

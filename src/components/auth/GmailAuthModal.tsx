@@ -172,7 +172,7 @@ export const GmailAuthModal: React.FC = () => {
             </div>
             <div>
               <div style={{ fontSize: '1.45rem', fontWeight: 900, color: '#FFFFFF', letterSpacing: '-0.03em', fontFamily: 'var(--font-display)' }}>
-                TrainX<span style={{ color: 'var(--rx-orange)' }}>.ai</span>
+                Train<span style={{ color: 'var(--rx-orange)' }}>X</span>
               </div>
               <div style={{ fontSize: '0.66rem', color: 'rgba(255,255,255,0.4)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 {t('brand.tagline')}

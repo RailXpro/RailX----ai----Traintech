@@ -4,7 +4,10 @@ import {
   MegaBlock, 
   AccidentIncident, 
   RailwayAsset, 
-  OptimizationMetrics 
+  OptimizationMetrics,
+  PassengerBooking,
+  DisruptionNotification,
+  RerouteOption
 } from '../types/railway';
 
 export const INITIAL_TRACK_SECTIONS: TrackSection[] = [
@@ -628,3 +631,202 @@ export const INITIAL_OPTIMIZATION_METRICS: OptimizationMetrics = {
     }
   ]
 };
+
+export const INITIAL_PASSENGER_BOOKINGS: PassengerBooking[] = [
+  {
+    pnr: '8421984210',
+    passengerName: 'Aarav Sharma',
+    trainNumber: '12951',
+    trainName: 'Mumbai Rajdhani Express',
+    journeyDate: '2026-08-24',
+    sourceStation: 'KOTA (Kota Junction)',
+    destinationStation: 'NDLS (New Delhi)',
+    coach: 'B4',
+    berthNumber: '29 (Lower)',
+    status: 'CONFIRMED',
+    contactPhone: '+91-9820198201',
+    intersectingDisruptionId: 'INC-01',
+    intersectingDisruptionType: 'ACCIDENT'
+  },
+  {
+    pnr: '6512903341',
+    passengerName: 'Priya Deshmukh',
+    trainNumber: '12137',
+    trainName: 'Punjab Mail',
+    journeyDate: '2026-08-24',
+    sourceStation: 'CSMT (Mumbai CSMT)',
+    destinationStation: 'KYN (Kalyan Jn)',
+    coach: 'B2',
+    berthNumber: '45 (Side Lower)',
+    status: 'CONFIRMED',
+    contactPhone: '+91-9876543210',
+    intersectingDisruptionId: 'MB-CR-01',
+    intersectingDisruptionType: 'MEGA_BLOCK'
+  },
+  {
+    pnr: '9703411209',
+    passengerName: 'Sunita Patil',
+    trainNumber: '97034',
+    trainName: 'CSMT Fast Local Suburban',
+    journeyDate: '2026-08-24',
+    sourceStation: 'TNA (Thane)',
+    destinationStation: 'KYN (Kalyan)',
+    coach: 'FC',
+    berthNumber: 'Monthly Season Pass #4419',
+    status: 'CONFIRMED',
+    contactPhone: '+91-9123456780',
+    intersectingDisruptionId: 'MB-CR-01',
+    intersectingDisruptionType: 'MEGA_BLOCK'
+  },
+  {
+    pnr: '4410298512',
+    passengerName: 'Rahul Verma',
+    trainNumber: '22221',
+    trainName: 'Mumbai CSMT Rajdhani Express',
+    journeyDate: '2026-08-24',
+    sourceStation: 'CSMT (Mumbai)',
+    destinationStation: 'NZM (Hazrat Nizamuddin)',
+    coach: 'A1',
+    berthNumber: '12 (Cabin)',
+    status: 'CONFIRMED',
+    contactPhone: '+91-9988776655',
+    intersectingDisruptionId: 'INC-01',
+    intersectingDisruptionType: 'ACCIDENT'
+  },
+  {
+    pnr: '1092837465',
+    passengerName: 'Meera Iyer',
+    trainNumber: '20977',
+    trainName: 'Ajmer - Chandigarh Vande Bharat',
+    journeyDate: '2026-08-24',
+    sourceStation: 'JP (Jaipur)',
+    destinationStation: 'DEC (Delhi Cantt)',
+    coach: 'EC',
+    berthNumber: 'E1-14 (Window)',
+    status: 'CONFIRMED',
+    contactPhone: '+91-9445566778'
+  }
+];
+
+export const INITIAL_REROUTE_OPTIONS: RerouteOption[] = [
+  {
+    option_id: 'REROUTE-RAIL-CHORD-01',
+    strategy_type: 'RAIL_DIVERSION_CHORD_BYPASS',
+    title: 'Direct Rail Chord Diversion via Sawai Madhopur ➔ Jaipur ➔ Rewari',
+    path_stations: ['KOTA', 'SWM', 'JP', 'RE', 'DEC', 'NDLS'],
+    bypassed_blocked_stations: ['AGC', 'MTJ', 'NZM'],
+    additional_distance_km: 38.0,
+    revised_eta: '11:45 AM (Today)',
+    delay_minutes: 190,
+    comfort_score: 0.94,
+    feasibility_status: 'RECOMMENDED BY AI',
+    reasoning: 'Train remains continuous. No passenger deboarding required. Clear signal slots available via Jaipur-Rewari electrified cord.',
+    mode: 'Train Diversion'
+  },
+  {
+    option_id: 'REROUTE-MULTI-HOP-02',
+    strategy_type: 'MULTI_HOP_CONNECTING',
+    title: 'Transfer at Kota Jn to Connecting Vande Bharat Express #20977',
+    path_stations: ['KOTA', 'JP', 'DEC', 'NDLS'],
+    bypassed_blocked_stations: ['AGC', 'MTJ'],
+    additional_distance_km: 15.0,
+    revised_eta: '10:15 AM (Today)',
+    delay_minutes: 105,
+    comfort_score: 0.89,
+    feasibility_status: 'FASTEST TRANSIT',
+    reasoning: 'Guaranteed berth transfer at Kota Jn onto High-Speed Vande Bharat. Saves ~85 minutes vs waiting.',
+    mode: 'High Speed Transfer'
+  },
+  {
+    option_id: 'REROUTE-INTERMODAL-03',
+    strategy_type: 'INTERMODAL_SHUTTLE',
+    title: 'Emergency Highway Bus Shuttle (Agra Cantt ➔ Mathura Jn) + Onward Train',
+    path_stations: ['AGC', 'EXPRESSWAY_BUS_SHUTTLE', 'MTJ', 'NZM', 'NDLS'],
+    bypassed_blocked_stations: ['AGC-MTJ Rail Track'],
+    additional_distance_km: 0.0,
+    revised_eta: '09:40 AM (Today)',
+    delay_minutes: 68,
+    comfort_score: 0.76,
+    feasibility_status: 'EMERGENCY SHUTTLE',
+    reasoning: 'Air-conditioned express coach bridges blocked rail section via Yamuna Expressway.',
+    mode: 'Intermodal Coach Bridge'
+  }
+];
+
+export const INITIAL_DISRUPTION_NOTIFICATIONS: Record<string, DisruptionNotification> = {
+  '8421984210': {
+    notification_id: 'NOTIF-8421984210-ACC',
+    pnr: '8421984210',
+    passenger_name: 'Aarav Sharma',
+    train_number: '12951',
+    train_name: 'Mumbai Rajdhani Express',
+    priority: 'CRITICAL_EMERGENCY',
+    headline: '🚨 CRITICAL EMERGENCY TRACK ADVISORY: Accident ahead on your train route',
+    exact_incident_details: 'Derailment of Goods Train BTPN at Km 1342/12 between Agra Cantt (AGC) & Mathura Jn (MTJ). Both UP & DOWN main lines blocked.',
+    impact_on_journey: 'Your Train #12951 is approaching this section. Expected delay: ~3.5 hrs. AI has computed 3 alternative routes and bypass chords.',
+    actionable_alternatives: ['View AI Alternative Reroute Options', 'Request Emergency Meal Assistance (IRCTC)', 'Call IR Helpline 139'],
+    helpline_contacts: ['139 (Toll Free)', '0562-2421204 (Agra Ctrl)', '1072 (Disaster Helpline)'],
+    has_reroute_available: true,
+    reroute_options: INITIAL_REROUTE_OPTIONS,
+    timestamp: 'Just now'
+  },
+  '6512903341': {
+    notification_id: 'NOTIF-6512903341-MB',
+    pnr: '6512903341',
+    passenger_name: 'Priya Deshmukh',
+    train_number: '12137',
+    train_name: 'Punjab Mail',
+    priority: 'PLANNED_MAINTENANCE',
+    headline: '🛠️ PLANNED MEGA BLOCK ADVISORY: Thane-Kalyan Track Maintenance',
+    exact_incident_details: 'Scheduled 5-hour Sunday Mega Block on UP/DOWN Fast line between Thane and Kalyan for track renewal and OHE maintenance.',
+    impact_on_journey: 'Train #12137 diverted to Slow Line between Thane and Kalyan. Expected regulated run with 15-25 mins delay.',
+    actionable_alternatives: ['View Regulated Schedule', 'Check Feeder Bus Connections', 'Download Delay Slip'],
+    helpline_contacts: ['139', '022-22624555 (CSMT Control)'],
+    has_reroute_available: true,
+    timestamp: '15 mins ago'
+  },
+  '9703411209': {
+    notification_id: 'NOTIF-9703411209-MB',
+    pnr: '9703411209',
+    passenger_name: 'Sunita Patil',
+    train_number: '97034',
+    train_name: 'CSMT Fast Local Suburban',
+    priority: 'PLANNED_MAINTENANCE',
+    headline: '🚇 SUBURBAN DIVERSION NOTICE: Fast Locals Halting All Stations',
+    exact_incident_details: 'Fast corridor closed between Byculla and Dadar. All fast suburban services routed via slow tracks with additional intermediate halts.',
+    impact_on_journey: 'Your local will halt at all stations from Byculla to Dadar. Extra journey duration: ~12 minutes.',
+    actionable_alternatives: ['View Real-time Suburban Track Live', 'Use Metro Line 3 Alternative'],
+    helpline_contacts: ['139', '1512 (GRP Mumbai)'],
+    has_reroute_available: false,
+    timestamp: '30 mins ago'
+  }
+};
+
+export const SAMPLE_CIRCULARS = [
+  {
+    id: 'CR-MB-01',
+    title: 'Central Railway Sunday Mega Block - Thane to Kalyan',
+    text: `CENTRAL RAILWAY PRESS RELEASE
+MUMBAI DIVISION MEGA BLOCK ON 24.08.2026
+
+Central Railway's Mumbai Division will operate a scheduled Mega Block on its suburban network for carrying out urgent track renewal, overhead equipment (OHE) maintenance, and signaling modernization works as under:
+
+SECTION: BETWEEN THANE AND KALYAN
+TIMING: 10:30 HRS TO 15:30 HRS (5.0 Hours)
+TRACKS AFFECTED: UP & DOWN FAST LINES
+
+REGULATION OF TRAINS:
+1. All UP and DOWN Fast line suburban services departing CSMT between 10:00 AM and 3:00 PM will be diverted to UP/DOWN Slow lines between Thane and Kalyan stations, halting at all intermediate stations.
+2. Mail/Express Train Nos. 12137 (Punjab Mail), 11057 (Amritsar Express) and 12163 arriving in Mumbai will be regulated and delayed by 15-25 minutes.
+3. Speed restriction of 30 km/h will be enforced through the maintenance corridor.
+
+Passengers are requested to bear with the Railway Administration for the inconvenience caused.`
+  },
+  {
+    id: 'WR-MB-02',
+    title: 'Western Railway Night Jumbo Block - Churchgate to Mumbai Central',
+    text: `WESTERN RAILWAY NIGHT CORRIDOR BLOCK
+Possession on 5th and 6th lines between Churchgate and Mumbai Central from 00:30 hrs to 04:30 hrs for Electronic Interlocking (Kavach 2.0) testing. All long-distance trains arriving into Mumbai Central will run at 30 kmph with pilot escort. Passengers advised to check live status on 139.`
+  }
+];
+

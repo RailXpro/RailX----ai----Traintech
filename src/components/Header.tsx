@@ -10,13 +10,16 @@ import {
   ShieldCheck,
   RefreshCw,
   Zap,
-  Settings
+  Settings,
+  Bell
 } from 'lucide-react';
 import { SettingsPanel } from './settings/SettingsPanel';
 import { KavachModal } from './planner/KavachModal';
 import { GlobalSearchBar } from './search/GlobalSearchBar';
+import { NotificationsDrawer } from './notifications/NotificationsDrawer';
 import { useRailway } from '../context/RailwayContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useSettings } from '../context/SettingsContext';
 import { DivisionName } from '../types/railway';
 
 const DIVISIONS: DivisionName[] = [
@@ -25,7 +28,7 @@ const DIVISIONS: DivisionName[] = [
 
 /* ── Wavy SVG divider (header → page) ────────────────────────────────── */
 const WavyDivider: React.FC = () => (
-  <div style={{ lineHeight: 0, background: 'var(--rx-header-sub)' }}>
+  <div className="wavy-divider-container" style={{ lineHeight: 0, background: 'var(--rx-header-sub)' }}>
     <svg viewBox="0 0 1440 38" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', width: '100%', height: '38px' }} preserveAspectRatio="none">
       <path
         d="M0,18 C180,38 360,-2 540,18 C720,38 900,-2 1080,18 C1260,38 1380,8 1440,18 L1440,38 L0,38 Z"
@@ -53,11 +56,16 @@ export const Header: React.FC = () => {
   } = useRailway();
 
   const { language, setLanguage, t } = useLanguage();
+  const {
+    notificationsDrawerOpen,
+    setNotificationsDrawerOpen,
+    settingsModalOpen,
+    setSettingsModalOpen
+  } = useSettings();
 
   const [currentTime, setCurrentTime] = useState('');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [divDropdownOpen, setDivDropdownOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const divDropRef  = useRef<HTMLDivElement>(null);
 
@@ -92,51 +100,95 @@ export const Header: React.FC = () => {
     <header style={{ position: 'sticky', top: 0, zIndex: 100, boxShadow: 'var(--shadow-header)' }}>
 
       {/* ── Primary Header ─── deep navy + glass ── */}
-      <div style={{
+      <div className="header-primary-inner" style={{
         background: 'linear-gradient(135deg, var(--rx-header) 0%, #0D2252 100%)',
         padding: '10px 24px',
         backdropFilter: 'blur(12px)',
       }}>
-        <div style={{
+        <div className="header-main-bar" style={{
           maxWidth: '1260px', margin: '0 auto',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px'
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px'
         }}>
 
           {/* Brand Logo */}
           <div
+            className="header-brand-wrap"
             style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', flexShrink: 0 }}
             onClick={() => setPersona('planner')}
           >
             <div style={{
-              width: '40px', height: '40px', borderRadius: '12px',
-              background: 'linear-gradient(135deg, var(--rx-orange) 0%, #FF8F45 100%)',
+              width: '38px', height: '38px', borderRadius: '12px',
+              background: 'linear-gradient(135deg, var(--rx-green) 0%, var(--rx-green-mid) 100%)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 14px var(--rx-orange-glow)'
+              boxShadow: '0 4px 14px var(--rx-green-glow)'
             }}>
-              <Train size={22} color="#fff" />
+              <Train size={20} color="#fff" />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '1px' }}>
-                <span className="font-display" style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.04em', color: '#FFFFFF' }}>
-                  TrainX
+                <span className="font-display" style={{ fontSize: '1.4rem', fontWeight: 900, letterSpacing: '-0.03em', color: '#FFFFFF' }}>
+                  Train<span style={{ color: '#34D399' }}>X</span>
                 </span>
-                <span style={{ fontSize: '1.1rem', fontWeight: 900, color: 'var(--rx-orange)' }}>.ai</span>
               </div>
-              <div style={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '-2px' }}>
+              <div style={{ fontSize: '0.58rem', fontWeight: 700, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: '-2px' }}>
                 {t('brand.tagline')}
               </div>
             </div>
           </div>
 
           {/* Global Smart Search Bar */}
-          <GlobalSearchBar />
+          <div className="header-search-wrap">
+            <GlobalSearchBar />
+          </div>
 
           {/* Right Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+          <div className="header-controls-wrap" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
 
-            {/* Settings Gear */}
+            {/* Notification Bell */}
             <button
-              onClick={() => setSettingsOpen(true)}
+              onClick={() => setNotificationsDrawerOpen(true)}
+              title={language === 'mr' ? 'सूचना' : 'Notifications'}
+              style={{
+                width: '36px', height: '36px',
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.14)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', color: '#FFFFFF',
+                transition: 'all 0.18s ease', flexShrink: 0,
+                position: 'relative'
+              }}
+              onMouseEnter={e => { (e.currentTarget.style.background = 'rgba(5, 150, 105, 0.4)'); }}
+              onMouseLeave={e => { (e.currentTarget.style.background = 'rgba(255,255,255,0.08)'); }}
+            >
+              <Bell size={16} />
+              {(activeAccidentsCount + activeMegaBlocksCount) > 0 && (
+                <span style={{
+                  position: 'absolute',
+                  top: '-2px',
+                  right: '-2px',
+                  minWidth: '16px',
+                  height: '16px',
+                  padding: '0 4px',
+                  borderRadius: '8px',
+                  background: activeAccidentsCount > 0 ? '#EF4444' : 'var(--rx-orange)',
+                  color: '#FFFFFF',
+                  fontSize: '0.62rem',
+                  fontWeight: 900,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.35)',
+                  border: '1.5px solid var(--rx-header)'
+                }}>
+                  {activeAccidentsCount + activeMegaBlocksCount}
+                </span>
+              )}
+            </button>
+
+            {/* Settings Gear — always visible, even on mobile */}
+            <button
+              onClick={() => setSettingsModalOpen(true)}
               title={language === 'mr' ? 'सेटिंग्ज' : 'Settings'}
               style={{
                 width: '36px', height: '36px',
@@ -154,16 +206,17 @@ export const Header: React.FC = () => {
             </button>
 
             {/* Division Picker */}
-            <div ref={divDropRef} style={{ position: 'relative' }}>
+            <div ref={divDropRef} className="header-secondary-control" style={{ position: 'relative' }}>
               <button
                 onClick={() => setDivDropdownOpen(p => !p)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '6px',
+                  display: 'flex', alignItems: 'center', gap: '4px',
                   background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.14)',
                   borderRadius: 'var(--radius-pill)',
-                  padding: '6px 13px', cursor: 'pointer', color: '#E0E0E0',
-                  fontSize: '0.8rem', fontWeight: 600, fontFamily: 'var(--font-sans)'
+                  padding: '5px 10px', cursor: 'pointer', color: '#E0E0E0',
+                  fontSize: '0.75rem', fontWeight: 600, fontFamily: 'var(--font-sans)',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 📍 {divLabel}
@@ -202,7 +255,7 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Persona Pill Switcher */}
-            <div className="persona-switcher">
+            <div className="persona-switcher header-secondary-control">
               <button
                 className={`persona-btn${persona === 'planner' ? ' active' : ''}`}
                 onClick={() => setPersona('planner')}
@@ -218,7 +271,7 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Language Toggle */}
-            <div className="lang-toggle">
+            <div className="lang-toggle header-secondary-control">
               <button
                 className={`lang-toggle-btn${language === 'en' ? ' active' : ''}`}
                 onClick={() => setLanguage('en')}
@@ -231,31 +284,28 @@ export const Header: React.FC = () => {
               >मराठी</button>
             </div>
 
-            {/* Auth Area */}
+            {/* Auth Area — Always pinned & visible */}
             {currentUser ? (
-              <div ref={dropdownRef} style={{ position: 'relative' }}>
+              <div ref={dropdownRef} className="header-auth-btn" style={{ position: 'relative', flexShrink: 0 }}>
                 <button
                   onClick={() => setUserDropdownOpen(p => !p)}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: '8px',
+                    display: 'flex', alignItems: 'center', gap: '6px',
                     background: 'rgba(255,255,255,0.08)',
                     border: '1px solid rgba(255,255,255,0.14)',
-                    borderRadius: 'var(--radius-pill)', padding: '4px 12px 4px 4px',
+                    borderRadius: 'var(--radius-pill)', padding: '4px 10px 4px 4px',
                     cursor: 'pointer', transition: 'all 0.15s ease', fontFamily: 'var(--font-sans)'
                   }}
                 >
                   <img
                     src={currentUser.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=FF6B1A&color=fff`}
                     alt={currentUser.name}
-                    style={{ width: '30px', height: '30px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,107,26,0.5)' }}
+                    style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,107,26,0.5)' }}
                     onError={e => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentUser.name)}&background=FF6B1A&color=fff`; }}
                   />
                   <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontSize: '0.76rem', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.2, maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#FFFFFF', lineHeight: 1.2, maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {currentUser.name.split(' ')[0]}
-                    </div>
-                    <div style={{ fontSize: '0.62rem', color: currentUser.role === 'official' ? '#4ABD5D' : 'var(--rx-orange)', fontWeight: 700, lineHeight: 1 }}>
-                      {currentUser.role === 'official' ? t('user.roleOfficial') : t('user.roleYatri')}
                     </div>
                   </div>
                   <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', transition: 'transform 0.15s', display: 'inline-block', transform: userDropdownOpen ? 'rotate(180deg)' : 'none' }}>▾</span>
@@ -265,21 +315,21 @@ export const Header: React.FC = () => {
                   <div style={{
                     position: 'absolute', top: 'calc(100% + 8px)', right: 0,
                     background: '#0F1C3D',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '16px', padding: '8px', minWidth: '220px',
-                    boxShadow: '0 16px 48px rgba(0,0,0,0.5)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '16px', padding: '8px', minWidth: '220px', maxWidth: 'min(280px, 90vw)',
+                    boxShadow: '0 16px 48px rgba(0,0,0,0.6)',
                     zIndex: 300, animation: 'authFadeIn 0.15s ease'
                   }}>
                     <div style={{ padding: '10px 12px', borderBottom: '1px solid rgba(255,255,255,0.07)', marginBottom: '6px' }}>
-                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFFFFF' }}>{currentUser.name}</div>
-                      <div style={{ fontSize: '0.7rem', color: '#888', marginTop: '2px' }}>{currentUser.email}</div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#FFFFFF', wordBreak: 'break-word' }}>{currentUser.name}</div>
+                      <div style={{ fontSize: '0.7rem', color: '#A0AEC0', marginTop: '2px', wordBreak: 'break-word' }}>{currentUser.email}</div>
                       {currentUser.officialDesignation && (
-                        <div style={{ fontSize: '0.68rem', color: '#4ABD5D', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <ShieldCheck size={11} /> {currentUser.officialDesignation}
+                        <div style={{ fontSize: '0.68rem', color: '#4ABD5D', marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                          <ShieldCheck size={11} style={{ flexShrink: 0 }} /> <span>{currentUser.officialDesignation}</span>
                         </div>
                       )}
                       {currentUser.employeeId && (
-                        <div style={{ fontSize: '0.66rem', color: '#666', marginTop: '2px' }}>ID: {currentUser.employeeId}</div>
+                        <div style={{ fontSize: '0.66rem', color: '#718096', marginTop: '2px' }}>ID: {currentUser.employeeId}</div>
                       )}
                     </div>
                     {[
@@ -309,19 +359,20 @@ export const Header: React.FC = () => {
               </div>
             ) : (
               <button
+                className="header-auth-btn"
                 onClick={() => setIsAuthModalOpen(true)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: '7px',
+                  display: 'flex', alignItems: 'center', gap: '6px',
                   background: 'var(--rx-orange)',
                   border: 'none', borderRadius: 'var(--radius-pill)',
-                  padding: '7px 16px', color: '#FFFFFF', fontSize: '0.8rem', fontWeight: 700,
+                  padding: '7px 14px', color: '#FFFFFF', fontSize: '0.78rem', fontWeight: 700,
                   cursor: 'pointer', transition: 'all 0.18s ease', fontFamily: 'var(--font-sans)',
-                  boxShadow: '0 2px 12px var(--rx-orange-glow)'
+                  boxShadow: '0 2px 12px var(--rx-orange-glow)', flexShrink: 0
                 }}
                 onMouseEnter={e => { (e.currentTarget.style.transform = 'translateY(-1px)'); (e.currentTarget.style.boxShadow = '0 6px 20px var(--rx-orange-glow)'); }}
                 onMouseLeave={e => { (e.currentTarget.style.transform = 'translateY(0)'); (e.currentTarget.style.boxShadow = '0 2px 12px var(--rx-orange-glow)'); }}
               >
-                <LogIn size={14} /> {t('header.signIn')}
+                <LogIn size={13} /> {t('header.signIn')}
               </button>
             )}
           </div>
@@ -329,7 +380,7 @@ export const Header: React.FC = () => {
       </div>
 
       {/* ── Sub-header: pill nav + status strip ── */}
-      <div style={{
+      <div className="header-sub-inner" style={{
         background: 'var(--rx-header-sub)',
         padding: '0 24px',
         borderTop: '1px solid rgba(255,255,255,0.04)'
@@ -337,11 +388,13 @@ export const Header: React.FC = () => {
         <div style={{
           maxWidth: '1260px', margin: '0 auto',
           display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px',
-          padding: '6px 0'
+          justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px',
+          padding: '6px 0',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch'
         }}>
           {/* Pill nav links */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+          <div className="nav-tabs-container" style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
             {[
               { key: 'nav.corridors', tabId: 'map' },
               { key: 'nav.megaBlocks', tabId: 'megablock' },
@@ -360,10 +413,12 @@ export const Header: React.FC = () => {
                   }}
                   style={{
                     cursor: 'pointer',
-                    background: isActive ? 'var(--rx-orange)' : 'rgba(255, 255, 255, 0.05)',
+                    background: isActive ? 'linear-gradient(135deg, var(--rx-green) 0%, var(--rx-green-mid) 100%)' : 'rgba(255, 255, 255, 0.05)',
                     color: isActive ? '#FFFFFF' : '#CBD5E1',
-                    fontWeight: isActive ? 700 : 500,
-                    transition: 'all 0.18s ease'
+                    fontWeight: isActive ? 800 : 500,
+                    boxShadow: isActive ? '0 2px 10px var(--rx-green-glow)' : 'none',
+                    transition: 'all 0.18s ease',
+                    whiteSpace: 'nowrap'
                   }}
                   onMouseEnter={e => {
                     if (!isActive) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.12)';
@@ -380,23 +435,24 @@ export const Header: React.FC = () => {
               className="nav-tab-button"
               onClick={() => setIsKavachModalOpen(true)}
               style={{
-                color: 'var(--rx-orange)',
-                background: 'rgba(255,107,26,0.14)',
-                border: '1px solid rgba(255,107,26,0.3)',
+                color: '#34D399',
+                background: 'rgba(16,185,129,0.14)',
+                border: '1px solid rgba(16,185,129,0.3)',
                 cursor: 'pointer',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
                 gap: '5px',
-                transition: 'all 0.18s ease'
+                transition: 'all 0.18s ease',
+                whiteSpace: 'nowrap'
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.background = 'var(--rx-orange)';
+                e.currentTarget.style.background = 'var(--rx-green)';
                 e.currentTarget.style.color = '#FFFFFF';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.background = 'rgba(255,107,26,0.14)';
-                e.currentTarget.style.color = 'var(--rx-orange)';
+                e.currentTarget.style.background = 'rgba(16,185,129,0.14)';
+                e.currentTarget.style.color = '#34D399';
               }}
             >
               <Zap size={12} style={{ display: 'inline' }} />
@@ -404,8 +460,8 @@ export const Header: React.FC = () => {
             </button>
           </div>
 
-          {/* Right Status */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.72rem', flexWrap: 'wrap' }}>
+          {/* Right Status — hidden on mobile via .header-status-strip */}
+          <div className="header-status-strip" style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.72rem', flexShrink: 0, flexWrap: 'wrap' }}>
             {activeAccidentsCount > 0 && (
               <span
                 onClick={() => { setPersona('planner'); setActiveTab('accidents'); }}
@@ -448,7 +504,10 @@ export const Header: React.FC = () => {
       <WavyDivider />
 
       {/* ── Settings Drawer ── */}
-      <SettingsPanel isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <SettingsPanel isOpen={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} />
+
+      {/* ── Notifications Center Drawer ── */}
+      <NotificationsDrawer isOpen={notificationsDrawerOpen} onClose={() => setNotificationsDrawerOpen(false)} />
 
       {/* ── Kavach 2.0 Telemetry Modal ── */}
       <KavachModal />

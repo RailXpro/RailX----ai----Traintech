@@ -19,7 +19,7 @@ export const AssetAnalyticsView: React.FC = () => {
 
   const handleExportJson = () => {
     const reportData = {
-      title: 'TrainX.ai Block Planning & Asset Optimization Report',
+      title: 'TrainX Block Planning & Asset Optimization Report',
       timestamp: new Date().toISOString(),
       division: selectedDivision,
       metrics,
@@ -78,7 +78,7 @@ export const AssetAnalyticsView: React.FC = () => {
               <tr style={{ borderBottom: '2px solid var(--border-light)', color: 'var(--text-secondary)', background: 'var(--rx-surface-alt)' }}>
                 <th style={{ padding: '12px 16px' }}>Operational Metric</th>
                 <th style={{ padding: '12px 16px' }}>Traditional Planning</th>
-                <th style={{ padding: '12px 16px' }}>TrainX.ai Optimizer</th>
+                <th style={{ padding: '12px 16px' }}>TrainX Optimizer</th>
                 <th style={{ padding: '12px 16px' }}>Net Impact</th>
               </tr>
             </thead>

@@ -11,7 +11,17 @@ interface SettingsPanelProps {
 }
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
-  const { darkMode, toggleDarkMode, mapStyle, setMapStyle } = useSettings();
+  const {
+    darkMode,
+    toggleDarkMode,
+    mapStyle,
+    setMapStyle,
+    megaBlockAlerts,
+    emergencySosAlerts,
+    kavachAlerts,
+    toggleNotification,
+    setNotificationsDrawerOpen
+  } = useSettings();
   const { language, setLanguage } = useLanguage();
 
   return (
@@ -265,40 +275,70 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
 
           {/* ── Notifications Section ───────────────────────── */}
           <section>
-            <h3 style={{
-              fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.1em',
-              textTransform: 'uppercase', color: 'var(--rx-orange)', marginBottom: '12px',
-              display: 'flex', alignItems: 'center', gap: '6px'
-            }}>
-              <Bell size={12} /> {language === 'mr' ? 'सूचना' : 'Notifications'}
-            </h3>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <h3 style={{
+                fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.1em',
+                textTransform: 'uppercase', color: 'var(--rx-orange)',
+                display: 'flex', alignItems: 'center', gap: '6px'
+              }}>
+                <Bell size={12} /> {language === 'mr' ? 'सूचना' : 'Notifications'}
+              </h3>
+
+              <button
+                onClick={() => {
+                  onClose();
+                  setNotificationsDrawerOpen(true);
+                }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--rx-green-deep)',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  padding: 0
+                }}
+              >
+                {language === 'mr' ? 'सूचना पहा →' : 'View Alerts →'}
+              </button>
+            </div>
 
             {[
               {
+                key: 'megablock' as const,
                 icon: <Train size={15} color="var(--rx-blue)" />,
                 label: language === 'mr' ? 'मेगा ब्लॉक सूचना' : 'Mega Block Alerts',
                 sub: language === 'mr' ? 'रविवार नियोजित ब्लॉक' : 'Sunday scheduled blocks',
-                defaultOn: true
+                active: megaBlockAlerts
               },
               {
+                key: 'sos' as const,
                 icon: <Zap size={15} color="var(--rx-red)" />,
                 label: language === 'mr' ? 'आपत्कालीन SOS' : 'Emergency SOS',
                 sub: language === 'mr' ? 'तात्काळ घटना इशारे' : 'Real-time incident alerts',
-                defaultOn: true
+                active: emergencySosAlerts
               },
               {
+                key: 'kavach' as const,
                 icon: <ShieldCheck size={15} color="var(--rx-green)" />,
                 label: language === 'mr' ? 'कवच अपडेट्स' : 'Kavach Updates',
                 sub: language === 'mr' ? 'सुरक्षा प्रणाली स्थिती' : 'Safety system status',
-                defaultOn: false
+                active: kavachAlerts
               }
-            ].map((item, i) => (
-              <div key={i} style={{
-                background: 'var(--rx-surface-alt)',
-                borderRadius: '12px', padding: '13px 14px',
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                marginBottom: '8px'
-              }}>
+            ].map((item) => (
+              <div
+                key={item.key}
+                onClick={() => toggleNotification(item.key)}
+                style={{
+                  background: 'var(--rx-surface-alt)',
+                  borderRadius: '12px', padding: '13px 14px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  marginBottom: '8px',
+                  cursor: 'pointer',
+                  border: item.active ? '1px solid rgba(5, 150, 105, 0.25)' : '1px solid var(--border-light)',
+                  transition: 'all 0.18s ease'
+                }}
+              >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{
                     width: '32px', height: '32px', borderRadius: '8px',
@@ -306,21 +346,23 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
                     alignItems: 'center', justifyContent: 'center'
                   }}>{item.icon}</div>
                   <div>
-                    <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-dark)' }}>{item.label}</div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)' }}>{item.label}</div>
                     <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>{item.sub}</div>
                   </div>
                 </div>
                 <div style={{
-                  width: '36px', height: '20px', borderRadius: '10px',
-                  background: item.defaultOn ? 'var(--rx-green)' : 'var(--border-medium)',
-                  position: 'relative', cursor: 'pointer', flexShrink: 0
+                  width: '38px', height: '22px', borderRadius: '11px',
+                  background: item.active ? 'var(--rx-green)' : 'var(--border-medium)',
+                  position: 'relative', cursor: 'pointer', flexShrink: 0,
+                  transition: 'background 0.2s ease',
+                  boxShadow: item.active ? '0 2px 8px var(--rx-green-glow)' : 'none'
                 }}>
                   <span style={{
-                    position: 'absolute', top: '2px',
-                    left: item.defaultOn ? '18px' : '2px',
+                    position: 'absolute', top: '3px',
+                    left: item.active ? '19px' : '3px',
                     width: '16px', height: '16px', borderRadius: '50%',
-                    background: '#FFFFFF', boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-                    transition: 'left 0.2s ease'
+                    background: '#FFFFFF', boxShadow: '0 1px 4px rgba(0,0,0,0.25)',
+                    transition: 'left 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
                   }} />
                 </div>
               </div>
@@ -334,7 +376,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose })
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
               <Train size={16} color="var(--rx-orange)" />
-              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#FFFFFF' }}>TrainX.ai</span>
+              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#FFFFFF' }}>TrainX</span>
             </div>
             <p style={{ fontSize: '0.7rem', color: '#7A8499', lineHeight: 1.6, margin: 0 }}>
               {language === 'mr'

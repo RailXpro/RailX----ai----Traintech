@@ -1,108 +1,122 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   TrainX.ai — Design System v2
-   Palette: Orange · Blue · White  |  Style: Fluid, Organic, Non-Boxy
+   TrainX — Eye-Soothing Modern Design System
+   Palette: Indian Saffron · Emerald Green · Calming Royal Blue · Soft Slate
    ═══════════════════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* ── Primary Brand: Orange ─────────────────────────────────────────── */
-  --rx-orange:        #FF6B1A;
-  --rx-orange-deep:   #E55A0A;
-  --rx-orange-glow:   rgba(255, 107, 26, 0.28);
-  --rx-orange-light:  #FFF3EC;
-  --rx-orange-border: rgba(255, 107, 26, 0.25);
-  --rx-orange-mid:    rgba(255, 107, 26, 0.12);
+  /* ── Saffron / Amber Brand Accent (Warm & Soothing) ─────────────────── */
+  --rx-orange:        #EA580C;
+  --rx-orange-deep:   #C2410C;
+  --rx-orange-glow:   rgba(234, 88, 12, 0.18);
+  --rx-orange-light:  #FFF7ED;
+  --rx-orange-border: rgba(234, 88, 12, 0.2);
+  --rx-orange-mid:    rgba(234, 88, 12, 0.08);
 
-  /* ── Secondary: Blue ───────────────────────────────────────────────── */
-  --rx-blue:          #1A56DB;
-  --rx-blue-mid:      #2D6EE8;
-  --rx-blue-dark:     #1240B0;
-  --rx-blue-light:    #EBF2FF;
-  --rx-blue-glow:     rgba(26, 86, 219, 0.22);
-  --rx-blue-alpha:    rgba(26, 86, 219, 0.12);
+  /* ── Secondary: Calming Slate Blue ──────────────────────────────────── */
+  --rx-blue:          #2563EB;
+  --rx-blue-mid:      #3B82F6;
+  --rx-blue-dark:     #1D4ED8;
+  --rx-blue-light:    #EFF6FF;
+  --rx-blue-glow:     rgba(37, 99, 235, 0.16);
+  --rx-blue-alpha:    rgba(37, 99, 235, 0.08);
 
-  /* ── Header / Dark Surfaces ────────────────────────────────────────── */
-  --rx-header:        #0F1C3D;
-  --rx-header-sub:    #162248;
-  --rx-footer-bg:     #0F1C3D;
-  --rx-footer-sub:    #0B1530;
+  /* ── Header / Dark Surfaces (Deep Obsidian Slate) ────────────────────── */
+  --rx-header:        #0C1322;
+  --rx-header-sub:    #111C33;
+  --rx-footer-bg:     #0C1322;
+  --rx-footer-sub:    #080E1A;
 
-  /* ── Neutral / Surface ─────────────────────────────────────────────── */
+  /* ── Neutral / Surface (Eye-Soothing Soft Neutrals) ─────────────────── */
   --rx-white:         #FFFFFF;
-  --rx-cream:         #FAFBFF;
+  --rx-cream:         #F8FAFC;
   --rx-surface:       #FFFFFF;
-  --rx-surface-alt:   #F4F7FF;
+  --rx-surface-alt:   #F1F5F9;
 
-  /* ── Semantic ──────────────────────────────────────────────────────── */
-  --rx-green:         #22C55E;
-  --rx-green-light:   #DCFCE7;
-  --rx-amber:         #F59E0B;
-  --rx-amber-light:   #FEF3C7;
-  --rx-red:           #EF4444;
-  --rx-red-light:     #FEE2E2;
+  /* ── Semantic: Soothing Emerald, Warm Amber & Coral Red ─────────────── */
+  --rx-green:         #059669;
+  --rx-green-mid:     #10B981;
+  --rx-green-light:   #ECFDF5;
+  --rx-green-deep:    #064E3B;
+  --rx-green-glow:    rgba(5, 150, 105, 0.20);
+  --rx-green-alpha:   rgba(5, 150, 105, 0.08);
+  --rx-green-border:  rgba(5, 150, 105, 0.24);
+  --rx-amber:         #D97706;
+  --rx-amber-light:   #FFFBEB;
+  --rx-red:           #E11D48;
+  --rx-red-light:     #FFE4E6;
 
-  /* ── Text ──────────────────────────────────────────────────────────── */
-  --text-dark:        #0F1C3D;
-  --text-body:        #1E293B;
-  --text-secondary:   #475569;
+  /* ── TrainX Routes Network Pattern (Authentic Rail Corridors, Switches & Junctions) ── */
+  --tx-routes-bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23059669' stroke-width='1.5' opacity='0.07'%3E%3Cpath d='M0,30 Q30,30 60,60 T120,60' stroke-dasharray='4,3'/%3E%3Cpath d='M0,90 Q40,90 60,60 T120,30'/%3E%3Cpath d='M30,0 L30,120' stroke-dasharray='6,4'/%3E%3Cpath d='M90,0 Q90,50 60,60 T30,120'/%3E%3Ccircle cx='60' cy='60' r='5.5' fill='%23EA580C' opacity='0.6'/%3E%3Ccircle cx='30' cy='30' r='4' fill='%23059669' opacity='0.6'/%3E%3Ccircle cx='90' cy='30' r='4' fill='%232563EB' opacity='0.6'/%3E%3Ccircle cx='30' cy='90' r='4' fill='%23059669' opacity='0.6'/%3E%3Ccircle cx='120' cy='60' r='3' fill='%23D97706' opacity='0.6'/%3E%3Cpath d='M0,60 L120,60' stroke-width='1.6'/%3E%3C/g%3E%3C/svg%3E");
+
+  /* ── Text (Carefully balanced contrast for zero eye fatigue) ────────── */
+  --text-dark:        #0F172A;
+  --text-body:        #334155;
+  --text-secondary:   #64748B;
   --text-muted:       #94A3B8;
   --text-light:       #FFFFFF;
 
   /* ── Borders ───────────────────────────────────────────────────────── */
-  --border-light:     rgba(15, 28, 61, 0.07);
-  --border-medium:    rgba(15, 28, 61, 0.12);
-  --border-dark:      rgba(15, 28, 61, 0.2);
+  --border-light:     rgba(148, 163, 184, 0.15);
+  --border-medium:    rgba(148, 163, 184, 0.25);
+  --border-dark:      rgba(148, 163, 184, 0.4);
 
   /* ── Fonts ─────────────────────────────────────────────────────────── */
   --font-sans:    'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Plus Jakarta Sans', 'Noto Sans Devanagari', var(--font-sans);
   --font-mono:    'JetBrains Mono', monospace;
 
-  /* ── Radius — fluid / organic ──────────────────────────────────────── */
+  /* ── Radius — fluid & ergonomic ────────────────────────────────────── */
   --radius-xs:    6px;
-  --radius-sm:    12px;
-  --radius-md:    18px;
-  --radius-lg:    24px;
-  --radius-xl:    32px;
+  --radius-sm:    10px;
+  --radius-md:    16px;
+  --radius-lg:    22px;
+  --radius-xl:    28px;
   --radius-pill:  9999px;
 
-  /* ── Shadows — airy, no hard borders ──────────────────────────────── */
-  --shadow-card:    0 2px 16px rgba(15, 28, 61, 0.07), 0 0 0 1px rgba(15, 28, 61, 0.04);
-  --shadow-hover:   0 8px 32px rgba(15, 28, 61, 0.13), 0 0 0 1px rgba(15, 28, 61, 0.06);
-  --shadow-header:  0 4px 24px rgba(15, 28, 61, 0.22);
-  --shadow-modal:   0 32px 80px rgba(15, 28, 61, 0.28);
-  --shadow-float:   0 16px 48px rgba(255, 107, 26, 0.14), 0 4px 16px rgba(15, 28, 61, 0.08);
+  /* ── Shadows — airy, soft diffuse ambient ──────────────────────────── */
+  --shadow-card:    0 1px 3px rgba(15, 23, 42, 0.04), 0 6px 24px rgba(15, 23, 42, 0.04), 0 0 0 1px rgba(148, 163, 184, 0.08);
+  --shadow-hover:   0 4px 6px rgba(15, 23, 42, 0.04), 0 12px 32px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(148, 163, 184, 0.14);
+  --shadow-header:  0 4px 20px rgba(12, 19, 34, 0.25);
+  --shadow-modal:   0 24px 64px rgba(12, 19, 34, 0.32);
+  --shadow-float:   0 12px 36px rgba(234, 88, 12, 0.12), 0 4px 12px rgba(15, 23, 42, 0.05);
 }
 
-/* ── Dark Mode Overrides ─────────────────────────────────────────────────── */
+/* ── Dark Mode Overrides (Deep soothing night palette) ─────────────────────── */
 [data-theme="dark"] {
-  --rx-cream:         #0A0F1D;
-  --rx-surface:       #111827;
-  --rx-surface-alt:   #1A2234;
-  --text-dark:        #F9FAFB;
-  --text-body:        #E2E8F0;
+  --rx-cream:         #090D16;
+  --rx-surface:       #0F1524;
+  --rx-surface-alt:   #172033;
+  --text-dark:        #F8FAFC;
+  --text-body:        #CBD5E1;
   --text-secondary:   #94A3B8;
   --text-muted:       #64748B;
-  --border-light:     rgba(255, 255, 255, 0.08);
-  --border-medium:    rgba(255, 255, 255, 0.14);
-  --border-dark:      rgba(255, 255, 255, 0.24);
-  --shadow-card:      0 4px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.06);
-  --shadow-hover:     0 12px 36px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
-  --rx-orange-light:  rgba(255, 107, 26, 0.15);
-  --rx-blue-light:    rgba(26, 86, 219, 0.2);
-  --rx-green-light:   rgba(34, 197, 94, 0.18);
-  --rx-amber-light:   rgba(245, 158, 11, 0.18);
-  --rx-red-light:     rgba(239, 68, 68, 0.18);
+  --border-light:     rgba(255, 255, 255, 0.06);
+  --border-medium:    rgba(255, 255, 255, 0.12);
+  --border-dark:      rgba(255, 255, 255, 0.20);
+  --shadow-card:      0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-hover:     0 10px 36px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.09);
+  --rx-orange-light:  rgba(234, 88, 12, 0.12);
+  --rx-blue-light:    rgba(37, 99, 235, 0.15);
+  --rx-green-light:   rgba(16, 185, 129, 0.14);
+  --rx-amber-light:   rgba(217, 119, 6, 0.14);
+  --rx-red-light:     rgba(225, 29, 72, 0.14);
 }
 
 [data-theme="dark"] body {
   background-color: var(--rx-cream);
-  background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(255,107,26,0.12) 0%, transparent 70%);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(16, 185, 129, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 85% 85%, rgba(234, 88, 12, 0.05) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%2334D399' stroke-width='1.5' opacity='0.10'%3E%3Cpath d='M0,30 Q30,30 60,60 T120,60' stroke-dasharray='4,3'/%3E%3Cpath d='M0,90 Q40,90 60,60 T120,30'/%3E%3Cpath d='M30,0 L30,120' stroke-dasharray='6,4'/%3E%3Cpath d='M90,0 Q90,50 60,60 T30,120'/%3E%3Ccircle cx='60' cy='60' r='5.5' fill='%2338BDF8' opacity='0.7'/%3E%3Ccircle cx='30' cy='30' r='4' fill='%2334D399' opacity='0.7'/%3E%3Ccircle cx='90' cy='30' r='4' fill='%2360A5FA' opacity='0.7'/%3E%3Ccircle cx='30' cy='90' r='4' fill='%2334D399' opacity='0.7'/%3E%3Ccircle cx='120' cy='60' r='3' fill='%23FBBF24' opacity='0.7'/%3E%3Cpath d='M0,60 L120,60' stroke-width='1.6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: auto, auto, 120px 120px;
+  background-repeat: no-repeat, no-repeat, repeat;
 }
 
 [data-theme="dark"] .bms-card,
-[data-theme="dark"] .metric-card {
+[data-theme="dark"] .metric-card,
+[data-theme="dark"] .circle-metric-pod {
   background: var(--rx-surface) !important;
   border-color: var(--border-light) !important;
 }
@@ -129,11 +143,70 @@ body {
   color: var(--text-body);
   min-height: 100vh;
   overflow-x: hidden;
-  line-height: 1.55;
+  line-height: 1.58;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Subtle radial warm glow on page bg */
-  background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(255,107,26,0.06) 0%, transparent 70%);
+  /* Authentic Railway Routes Background with ambient glow */
+  background-image:
+    radial-gradient(ellipse 70% 35% at 50% -5%, rgba(234, 88, 12, 0.035) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 30% at 85% 30%, rgba(5, 150, 105, 0.03) 0%, transparent 60%),
+    var(--tx-routes-bg);
+  background-size: auto, auto, 120px 120px;
+  background-repeat: no-repeat, no-repeat, repeat;
+}
+
+/* ── Circular Metric Cards Format ────────────────────────────────────────── */
+.circle-metrics-deck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.circle-metric-pod {
+  background: var(--rx-surface);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+.circle-metric-pod:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.circle-dial-container {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.circle-dial-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.circle-dial-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
 }
 
 /* ── Custom Scrollbar ───────────────────────────────────────────────────── */
@@ -164,7 +237,7 @@ body {
   box-shadow: var(--shadow-card);
   transition: box-shadow 0.22s cubic-bezier(0.4,0,0.2,1), transform 0.22s cubic-bezier(0.4,0,0.2,1);
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden removed — was clipping content on mobile */
 }
 .bms-card:hover {
   box-shadow: var(--shadow-hover);
@@ -287,6 +360,16 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px var(--rx-blue-glow);
 }
+.btn-green {
+  background: var(--rx-green);
+  color: #FFFFFF;
+  box-shadow: 0 2px 12px var(--rx-green-glow);
+}
+.btn-green:hover {
+  background: #15803D;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--rx-green-glow);
+}
 .btn-emergency {
   background: var(--rx-red);
   color: #FFFFFF;
@@ -304,6 +387,64 @@ body {
 .btn-optimizer:hover {
   transform: translateY(-1px);
   box-shadow: 0 6px 20px var(--rx-orange-glow);
+}
+
+/* ── IR Card Nameboard (Softer, eye-soothing station signboard) ───────────── */
+.ir-nameboard {
+  background: linear-gradient(135deg, #FEFCE8 0%, #FEF08A 100%);
+  border-bottom: 2px solid #334155;
+}
+.ir-nameboard-active {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FDE68A 100%);
+  border-bottom: 2px solid #334155;
+}
+.ir-nameboard-block {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FDE68A 100%);
+  border-bottom: 2px solid #D97706;
+}
+.ir-nameboard-accident {
+  background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%);
+  border-bottom: 2px solid #E11D48;
+}
+.ir-nameboard-clear {
+  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+  border-bottom: 2px solid #059669;
+}
+
+/* ── IR Zone Code Badge ───────────────────────────────────────────────────── */
+.ir-zone-badge {
+  background: #0F172A;
+  color: #FBBF24;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 5px;
+  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+
+/* ── Status badge colour variants ─────────────────────────────────────────── */
+.badge-green    { background: var(--rx-green-light); color: var(--rx-green-deep); }
+.badge-ir-clear { background: #ECFDF5; color: #065F46; border: 1px solid rgba(5,150,105,0.22); }
+.badge-ir-block { background: #FFFBEB; color: #92400E; border: 1px solid rgba(217,119,6,0.25); }
+.badge-ir-accident { background: #FFE4E6; color: #9F1239; border: 1px solid rgba(225,29,72,0.25); animation: pulse-red 2s infinite; }
+
+@keyframes pulse-red {
+  0%   { box-shadow: 0 0 0 0 rgba(225,29,72,0.35); }
+  70%  { box-shadow: 0 0 0 6px rgba(225,29,72,0); }
+  100% { box-shadow: 0 0 0 0 rgba(225,29,72,0); }
+}
+
+/* ── TrainX Watermark overlay (fixed, behind content) ─────────────────────── */
+.tx-watermark-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: var(--tx-watermark);
+  background-size: 72px 72px;
+  background-repeat: repeat;
+  opacity: 1;
 }
 
 /* ── Animations ─────────────────────────────────────────────────────────── */
@@ -404,6 +545,16 @@ body {
 }
 .bms-search-input::placeholder { color: rgba(255,255,255,0.5); }
 
+.global-search-container {
+  position: relative;
+  flex: 1;
+  max-width: 480px;
+}
+
+.mobile-search-trigger-btn {
+  display: none !important;
+}
+
 /* ── Metric Cards — floating, no border ─────────────────────────────────── */
 .grid-metrics {
   display: grid;
@@ -498,4 +649,406 @@ body {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Mobile / Android App Responsive Design — Full Overhaul
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Bottom Navigation Bar (Android-style) ───────────────────────────────── */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: var(--rx-surface);
+  border-top: 1px solid var(--border-medium);
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+.mobile-bottom-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+  padding: 0 4px;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  padding: 6px 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.18s ease;
+  min-height: 48px;
+  position: relative;
+}
+
+.mobile-nav-item.active {
+  color: var(--rx-orange);
+}
+
+.mobile-nav-item .nav-icon-wrap {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: all 0.18s ease;
+}
+
+.mobile-nav-item.active .nav-icon-wrap {
+  background: rgba(234, 88, 12, 0.12);
+}
+
+.mobile-nav-item .nav-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  transition: color 0.18s ease;
+}
+
+.mobile-nav-item.active .nav-label {
+  color: var(--rx-orange);
+}
+
+.mobile-nav-badge {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  background: var(--rx-red);
+  color: #FFFFFF;
+  font-size: 0.55rem;
+  font-weight: 900;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border: 2px solid var(--rx-surface);
+}
+
+/* ── Mobile App Top Bar (compact) ───────────────────────────────────────── */
+.mobile-top-bar {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 800;
+  background: var(--rx-header);
+  padding: 0 14px;
+  height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-header);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* ── Tablet (992px) ─────────────────────────────────────────────────────── */
+@media (max-width: 992px) {
+  .main-content {
+    padding: 20px 16px 56px;
+  }
+}
+
+/* ── Mobile (768px) — Android app layout ───────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   Fluid Responsive Layout (Preserving Exact Website Design Language)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Prevent any horizontal page overflow ────────────────────────────────── */
+html, body, #root, .app-container {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* ── Tablet & Laptop ─────────────────────────────────────────────────────── */
+@media (max-width: 992px) {
+  .main-content {
+    padding: 20px 16px 56px;
+  }
+}
+
+/* ── Header Responsive Flex ────────────────────────────────────────────── */
+.header-main-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+}
+
+.header-brand-wrap {
+  flex-shrink: 0;
+}
+
+.header-search-wrap {
+  flex: 1 1 340px;
+  max-width: 480px;
+}
+
+.header-controls-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── Mobile Responsive (Keeps Full Web Design Language) ─────────────────── */
+@media (max-width: 900px) {
+  .header-main-bar {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+  
+  .header-brand-wrap {
+    order: 1;
+  }
+  
+  .header-controls-wrap {
+    order: 2;
+    margin-left: auto;
+    gap: 6px !important;
+  }
+  
+  .header-search-wrap {
+    order: 3;
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .bms-search-box {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .header-main-bar {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    gap: 6px 8px !important;
+    width: 100% !important;
+  }
+  .header-brand-wrap {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .header-controls-wrap {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    margin-left: auto !important;
+  }
+  .header-search-wrap {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100% !important;
+  }
+  .header-secondary-control {
+    display: none !important;
+  }
+  /* Hide subheader status strip (incidents/clock/API) on mobile — saves vertical space */
+  .header-status-strip {
+    display: none !important;
+  }
+  /* Compact header padding on mobile */
+  .header-primary-inner {
+    padding: 8px 14px !important;
+  }
+  .header-sub-inner {
+    padding: 4px 12px !important;
+  }
+  
+  /* Full width simulator buttons so nothing clips */
+  .sim-controls-btn-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+  .sim-btn, .sim-btn-primary, .sim-btn-reset {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    min-height: 42px !important;
+  }
+  
+  /* Wavy divider compact height */
+  .wavy-divider-container svg {
+    height: 16px !important;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* Main content fluid spacing */
+  .main-content {
+    padding: 14px 12px 64px;
+    max-width: 100%;
+  }
+
+  /* Header padding */
+  header [style*="padding: '10px 24px'"] {
+    padding: 8px 12px !important;
+  }
+
+  /* Subheader tabs scroll smoothly with no scrollbars */
+  .nav-tabs-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .nav-tabs-container::-webkit-scrollbar { display: none; }
+
+  /* Metrics grid */
+  .grid-metrics {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .circle-metrics-deck {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .metric-card {
+    padding: 14px 12px;
+  }
+
+  /* Buttons & Inputs */
+  .btn {
+    padding: 9px 14px;
+    font-size: 0.8rem;
+    min-height: 40px;
+  }
+
+  .input-control {
+    font-size: 0.86rem;
+    padding: 10px 12px;
+  }
+
+  /* Section header */
+  .bms-section-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  /* Tap feedback */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@media (max-width: 520px) {
+  .header-controls-wrap {
+    gap: 4px !important;
+  }
+  
+  .persona-btn {
+    padding: 4px 8px !important;
+    font-size: 0.68rem !important;
+  }
+
+  .lang-toggle-btn {
+    padding: 3px 7px !important;
+    font-size: 0.68rem !important;
+  }
+}
+
+/* ── Small Mobile Phones ────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+
+  .main-content {
+    padding: 10px 10px 48px;
+  }
+
+  .grid-metrics {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .circle-metrics-deck {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .bms-section-title {
+    font-size: 1.05rem;
+  }
+
+  .bms-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .nav-tab-button {
+    font-size: 0.72rem;
+    padding: 6px 12px;
+  }
+
+  .sim-controls-btn-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .sim-btn-primary {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* ── iOS Safari safe area support ──────────────────────────────────────── */
+@supports (padding-top: env(safe-area-inset-top)) {
+  header {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .main-content {
+    padding-left: max(12px, env(safe-area-inset-left, 0px));
+    padding-right: max(12px, env(safe-area-inset-right, 0px));
+    padding-bottom: max(48px, calc(env(safe-area-inset-bottom, 0px) + 24px));
+  }
+}
+
+/* ── PWA / Standalone mode ──────────────────────────────────────────────── */
+@media (display-mode: standalone) {
+  .mobile-bottom-nav {
+    padding-bottom: env(safe-area-inset-bottom, 12px);
+  }
+  .main-content {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ── Keyframes ─────────────────────────────────────────────────────────── */
+@keyframes slideUpFade {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.page-enter {
+  animation: slideUpFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

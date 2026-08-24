@@ -10,12 +10,15 @@ import {
   X, 
   Volume2, 
   Send, 
-  Clock 
+  Clock,
+  Sparkles,
+  Compass
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { AccidentIncident, AccidentSeverity } from '../../types/railway';
 import { playEmergencyAlertSound } from '../../utils/audioAlert';
+import { AccidentRerouteAdvisorModal } from '../passenger/AccidentRerouteAdvisorModal';
 
 export const AccidentIncidentManager: React.FC = () => {
   const { 
@@ -29,6 +32,7 @@ export const AccidentIncidentManager: React.FC = () => {
   const { t, localize } = useLanguage();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedIncidentForReroute, setSelectedIncidentForReroute] = useState<AccidentIncident | null>(null);
   const [trainNumber, setTrainNumber] = useState<string>('12951');
   const [sectionId, setSectionId] = useState<string>('SEC-WR-04');
   const [natureOfIncident, setNatureOfIncident] = useState<AccidentIncident['natureOfIncident']>('OHE Wire Snap');
@@ -98,69 +102,128 @@ export const AccidentIncidentManager: React.FC = () => {
       </div>
 
       {/* Incidents List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {filteredIncidents.map(inc => (
           <div
             key={inc.id}
             className="bms-card"
             style={{
-              padding: '22px',
-              borderLeft: `5px solid ${inc.severity === 'critical' ? 'var(--rx-red)' : '#F59E0B'}`,
-              background: inc.status === 'resolved' ? '#FAFAFA' : 'var(--rx-surface)',
-              opacity: inc.status === 'resolved' ? 0.75 : 1
+              padding: 0,
+              border: inc.status === 'resolved'
+                ? '1.5px solid rgba(22,163,74,0.4)'
+                : inc.severity === 'critical'
+                ? '2px solid rgba(239,68,68,0.6)'
+                : '1.5px solid rgba(245,158,11,0.4)',
+              overflow: 'hidden',
+              opacity: inc.status === 'resolved' ? 0.85 : 1
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span className={`badge ${inc.status === 'resolved' ? 'badge-clear' : 'badge-accident'}`}>
-                  {inc.status === 'resolved' ? 'RESOLVED & RESTORED' : `${inc.severity.toUpperCase()} ALERT`}
-                </span>
-                <span className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                  ID: {inc.id} • {t('alert.reported')}: {inc.reportedAt}
-                </span>
+            {/* IR Red/Green Nameboard Header */}
+            <div
+              className={
+                inc.status === 'resolved'
+                  ? 'ir-nameboard-clear'
+                  : inc.severity === 'critical'
+                  ? 'ir-nameboard-accident'
+                  : 'ir-nameboard-active'
+              }
+              style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '3px' }}>
+                  <span className="ir-zone-badge">
+                    [{inc.severity.toUpperCase().slice(0,3)} / {inc.id}]
+                  </span>
+                  <span className="font-mono" style={{ fontSize: '0.66rem', color: '#1E293B', fontWeight: 700 }}>
+                    {inc.reportedAt}
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#000000', fontFamily: 'serif', lineHeight: 1.3 }}>
+                  Train #{inc.trainNumber} — {localize(inc.sectionName)}
+                </div>
+                <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#374151', marginTop: '2px' }}>
+                  {localize(inc.trainName)}
+                </div>
               </div>
-
-              {inc.status !== 'resolved' && (
-                <button
-                  onClick={() => resolveIncident(inc.id)}
-                  className="btn btn-secondary"
-                  style={{ fontSize: '0.78rem', padding: '6px 14px', color: '#15803D' }}
-                >
-                  <CheckCircle2 size={14} />
-                  {t('incident.resolve')}
-                </button>
-              )}
+              <span className={`badge ${
+                inc.status === 'resolved' ? 'badge-ir-clear' : 'badge-ir-accident'
+              }`} style={{ fontSize: '0.64rem', flexShrink: 0 }}>
+                {inc.status === 'resolved' ? '✅ RESOLVED & RESTORED' : `🔴 ${inc.severity.toUpperCase()} ALERT`}
+              </span>
             </div>
 
-            <h3 style={{ fontSize: '1.12rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '6px' }}>
-              Train #{inc.trainNumber} ({localize(inc.trainName)}) — {localize(inc.sectionName)}
-            </h3>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-body)', marginBottom: '14px', lineHeight: '1.5' }}>
-              {localize(inc.description)}
-            </p>
-
-            {/* Emergency Protocols Strip */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px', background: 'var(--rx-surface-alt)', padding: '12px 14px', borderRadius: 'var(--radius-xs)', fontSize: '0.75rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Truck size={15} color="var(--rx-orange)" />
-                <span>
-                  <strong>SP-ARME Relief Train:</strong> {localize(inc.reliefTrainStatus)} ({inc.reliefTrainId || 'None'})
-                </span>
+            {/* Card Body */}
+            <div style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {/* Nature of incident */}
+              <div style={{
+                borderLeft: `3px solid ${inc.severity === 'critical' ? 'var(--rx-red)' : 'var(--rx-amber)'}`,
+                paddingLeft: '10px', fontSize: '0.82rem', color: 'var(--text-body)', lineHeight: '1.5'
+              }}>
+                <strong style={{ color: 'var(--text-dark)' }}>{inc.natureOfIncident}:</strong>{' '}
+                {localize(inc.description)}
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Clock size={15} color="var(--rx-blue)" />
-                <span>
-                  <strong>Estimated Restoration:</strong> {inc.estimatedTrackRestoration}
-                </span>
+              {/* Emergency Protocols Grid */}
+              <div style={{
+                display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '8px', background: 'var(--rx-surface-alt)',
+                padding: '10px 14px', borderRadius: '8px', fontSize: '0.74rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                  <Truck size={14} color="var(--rx-orange)" />
+                  <span>
+                    <strong style={{ color: 'var(--text-dark)' }}>SP-ARME Relief:</strong>{' '}
+                    {localize(inc.reliefTrainStatus)} ({inc.reliefTrainId || 'None'})
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                  <Clock size={14} color="var(--rx-blue)" />
+                  <span>
+                    <strong style={{ color: 'var(--text-dark)' }}>Restoration ETA:</strong>{' '}
+                    {inc.estimatedTrackRestoration}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                  <PhoneCall size={14} color="var(--rx-green)" />
+                  <span>
+                    <strong style={{ color: 'var(--text-dark)' }}>Helpline:</strong>{' '}
+                    {inc.passengerAssistanceContact}
+                  </span>
+                </div>
+                {inc.divisionController && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                    <Radio size={14} color="var(--rx-red)" />
+                    <span>
+                      <strong style={{ color: 'var(--text-dark)' }}>Section Controller:</strong>{' '}
+                      {inc.divisionController}
+                    </span>
+                  </div>
+                )}
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <PhoneCall size={15} color="#15803D" />
-                <span>
-                  <strong>Passenger Helpline:</strong> {inc.passengerAssistanceContact}
-                </span>
-              </div>
+              {/* Actions */}
+              {inc.status !== 'resolved' && (
+                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedIncidentForReroute(inc)}
+                    className="btn btn-secondary"
+                    style={{ fontSize: '0.78rem', padding: '7px 14px', borderRadius: '8px', color: 'var(--rx-blue)', borderColor: 'rgba(37, 99, 235, 0.3)' }}
+                  >
+                    <Compass size={14} color="var(--rx-blue)" />
+                    AI Route Rethink & Bypass
+                  </button>
+
+                  <button
+                    onClick={() => resolveIncident(inc.id)}
+                    className="btn btn-green"
+                    style={{ fontSize: '0.78rem', padding: '7px 16px', borderRadius: '8px' }}
+                  >
+                    <CheckCircle2 size={14} />
+                    {t('incident.resolve')}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -306,6 +369,17 @@ export const AccidentIncidentManager: React.FC = () => {
             </form>
           </div>
         </div>
+      )}
+
+      {/* AI Reroute Advisor Modal */}
+      {selectedIncidentForReroute && (
+        <AccidentRerouteAdvisorModal
+          isOpen={!!selectedIncidentForReroute}
+          onClose={() => setSelectedIncidentForReroute(null)}
+          trainNumber={selectedIncidentForReroute.trainNumber}
+          trainName={selectedIncidentForReroute.trainName}
+          sectionCode={selectedIncidentForReroute.sectionName}
+        />
       )}
     </div>
   );

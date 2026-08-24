@@ -15,6 +15,7 @@ import { useRailway } from '../../context/RailwayContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { BlockReason, DivisionName, MegaBlock } from '../../types/railway';
 import { railwayApi } from '../../services/apiClient';
+import { MegaBlockUploaderModal } from './MegaBlockUploaderModal';
 
 export const MegaBlockManager: React.FC = () => {
   const { 
@@ -124,101 +125,144 @@ Diversion: Up & Down fast line services leaving CSMT Mumbai will be diverted ont
       </div>
 
       {/* Active & Scheduled Mega Blocks List */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '16px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))', gap: '20px' }}>
         {filteredBlocks.map(block => (
           <div
             key={block.id}
             className="bms-card"
             style={{
-              padding: '20px',
-              borderTop: `4px solid ${block.status === 'active' ? 'var(--rx-amber)' : block.status === 'completed' ? 'var(--rx-green)' : 'var(--rx-blue)'}`,
+              padding: 0,
+              border: block.status === 'active'
+                ? '1.5px solid rgba(245,158,11,0.45)'
+                : block.status === 'completed'
+                ? '1.5px solid rgba(22,163,74,0.4)'
+                : '1px solid var(--border-light)',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'space-between',
-              gap: '14px'
+              overflow: 'hidden',
+              transition: 'all 0.18s ease'
             }}
           >
-            <div>
-              {/* Header Badge */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                <span className="font-mono" style={{ fontSize: '0.72rem', color: '#666666' }}>
-                  {block.id} • {localize(block.division)}
-                </span>
-                <span className={`badge ${
-                  block.status === 'active' ? 'badge-megablock' :
-                  block.status === 'completed' ? 'badge-clear' : 'badge-cyan'
-                }`} style={{ fontSize: '0.65rem' }}>
-                  {block.status.toUpperCase()}
-                </span>
-              </div>
-
-              {/* Title & Section */}
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '4px' }}>
-                {localize(block.sectionName)}
-              </h3>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-                <Clock size={13} color="var(--rx-amber)" />
-                <span>{block.date} | <strong>{block.startTime} – {block.endTime}</strong></span>
-              </div>
-
-              {/* Scope & Lines */}
-              <div style={{ background: 'var(--rx-surface-alt)', padding: '12px', borderRadius: 'var(--radius-xs)', marginBottom: '12px', fontSize: '0.75rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>{t('passenger.linesAffected')}:</span>
-                  <strong style={{ color: '#92400E' }}>{block.linesAffected}</strong>
+            {/* ── IR Yellow Station Nameboard Header ── */}
+            <div
+              className={
+                block.status === 'active'
+                  ? 'ir-nameboard-block'
+                  : block.status === 'completed'
+                  ? 'ir-nameboard-clear'
+                  : 'ir-nameboard'
+              }
+              style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}
+            >
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+                  <span className="ir-zone-badge">[{block.division.slice(0, 2)} / {block.id}]</span>
+                  <span style={{ fontSize: '0.68rem', fontWeight: 800, color: '#1E293B' }}>
+                    {localize(block.division)} • {block.linesAffected}
+                  </span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>{t('passenger.maintenanceWork')}:</span>
-                  <span style={{ color: 'var(--text-dark)', fontWeight: 600 }}>{localize(block.reason)}</span>
+                <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#000000', fontFamily: 'serif', lineHeight: 1.3 }}>
+                  {localize(block.sectionName)}
+                </div>
+              </div>
+              <span className={`badge ${
+                block.status === 'active' ? 'badge-ir-block' :
+                block.status === 'completed' ? 'badge-ir-clear' : 'badge-cyan'
+              }`} style={{ fontSize: '0.65rem', flexShrink: 0 }}>
+                {block.status === 'active' ? '🟡 MEGA BLOCK ACTIVE' : block.status === 'completed' ? '✅ COMPLETED' : '📋 SCHEDULED'}
+              </span>
+            </div>
+
+            {/* Card Body */}
+            <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+              {/* Date & Time */}
+              <div style={{
+                background: 'var(--rx-surface-alt)', padding: '8px 12px', borderRadius: '8px',
+                display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.78rem',
+                color: 'var(--text-secondary)', borderLeft: '3px solid var(--rx-amber)'
+              }}>
+                <Clock size={14} color="var(--rx-amber)" />
+                <span>{block.date}</span>
+                <span style={{ color: 'var(--border-dark)' }}>|</span>
+                <strong style={{ color: 'var(--text-dark)' }}>{block.startTime} – {block.endTime} hrs</strong>
+              </div>
+
+              {/* Scope & Lines Grid */}
+              <div style={{ background: 'var(--rx-surface-alt)', padding: '10px 12px', borderRadius: '8px', fontSize: '0.75rem', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>Lines Affected:</span>
+                  <strong style={{ color: '#B45309' }}>{block.linesAffected}</strong>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Gang:</span>
-                  <span style={{ color: 'var(--rx-blue)', fontWeight: 600 }}>{block.crewGangCount} Personnel</span>
+                  <span style={{ color: 'var(--text-secondary)' }}>Maintenance Work:</span>
+                  <span style={{ color: 'var(--text-dark)', fontWeight: 700 }}>{localize(block.reason)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>Engineering Gang:</span>
+                  <span style={{ color: 'var(--rx-blue)', fontWeight: 700 }}>{block.crewGangCount} Personnel</span>
                 </div>
               </div>
 
-              {/* Machinery Allocation */}
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-                <strong style={{ color: '#555555', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
+              {/* Machinery */}
+              <div style={{ fontSize: '0.72rem' }}>
+                <strong style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
                   <Wrench size={12} color="var(--rx-orange)" />
-                  Assigned Machinery:
+                  Assigned Machinery (P-Way):
                 </strong>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
                   {block.assignedMachinery.map((m, idx) => (
-                    <span key={idx} style={{ background: 'var(--rx-surface-alt)', color: 'var(--text-body)', padding: '3px 8px', borderRadius: '4px', fontSize: '0.7rem' }}>
-                      {m}
-                    </span>
+                    <span key={idx} style={{
+                      background: 'var(--rx-orange-light)', color: '#C2410C',
+                      padding: '3px 9px', borderRadius: '20px', fontSize: '0.68rem',
+                      fontWeight: 700, border: '1px solid rgba(255,107,26,0.2)'
+                    }}>{m}</span>
                   ))}
                 </div>
               </div>
 
-              {/* Passenger Advisory */}
-              <div style={{ background: 'var(--rx-amber-light)', padding: '10px 12px', borderRadius: 'var(--radius-xs)', fontSize: '0.74rem', color: '#92400E', lineHeight: '1.4' }}>
-                📢 {block.publicAdvisory}
+              {/* Public Advisory */}
+              <div style={{
+                background: 'var(--rx-amber-light)', borderLeft: '3px solid var(--rx-amber)',
+                padding: '8px 12px', borderRadius: '0 6px 6px 0',
+                fontSize: '0.73rem', color: '#92400E', lineHeight: '1.45'
+              }}>
+                📢 <strong>Passenger Advisory:</strong> {block.publicAdvisory}
               </div>
+
+              {/* Bus Services */}
               {block.alternativeBusServices && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.73rem', color: '#15803D', marginTop: '8px' }}>
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.72rem',
+                  color: 'var(--rx-green)', background: 'var(--rx-green-light)',
+                  borderLeft: '3px solid var(--rx-green)', padding: '6px 10px', borderRadius: '0 6px 6px 0'
+                }}>
                   <Bus size={13} />
                   <span>{block.alternativeBusServices}</span>
                 </div>
               )}
-            </div>
 
-            {/* Actions */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
-              <span style={{ fontSize: '0.72rem', color: '#888888' }}>
-                IRCTC Live Feed Sync
-              </span>
-              {block.status === 'active' && (
-                <button
-                  onClick={() => completeMegaBlock(block.id)}
-                  className="btn btn-secondary"
-                  style={{ fontSize: '0.75rem', padding: '5px 12px', color: '#15803D' }}
-                >
-                  <CheckCircle2 size={13} />
-                  {t('block.markComplete')}
-                </button>
-              )}
+              {/* Footer Actions */}
+              <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                borderTop: '1px solid var(--border-light)', paddingTop: '10px', marginTop: 'auto'
+              }}>
+                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                  🛡️ IRCTC / CRIS Live Feed Sync
+                </span>
+                {block.status === 'active' && (
+                  <button
+                    onClick={() => completeMegaBlock(block.id)}
+                    className="btn btn-green"
+                    style={{ fontSize: '0.74rem', padding: '5px 14px', borderRadius: '8px' }}
+                  >
+                    <CheckCircle2 size={13} />
+                    {t('block.markComplete')}
+                  </button>
+                )}
+                {block.status === 'completed' && (
+                  <span className="badge badge-ir-clear">✅ Work Completed</span>
+                )}
+              </div>
             </div>
           </div>
         ))}
@@ -409,105 +453,29 @@ Diversion: Up & Down fast line services leaving CSMT Mumbai will be diverted ont
       )}
 
       {/* AI Circular NLP Scanner Modal */}
-      {isScannerOpen && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(10, 14, 35, 0.82)',
-          backdropFilter: 'blur(8px)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          padding: '20px'
-        }}>
-          <div className="bms-card" style={{
-            width: '100%',
-            maxWidth: '680px',
-            background: 'var(--rx-surface)',
-            borderRadius: 'var(--radius-md)',
-            padding: '24px',
-            maxHeight: '90vh',
-            overflowY: 'auto'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', borderBottom: '1px solid var(--border-light)', paddingBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'var(--rx-orange-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rx-orange)' }}>
-                  <Sparkles size={20} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-dark)' }}>
-                    {t('block.scanCircular')}
-                  </h3>
-                  <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                    Paste raw railway circulars or press releases for instant entity extraction & block generation
-                  </p>
-                </div>
-              </div>
-              <button onClick={() => setIsScannerOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#999999' }}>
-                <X size={20} />
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '6px' }}>
-                  Raw Circular / Press Release Text:
-                </label>
-                <textarea
-                  className="input-control"
-                  rows={6}
-                  value={circularRawText}
-                  onChange={(e) => setCircularRawText(e.target.value)}
-                  style={{ fontFamily: 'monospace', fontSize: '0.8rem', lineHeight: '1.4' }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCircularRawText(
-                      `WESTERN RAILWAY NIGHT CORRIDOR BLOCK
-Possession on 5th and 6th lines between Churchgate and Mumbai Central from 00:30 hrs to 04:30 hrs for Electronic Interlocking (Kavach 2.0) testing. All long-distance trains arriving into Mumbai Central will run at 30 kmph with pilot escort. Passengers advised to check live status on 139.`
-                    );
-                  }}
-                  className="btn btn-secondary"
-                  style={{ fontSize: '0.75rem' }}
-                >
-                  <FileText size={14} />
-                  Load Sample WR Circular
-                </button>
-
-                <button
-                  type="button"
-                  disabled={isScanning}
-                  onClick={async () => {
-                    setIsScanning(true);
-                    const res = await railwayApi.scanCircular(circularRawText);
-                    setIsScanning(false);
-                    if (res && res.extracted) {
-                      const ext = res.extracted;
-                      setLinesAffected(ext.linesAffected.includes('Slow') ? 'Up Slow' : 'Up & Down Fast Lines' as any);
-                      setStartTime(ext.startTime || '11:05');
-                      setEndTime(ext.endTime || '16:05');
-                      setBlockDate(ext.date || '2026-08-30 (Sunday)');
-                      setPublicAdvisory(ext.passengerAdvisories.join(' '));
-                      setIsScannerOpen(false);
-                      setIsModalOpen(true);
-                    }
-                  }}
-                  className="btn btn-primary"
-                  style={{ fontSize: '0.82rem', padding: '8px 18px' }}
-                >
-                  <Sparkles size={16} />
-                  {isScanning ? 'Extracting via AI...' : 'Scan & Pre-Fill Block'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <MegaBlockUploaderModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onApplyBlock={(extracted) => {
+          scheduleMegaBlock({
+            division: extracted.division,
+            sectionId: 'SEC-CR-04',
+            sectionName: extracted.section,
+            linesAffected: extracted.affected_lines.join(', ') as any,
+            startTime: extracted.start_time,
+            endTime: extracted.end_time,
+            date: '2026-08-30 (Sunday)',
+            reason: 'Track Relaying & Tamping',
+            affectedTrainNumbers: extracted.diverted_trains,
+            divertedTrainNumbers: extracted.diverted_trains,
+            cancelledTrainNumbers: [],
+            assignedMachinery: ['Plasser 09-3X Tamping Express', 'OHE Tower Wagon'],
+            crewGangCount: 42,
+            publicAdvisory: extracted.train_impacts.join(' '),
+            alternativeBusServices: 'BEST / MSRTC Special Feeder Buses Deployed'
+          });
+        }}
+      />
     </div>
   );
 };

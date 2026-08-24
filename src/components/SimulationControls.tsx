@@ -52,10 +52,10 @@ export const SimulationControls: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+      <div className="sim-controls-btn-grid" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
         <button
           onClick={triggerSimulatedEmergency}
-          className="btn btn-secondary"
+          className="btn btn-secondary sim-btn"
           style={{ fontSize: '0.78rem', padding: '7px 14px', color: 'var(--rx-red)' }}
         >
           <ShieldAlert size={14} color="var(--rx-red)" />
@@ -64,7 +64,7 @@ export const SimulationControls: React.FC = () => {
 
         <button
           onClick={triggerSimulatedMegaBlock}
-          className="btn btn-secondary"
+          className="btn btn-secondary sim-btn"
           style={{ fontSize: '0.78rem', padding: '7px 14px', color: '#92400E' }}
         >
           <CalendarClock size={14} color="#D97706" />
@@ -74,7 +74,7 @@ export const SimulationControls: React.FC = () => {
         <button
           onClick={runAiOptimizer}
           disabled={isOptimizing}
-          className="btn btn-primary"
+          className="btn btn-primary sim-btn-primary"
           style={{ fontSize: '0.84rem', padding: '8px 18px', fontWeight: 700 }}
         >
           {isOptimizing ? (
@@ -92,7 +92,7 @@ export const SimulationControls: React.FC = () => {
 
         <button
           onClick={resetSimulation}
-          className="btn btn-secondary"
+          className="btn btn-secondary sim-btn-reset"
           title="Reset Network to Default"
           style={{ fontSize: '0.78rem', padding: '7px 14px' }}
         >

@@ -6,18 +6,31 @@ import { Header } from './components/Header';
 import { PlannerDashboard } from './components/planner/PlannerDashboard';
 import { PassengerPortal } from './components/passenger/PassengerPortal';
 import { GmailAuthModal } from './components/auth/GmailAuthModal';
+import { SignInGateway } from './components/auth/SignInGateway';
 import { IndianRailwaysTripPlanner } from './components/planner/IndianRailwaysTripPlanner';
+import { ToastContainer } from './components/notifications/ToastContainer';
 import { Train, ShieldCheck, PhoneCall } from 'lucide-react';
 
 const MainView: React.FC = () => {
-  const { persona } = useRailway();
+  const { persona, currentUser } = useRailway();
   const { t } = useLanguage();
+
+  if (!currentUser) {
+    return (
+      <>
+        <SignInGateway />
+        <GmailAuthModal />
+        <ToastContainer />
+      </>
+    );
+  }
 
   return (
     <div className="app-container">
       <Header />
       <GmailAuthModal />
       <IndianRailwaysTripPlanner />
+      <ToastContainer />
 
       <main className="main-content">
         {persona === 'planner' ? <PlannerDashboard /> : <PassengerPortal />}
@@ -99,7 +112,7 @@ const MainView: React.FC = () => {
                 <Train size={17} color="#fff" />
               </div>
               <span className="font-display" style={{ fontSize: '1.3rem', fontWeight: 900, color: '#FFFFFF' }}>
-                TrainX<span style={{ color: 'var(--rx-orange)' }}>.ai</span>
+                Train<span style={{ color: 'var(--rx-orange)' }}>X</span>
               </span>
             </div>
             <p style={{ fontSize: '0.74rem', color: '#7A8499', lineHeight: 1.6 }}>

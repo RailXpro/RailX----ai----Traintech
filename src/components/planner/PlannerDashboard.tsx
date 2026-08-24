@@ -35,13 +35,16 @@ export const PlannerDashboard: React.FC = () => {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '0 0 40px' }}>
       {/* Telemetry Ticker Strip */}
       <div style={{
-        background: 'var(--rx-header)',
-        padding: '10px 24px',
+        background: 'linear-gradient(135deg, var(--rx-header) 0%, var(--rx-header-sub) 100%)',
+        borderRadius: 'var(--radius-sm)',
+        padding: '10px 22px',
         display: 'flex',
         alignItems: 'center',
         gap: '24px',
         overflowX: 'auto',
-        flexWrap: 'nowrap'
+        flexWrap: 'nowrap',
+        boxShadow: 'var(--shadow-card)',
+        border: '1px solid rgba(255,255,255,0.06)'
       }}>
         {[
           {
@@ -92,78 +95,124 @@ export const PlannerDashboard: React.FC = () => {
         {/* Live Alert Banners */}
         <LiveAlertBanner onNavigateToIncidents={() => setActiveTab('accidents')} />
 
-        {/* Metric Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '20px' }}>
+        {/* Metric Cards in Circular Orbital Format */}
+        <div className="circle-metrics-deck">
           {[
             {
-              icon: <Wifi size={20} color="var(--rx-green)" />,
+              icon: <Wifi size={16} color="var(--rx-green)" />,
               value: `${((trackSections.filter(s => s.status === 'clear').length / trackSections.length) * 100).toFixed(1)}%`,
+              percentage: (trackSections.filter(s => s.status === 'clear').length / trackSections.length) * 100,
               label: t('metrics.networkAvailability'),
               sub: `${trackSections.filter(s => s.status === 'clear').length}/${trackSections.length} ${t('metrics.sectionsClear')}`,
-              bg: 'var(--rx-green-light)',
-              accent: '#15803D'
+              color: 'var(--rx-green)',
+              trackColor: 'rgba(5, 150, 105, 0.15)',
+              strokeColor: '#059669'
             },
             {
-              icon: <TrainIcon size={20} color="var(--rx-blue)" />,
-              value: trains.length,
+              icon: <TrainIcon size={16} color="var(--rx-blue)" />,
+              value: `${trains.length}`,
+              percentage: Math.min(100, (trains.length / 15) * 100),
               label: t('metrics.activeTrains'),
               sub: `${trains.filter(t => t.status !== 'on_time').length} ${t('metrics.delayedDiverted')}`,
-              bg: 'var(--rx-blue-light)',
-              accent: 'var(--rx-blue)'
+              color: 'var(--rx-blue)',
+              trackColor: 'rgba(37, 99, 235, 0.15)',
+              strokeColor: '#2563EB'
             },
             {
-              icon: <Calendar size={20} color="var(--rx-amber)" />,
-              value: megaBlocks.length,
+              icon: <Calendar size={16} color="var(--rx-amber)" />,
+              value: `${megaBlocks.length}`,
+              percentage: Math.min(100, (megaBlocks.length / 8) * 100),
               label: t('metrics.blocksScheduled'),
               sub: `${activeMegaBlocks.length} ${t('metrics.active')}`,
-              bg: 'var(--rx-amber-light)',
-              accent: '#92400E'
+              color: 'var(--rx-amber)',
+              trackColor: 'rgba(217, 119, 6, 0.15)',
+              strokeColor: '#D97706'
             },
             {
-              icon: <Zap size={20} color="var(--rx-orange)" />,
+              icon: <Zap size={16} color="var(--rx-orange)" />,
               value: '95.8%',
+              percentage: 95.8,
               label: t('metrics.fleetUtilization'),
               sub: t('metrics.optimized'),
-              bg: 'var(--rx-orange-light)',
-              accent: 'var(--rx-orange)'
+              color: 'var(--rx-orange)',
+              trackColor: 'rgba(234, 88, 12, 0.15)',
+              strokeColor: '#EA580C'
             }
-          ].map((card, i) => (
-            <div key={i} className="metric-card" style={{
-              padding: '16px',
-              background: 'var(--rx-surface)',
-              borderRadius: 'var(--radius-md)',
-              boxShadow: 'var(--shadow-card)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{
-                  width: '38px', height: '38px', borderRadius: '10px',
-                  background: card.bg, display: 'flex', alignItems: 'center', justifyContent: 'center'
-                }}>
-                  {card.icon}
+          ].map((card, i) => {
+            const radius = 42;
+            const circumference = 2 * Math.PI * radius;
+            const strokeDashoffset = circumference - (card.percentage / 100) * circumference;
+
+            return (
+              <div key={i} className="circle-metric-pod">
+                {/* Circular Gauge Dial */}
+                <div className="circle-dial-container">
+                  <svg className="circle-dial-svg" viewBox="0 0 100 100">
+                    {/* Background Track */}
+                    <circle
+                      cx="50" cy="50" r={radius}
+                      fill="none"
+                      stroke={card.trackColor}
+                      strokeWidth="7"
+                    />
+                    {/* Active Circular Progress Arc */}
+                    <circle
+                      cx="50" cy="50" r={radius}
+                      fill="none"
+                      stroke={card.strokeColor}
+                      strokeWidth="7"
+                      strokeDasharray={circumference}
+                      strokeDashoffset={strokeDashoffset}
+                      strokeLinecap="round"
+                      style={{ transition: 'stroke-dashoffset 0.8s ease' }}
+                    />
+                  </svg>
+
+                  {/* Dial Center Content */}
+                  <div className="circle-dial-content">
+                    <div style={{
+                      width: '28px', height: '28px', borderRadius: '50%',
+                      background: card.trackColor,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      marginBottom: '2px'
+                    }}>
+                      {card.icon}
+                    </div>
+                    <div style={{
+                      fontSize: '1.15rem',
+                      fontWeight: 900,
+                      color: card.color,
+                      lineHeight: 1.1,
+                      fontFamily: 'var(--font-display)'
+                    }}>
+                      {card.value}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Metric Label & Subtitle */}
+                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-dark)', marginBottom: '2px' }}>
+                  {card.label}
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>
+                  {card.sub}
                 </div>
               </div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 800, color: card.accent }}
-                className="font-display">{card.value}</div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-dark)' }}>{card.label}</div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{card.sub}</div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* Tab Navigation */}
-        <div style={{
+        {/* Tab Navigation (Responsive horizontal swipe on mobile) */}
+        <div className="nav-tabs-container" style={{
           display: 'flex',
           gap: '6px',
-          overflowX: 'auto',
           padding: '4px',
           background: 'var(--rx-surface-alt)',
           borderRadius: 'var(--radius-pill)',
           marginBottom: '20px',
           width: 'fit-content',
-          maxWidth: '100%'
+          maxWidth: '100%',
+          border: '1px solid var(--border-light)'
         }}>
           {tabs.map(tab => (
             <button
@@ -175,23 +224,24 @@ export const PlannerDashboard: React.FC = () => {
                 borderRadius: 'var(--radius-pill)',
                 border: 'none',
                 background: activeTab === tab.id
-                  ? 'linear-gradient(135deg, var(--rx-orange) 0%, #FF8F45 100%)'
+                  ? 'linear-gradient(135deg, var(--rx-green) 0%, var(--rx-green-mid) 100%)'
                   : 'transparent',
                 color: activeTab === tab.id ? '#FFFFFF' : 'var(--text-secondary)',
-                fontWeight: activeTab === tab.id ? 700 : 500,
+                fontWeight: activeTab === tab.id ? 800 : 600,
                 fontSize: '0.8rem',
                 cursor: 'pointer',
                 transition: 'all 0.18s ease',
                 whiteSpace: 'nowrap',
-                position: 'relative'
+                position: 'relative',
+                boxShadow: activeTab === tab.id ? '0 2px 10px var(--rx-green-glow)' : 'none'
               }}
             >
               {tab.icon}
               {tab.label}
               {tab.badge && tab.badge > 0 && (
                 <span style={{
-                  position: 'absolute', top: '4px', right: '8px',
-                  background: '#EF4444', color: '#FFFFFF',
+                  position: 'absolute', top: '2px', right: '4px',
+                  background: 'var(--rx-red)', color: '#FFFFFF',
                   borderRadius: '50%', width: '16px', height: '16px',
                   fontSize: '0.6rem', fontWeight: 800,
                   display: 'flex', alignItems: 'center', justifyContent: 'center'

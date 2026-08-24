@@ -8,12 +8,25 @@ import {
   Clock, 
   ArrowRight, 
   CheckCircle2, 
-  Sparkles
+  Sparkles,
+  Ticket,
+  AlertOctagon,
+  Train,
+  Compass
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { LiveAlertBanner } from '../LiveAlertBanner';
 import { SimulationControls } from '../SimulationControls';
+import { PersonalizedAlertCard } from './PersonalizedAlertCard';
+import { AccidentRerouteAdvisorModal } from './AccidentRerouteAdvisorModal';
+import { railwayApi } from '../../services/apiClient';
+import { 
+  INITIAL_PASSENGER_BOOKINGS, 
+  INITIAL_DISRUPTION_NOTIFICATIONS, 
+  INITIAL_REROUTE_OPTIONS 
+} from '../../data/mockData';
+import { DisruptionNotification, PassengerBooking, RerouteOption } from '../../types/railway';
 
 export const PassengerPortal: React.FC = () => {
   const { megaBlocks, accidents, selectedDivision, openTripPlanner } = useRailway();
@@ -23,12 +36,30 @@ export const PassengerPortal: React.FC = () => {
   const [searchDest, setSearchDest] = useState<string>('Kalyan Junction');
   const [searched, setSearched] = useState<boolean>(true);
 
+  // PNR Disruption Scanner State
+  const [pnrInput, setPnrInput] = useState<string>('8421984210');
+  const [isPnrScanning, setIsPnrScanning] = useState<boolean>(false);
+  const [activeBooking, setActiveBooking] = useState<PassengerBooking | null>(INITIAL_PASSENGER_BOOKINGS[0]);
+  const [activeNotification, setActiveNotification] = useState<DisruptionNotification | null>(
+    INITIAL_DISRUPTION_NOTIFICATIONS['8421984210']
+  );
+  const [isRerouteAdvisorOpen, setIsRerouteAdvisorOpen] = useState<boolean>(false);
+
   const activeAccidents = accidents.filter(a => a.status !== 'resolved');
   const activeMegaBlocks = megaBlocks.filter(b => b.status === 'active' || b.status === 'scheduled');
 
   const filteredBlocks = activeMegaBlocks.filter(b => 
     selectedDivision === 'All' || b.division === selectedDivision
   );
+
+  const handlePnrSearch = async (pnrToSearch?: string) => {
+    const targetPnr = pnrToSearch || pnrInput;
+    setIsPnrScanning(true);
+    const { booking, disruption } = await railwayApi.scanDisruptionForPnr(targetPnr);
+    setActiveBooking(booking);
+    setActiveNotification(disruption);
+    setIsPnrScanning(false);
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -68,6 +99,7 @@ export const PassengerPortal: React.FC = () => {
 
           {/* Quick Helplines Strip */}
           <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginTop: '20px' }}>
+            {/* 139 RailMadad — main call button */}
             <a
               href="tel:139"
               style={{
@@ -84,18 +116,150 @@ export const PassengerPortal: React.FC = () => {
                 boxShadow: '0 2px 10px var(--rx-orange-glow)',
                 transition: 'all 0.18s ease'
               }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '0.85'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.opacity = '1'; }}
             >
               <PhoneCall size={14} />
               {t('passenger.helpline139')}
             </a>
-            <span style={{ fontSize: '0.82rem', color: '#E0E0E0' }}>
-              {t('passenger.grpHelp')}: <strong style={{ color: '#FFFFFF' }}>1512</strong>
-            </span>
-            <span style={{ fontSize: '0.82rem', color: '#E0E0E0' }}>
-              {t('passenger.womenSafety')}: <strong style={{ color: '#FFFFFF' }}>182</strong>
-            </span>
+
+            {/* GRP Emergency: 1512 */}
+            <a
+              href="tel:1512"
+              title="GRP Emergency — Police Helpline"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                padding: '7px 14px',
+                borderRadius: 'var(--radius-pill)',
+                color: '#FFFFFF',
+                textDecoration: 'none',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                transition: 'all 0.18s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.16)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.08)'; }}
+            >
+              <PhoneCall size={13} />
+              {t('passenger.grpHelp')}: <strong style={{ color: '#FCD34D', marginLeft: '2px' }}>1512</strong>
+            </a>
+
+            {/* Women Safety: 182 */}
+            <a
+              href="tel:182"
+              title="Women Safety Helpline — 182"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.2)',
+                padding: '7px 14px',
+                borderRadius: 'var(--radius-pill)',
+                color: '#FFFFFF',
+                textDecoration: 'none',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                transition: 'all 0.18s ease',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.16)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.08)'; }}
+            >
+              <PhoneCall size={13} />
+              {t('passenger.womenSafety')}: <strong style={{ color: '#FCD34D', marginLeft: '2px' }}>182</strong>
+            </a>
           </div>
         </div>
+      </div>
+
+      {/* ── AI Feature 1 & 3: PNR Live Disruption & Emergency Route Rethink ── */}
+      <div className="bms-card" style={{ padding: '26px', borderLeft: '4px solid var(--rx-blue)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(37, 99, 235, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rx-blue)' }}>
+              <Ticket size={22} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 className="bms-section-title" style={{ fontSize: '1.18rem', margin: 0 }}>
+                  AI PNR Disruption & Exact Emergency Journey Checker
+                </h3>
+                <span className="badge badge-clear" style={{ fontSize: '0.66rem' }}>
+                  Features 1 & 3 AI
+                </span>
+              </div>
+              <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', margin: '2px 0 0 0' }}>
+                Check if your scheduled Indian Railways PNR intersects with active accidents or mega blocks in real-time.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* PNR Search & Quick Sample Buttons */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '18px' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <div style={{ flex: 1, minWidth: '240px' }}>
+              <input
+                type="text"
+                className="input-control"
+                value={pnrInput}
+                onChange={(e) => setPnrInput(e.target.value)}
+                placeholder="Enter 10-Digit Indian Railways PNR (e.g. 8421984210)"
+                style={{ fontSize: '0.88rem', fontWeight: 600, letterSpacing: '0.04em' }}
+              />
+            </div>
+            <button
+              type="button"
+              disabled={isPnrScanning}
+              onClick={() => handlePnrSearch()}
+              className="btn btn-primary"
+              style={{ padding: '10px 22px', fontSize: '0.84rem', fontWeight: 700 }}
+            >
+              <Sparkles size={16} />
+              {isPnrScanning ? 'Scanning Network...' : 'Check Disruption Status'}
+            </button>
+          </div>
+
+          {/* Quick Sample PNR Buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '0.74rem' }}>
+            <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Try Demo PNRs:</span>
+            {INITIAL_PASSENGER_BOOKINGS.map((b) => (
+              <button
+                key={b.pnr}
+                type="button"
+                onClick={() => {
+                  setPnrInput(b.pnr);
+                  handlePnrSearch(b.pnr);
+                }}
+                className="btn btn-secondary"
+                style={{
+                  fontSize: '0.72rem',
+                  padding: '4px 10px',
+                  borderRadius: 'var(--radius-pill)',
+                  border: pnrInput === b.pnr ? '1.5px solid var(--rx-blue)' : '1px solid var(--border-light)',
+                  background: pnrInput === b.pnr ? 'rgba(37, 99, 235, 0.08)' : 'transparent'
+                }}
+              >
+                #{b.pnr} ({b.passengerName.split(' ')[0]} • Train #{b.trainNumber})
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Render Personalized Alert Card */}
+        {activeNotification && (
+          <PersonalizedAlertCard
+            notification={activeNotification}
+            booking={activeBooking}
+            onExploreReroute={() => setIsRerouteAdvisorOpen(true)}
+          />
+        )}
       </div>
 
       {/* AI Smart Alternate Journey Route Finder */}
@@ -141,7 +305,7 @@ export const PassengerPortal: React.FC = () => {
                 setSearched(true);
                 openTripPlanner(searchOrigin, searchDest);
               }}
-              className="btn btn-primary"
+              className="btn btn-green"
               style={{ width: '100%', padding: '11px 18px', borderRadius: 'var(--radius-sm)' }}
             >
               <Search size={16} />
@@ -183,8 +347,8 @@ export const PassengerPortal: React.FC = () => {
                 ℹ️ <strong>Block Diversion Advisory:</strong> Diverted to Fast Line between Thane & Dadar to bypass track tamping. Skipping halts at Vidyavihar and Kanjurmarg. Slow line season pass valid.
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
                   <span>From: <strong>CSMT Platform 4</strong> (14:30)</span>
                   <ArrowRight size={13} color="#999999" />
                   <span>To: <strong>Kalyan Platform 3</strong> (15:28)</span>
@@ -250,7 +414,7 @@ export const PassengerPortal: React.FC = () => {
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(360px, 100%), 1fr))', gap: '16px' }}>
           {filteredBlocks.map(block => (
             <div
               key={block.id}
@@ -346,33 +510,63 @@ export const PassengerPortal: React.FC = () => {
                   padding: '18px'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <span className="badge badge-accident" style={{ fontSize: '0.65rem' }}>
-                    EMERGENCY INCIDENT • {inc.natureOfIncident.toUpperCase()}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                  <span className="badge badge-accident" style={{ fontSize: '0.65rem', flexShrink: 0 }}>
+                    CRITICAL: {inc.natureOfIncident.toUpperCase()}
                   </span>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
-                    Reported at {inc.reportedAt}
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                    Reported: {inc.reportedAt}
                   </span>
                 </div>
 
-                <h4 style={{ fontSize: '1.02rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '6px' }}>
-                  Train #{inc.trainNumber} ({inc.trainName}) — {inc.sectionName}
+                <h4 style={{ fontSize: '0.96rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '4px', wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+                  Train #{inc.trainNumber} ({inc.trainName})
                 </h4>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 600 }}>
+                  {inc.sectionName}
+                </div>
 
-                <p style={{ fontSize: '0.78rem', color: 'var(--text-dark)', marginBottom: '12px', lineHeight: '1.45' }}>
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-dark)', marginBottom: '12px', lineHeight: '1.5', overflowWrap: 'break-word' }}>
                   {inc.publicEmergencyAdvisory}
                 </p>
 
-                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '14px', fontSize: '0.75rem', borderTop: '1px solid rgba(239,68,68,0.2)', paddingTop: '10px' }}>
-                  <span style={{ color: '#15803D', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <PhoneCall size={12} />
-                    Helpline: {inc.passengerAssistanceContact}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.75rem', borderTop: '1px solid rgba(239,68,68,0.2)', paddingTop: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                    <a
+                      href={`tel:${inc.passengerAssistanceContact?.replace(/[^0-9]/g, '') || '139'}`}
+                      style={{
+                        color: '#059669',
+                        fontWeight: 700,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        textDecoration: 'none',
+                        background: 'rgba(5, 150, 105, 0.1)',
+                        padding: '4px 10px',
+                        borderRadius: 'var(--radius-pill)',
+                        border: '1px solid rgba(5, 150, 105, 0.25)'
+                      }}
+                      title="Call Helpline"
+                    >
+                      <PhoneCall size={12} />
+                      Helpline: {inc.passengerAssistanceContact || '139'}
+                    </a>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsRerouteAdvisorOpen(true)}
+                      className="btn btn-primary"
+                      style={{ fontSize: '0.74rem', padding: '5px 12px', borderRadius: 'var(--radius-pill)' }}
+                    >
+                      {t('alert.alternateRoute')}
+                    </button>
+                  </div>
+
+                  <span style={{ color: 'var(--text-secondary)' }}>
+                    Relief: <strong style={{ color: 'var(--text-dark)' }}>{inc.reliefTrainStatus}</strong> ({inc.reliefTrainId || 'En route'})
                   </span>
                   <span style={{ color: 'var(--text-secondary)' }}>
-                    Relief Team: <strong>{inc.reliefTrainStatus}</strong> ({inc.reliefTrainId})
-                  </span>
-                  <span style={{ color: 'var(--text-secondary)' }}>
-                    Expected Normalcy: <strong>{inc.estimatedTrackRestoration}</strong>
+                    Expected Normalcy: <strong style={{ color: 'var(--text-dark)' }}>{inc.estimatedTrackRestoration}</strong>
                   </span>
                 </div>
               </div>
@@ -380,6 +574,16 @@ export const PassengerPortal: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Reroute Advisor Modal */}
+      <AccidentRerouteAdvisorModal
+        isOpen={isRerouteAdvisorOpen}
+        onClose={() => setIsRerouteAdvisorOpen(false)}
+        trainNumber={activeNotification?.train_number || '12951'}
+        trainName={activeNotification?.train_name || 'Mumbai Rajdhani Express'}
+        sectionCode={activeNotification?.exact_incident_details || 'Agra Cantt ➔ Mathura Jn'}
+        rerouteOptions={activeNotification?.reroute_options || INITIAL_REROUTE_OPTIONS}
+      />
     </div>
   );
 };

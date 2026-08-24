@@ -145,6 +145,7 @@ export interface AccidentIncident {
   passengerAssistanceContact: string;
   publicEmergencyAdvisory: string;
   estimatedTrackRestoration: string;
+  divisionController?: string;
 }
 
 export interface RailwayAsset {
@@ -204,3 +205,84 @@ export interface JourneyOption {
   alternateRouteSummary?: string;
   onTimeProbability: number;
 }
+
+export interface PassengerBooking {
+  pnr: string;
+  passengerName: string;
+  trainNumber: string;
+  trainName: string;
+  journeyDate: string;
+  sourceStation: string;
+  destinationStation: string;
+  coach: string;
+  berthNumber: string;
+  status: 'CONFIRMED' | 'RAC' | 'WAITLISTED';
+  contactPhone?: string;
+  intersectingDisruptionId?: string;
+  intersectingDisruptionType?: 'ACCIDENT' | 'MEGA_BLOCK';
+}
+
+export interface RerouteOption {
+  option_id: string;
+  strategy_type: 'RAIL_DIVERSION_CHORD_BYPASS' | 'MULTI_HOP_CONNECTING' | 'INTERMODAL_SHUTTLE' | 'SLOW_QUAD_DIVERSION';
+  title: string;
+  path_stations: string[];
+  bypassed_blocked_stations: string[];
+  additional_distance_km: number;
+  revised_eta: string;
+  delay_minutes: number;
+  comfort_score: number; // 0.0 - 1.0
+  feasibility_status: string;
+  reasoning: string;
+  mode?: string;
+}
+
+export interface DisruptionNotification {
+  notification_id: string;
+  pnr: string;
+  passenger_name: string;
+  train_number: string;
+  train_name?: string;
+  priority: 'CRITICAL_EMERGENCY' | 'PLANNED_MAINTENANCE' | 'INFORMATIONAL';
+  headline: string;
+  exact_incident_details: string;
+  impact_on_journey: string;
+  actionable_alternatives: string[];
+  helpline_contacts: string[];
+  has_reroute_available: boolean;
+  reroute_options?: RerouteOption[];
+  timestamp?: string;
+}
+
+export interface CircularScanResult {
+  block_id: string;
+  railway_zone: string;
+  division: DivisionName;
+  section: string;
+  from_station: string;
+  to_station: string;
+  affected_lines: string[];
+  start_time: string;
+  end_time: string;
+  duration_hours: number;
+  maintenance_type: string;
+  speed_restrictions_kmph: number;
+  train_impacts: string[];
+  diverted_trains: string[];
+  confidence_score: number;
+  matched_passenger_count?: number;
+}
+
+export interface BroadcastSummary {
+  status: 'DELIVERED' | 'QUEUED';
+  affected_passengers_count: number;
+  sample_recipients: Array<{
+    pnr: string;
+    name: string;
+    train: string;
+    seat: string;
+  }>;
+  channels: string[];
+  sent_at: string;
+}
+
