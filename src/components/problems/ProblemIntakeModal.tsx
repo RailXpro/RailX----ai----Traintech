@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useSettings } from '../../context/SettingsContext';
 import { ProblemCategory, ProblemSeverity, DivisionName, ProblemReport } from '../../types/railway';
 
 const CATEGORIES: { id: ProblemCategory; icon: string; labelEn: string; labelMr: string; descEn: string }[] = [
@@ -93,6 +94,7 @@ export const ProblemIntakeModal: React.FC = () => {
     selectedDivision
   } = useRailway();
   const { language } = useLanguage();
+  const { addToast, setNotificationsDrawerOpen } = useSettings();
 
   const [modalTab, setModalTab] = useState<'submit' | 'track'>('submit');
   const [category, setCategory] = useState<ProblemCategory>('TRACK_INFRASTRUCTURE');
@@ -133,6 +135,14 @@ export const ProblemIntakeModal: React.FC = () => {
     });
 
     setSubmittedTicket(report);
+
+    // Instant toast notification for passengers and controllers
+    addToast({
+      type: severity === 'CRITICAL_SOS' ? 'emergency' : severity === 'HIGH' ? 'warning' : 'info',
+      category: severity === 'CRITICAL_SOS' ? 'sos' : 'system',
+      title: severity === 'CRITICAL_SOS' ? `🆘 SOS DISPATCHED: [${report.id}] ${title}` : `📋 Report Live: [${report.id}] ${title}`,
+      message: `${description.slice(0, 90)}${description.length > 90 ? '…' : ''} • AI Priority: ${report.aiPriorityScore}/100. Synchronized to notifications feed.`
+    });
   };
 
   const handleCopyId = (id: string) => {

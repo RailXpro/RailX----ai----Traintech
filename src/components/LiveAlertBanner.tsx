@@ -26,14 +26,14 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
   const activeAccidents = accidents.filter(a => a.status !== 'resolved');
   const activeMegaBlocks = megaBlocks.filter(b => b.status === 'active');
 
-  // SOS problem reports that aren't resolved and haven't been dismissed in this session
+  // SOS problem reports (CRITICAL_SOS)
   const activeSosReports = problemReports.filter(
     p => p.severity === 'CRITICAL_SOS' && p.status !== 'RESOLVED' && !dismissedSosIds.has(p.id)
   );
 
-  // High-priority non-SOS problem reports (HIGH severity, not resolved)
-  const activeHighReports = problemReports.filter(
-    p => p.severity === 'HIGH' && p.status !== 'RESOLVED' && !dismissedSosIds.has(p.id)
+  // Active / freshly filed problem reports (HIGH, MEDIUM, LOW or just now)
+  const activeGeneralReports = problemReports.filter(
+    p => p.severity !== 'CRITICAL_SOS' && (p.timestamp === 'Just now' || p.status !== 'RESOLVED') && !dismissedSosIds.has(p.id)
   );
 
   // Watch for NEW SOS reports and auto-open notification drawer in passenger view
@@ -88,7 +88,7 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
     activeAccidents.length === 0 &&
     activeMegaBlocks.length === 0 &&
     activeSosReports.length === 0 &&
-    activeHighReports.length === 0
+    activeGeneralReports.length === 0
   ) {
     return null;
   }
@@ -238,56 +238,98 @@ export const LiveAlertBanner: React.FC<{ onNavigateToIncidents?: () => void }> =
         </div>
       ))}
 
-      {/* ── HIGH severity report banners ────────────────────────────────── */}
-      {activeHighReports.map(report => (
-        <div
-          key={report.id}
-          style={{
-            background: 'var(--rx-amber-light)',
-            border: '1px solid rgba(245, 158, 11, 0.4)',
-            borderLeft: '5px solid var(--rx-amber)',
-            borderRadius: 'var(--radius-sm)',
-            padding: '14px 16px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-            <div style={{
-              width: '38px', height: '38px', borderRadius: '10px',
-              background: 'var(--rx-amber)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#FFFFFF', flexShrink: 0
-            }}>
-              <ShieldAlert size={18} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
-                <span style={{
-                  background: 'var(--rx-amber)', color: '#fff',
-                  fontSize: '0.63rem', fontWeight: 900,
-                  padding: '2px 8px', borderRadius: '20px', letterSpacing: '0.06em'
-                }}>🚨 HIGH PRIORITY</span>
-                <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: '#92400E', fontWeight: 700 }}>
-                  {report.id}
-                </span>
+      {/* ── Active Problem & Grievance Report Banners ─────────────────────────── */}
+      {activeGeneralReports.map(report => {
+        const isHigh = report.severity === 'HIGH';
+        const isJustNow = report.timestamp === 'Just now';
+
+        return (
+          <div
+            key={report.id}
+            style={{
+              background: isHigh ? 'var(--rx-amber-light)' : 'var(--rx-surface)',
+              border: isHigh ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid var(--border-medium)',
+              borderLeft: `5px solid ${isHigh ? 'var(--rx-amber)' : 'var(--rx-blue)'}`,
+              borderRadius: 'var(--radius-sm)',
+              padding: '14px 16px',
+              boxShadow: 'var(--shadow-card)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <div style={{
+                width: '38px', height: '38px', borderRadius: '10px',
+                background: isHigh ? 'var(--rx-amber)' : 'rgba(37, 99, 235, 0.12)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: isHigh ? '#FFFFFF' : 'var(--rx-blue)', flexShrink: 0
+              }}>
+                <LifeBuoy size={18} />
               </div>
-              <h4 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '3px' }}>
-                {report.title}
-              </h4>
-              <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                {report.description}
-              </p>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', flexWrap: 'wrap' }}>
+                  {isJustNow && (
+                    <span style={{
+                      background: 'var(--rx-green)', color: '#fff',
+                      fontSize: '0.6rem', fontWeight: 900,
+                      padding: '2px 7px', borderRadius: '20px', letterSpacing: '0.06em',
+                      animation: 'pulse 1.2s infinite'
+                    }}>
+                      ⚡ NEW LIVE REPORT
+                    </span>
+                  )}
+                  <span style={{
+                    background: isHigh ? 'var(--rx-amber)' : 'rgba(37,99,235,0.12)',
+                    color: isHigh ? '#fff' : 'var(--rx-blue)',
+                    fontSize: '0.63rem', fontWeight: 900,
+                    padding: '2px 8px', borderRadius: '20px', letterSpacing: '0.06em'
+                  }}>
+                    {isHigh ? '🚨 HIGH PRIORITY' : '📋 RAILMADAD REPORT'}
+                  </span>
+                  <span style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', color: 'var(--rx-orange)', fontWeight: 700 }}>
+                    {report.id}
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                    • Status: {report.status.replace('_', ' ')}
+                  </span>
+                </div>
+                <h4 style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '3px' }}>
+                  {report.title}
+                </h4>
+                <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.4, margin: '0 0 6px 0' }}>
+                  {report.description}
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', fontSize: '0.72rem' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>
+                    📍 {report.stationOrSection || 'Mumbai Corridor'}
+                  </span>
+                  {report.trainNumber && (
+                    <span style={{ color: 'var(--text-muted)' }}>
+                      🚆 Train #{report.trainNumber}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => setNotificationsDrawerOpen(true)}
+                    style={{
+                      background: 'transparent', border: 'none',
+                      color: 'var(--rx-green-deep)', fontWeight: 700,
+                      cursor: 'pointer', padding: 0, fontSize: '0.72rem'
+                    }}
+                  >
+                    View in Notification Center →
+                  </button>
+                </div>
+              </div>
+              <button
+                onClick={() => dismissSos(report.id)}
+                style={{
+                  background: 'transparent', border: 'none',
+                  color: 'var(--text-muted)', fontSize: '1rem', cursor: 'pointer',
+                  flexShrink: 0, opacity: 0.6, lineHeight: 1
+                }}
+              >✕</button>
             </div>
-            <button
-              onClick={() => dismissSos(report.id)}
-              style={{
-                background: 'transparent', border: 'none',
-                color: '#92400E', fontSize: '1rem', cursor: 'pointer',
-                flexShrink: 0, opacity: 0.6, lineHeight: 1
-              }}
-            >✕</button>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {/* ── Emergency Accident Banners ────────────────────────────────────── */}
       {activeAccidents.map(incident => {

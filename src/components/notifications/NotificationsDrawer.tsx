@@ -32,17 +32,11 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
   const prevProblemCount = useRef(problemReports.length);
   const listRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll & flash when new SOS problem arrives
+  // Auto-scroll to top when a new problem report is filed
   useEffect(() => {
     if (problemReports.length > prevProblemCount.current) {
-      const newest = problemReports[0];
-      if (newest && (newest.severity === 'CRITICAL_SOS' || newest.severity === 'HIGH')) {
-        // Switch filter to railmadad so user sees it immediately
-        setActiveFilter('railmadad');
-        // Scroll to top of list
-        if (listRef.current) {
-          listRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+      if (listRef.current) {
+        listRef.current.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
     prevProblemCount.current = problemReports.length;
@@ -52,6 +46,34 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
 
   // Build live notification stream from system events
   const notificationItems = [
+    // ── RailMadad Problem Reports (passengers + controllers) ───────────────
+    ...problemReports.map(pr => {
+      const isCritical = pr.severity === 'CRITICAL_SOS';
+      const isHigh = pr.severity === 'HIGH';
+      const isJustNow = pr.timestamp === 'Just now';
+
+      return {
+        id: `pr_${pr.id}`,
+        type: 'railmadad' as const,
+        title: isCritical
+          ? `🆘 SOS EMERGENCY: ${pr.title} [${pr.id}]`
+          : isHigh
+          ? `🚨 HIGH PRIORITY: ${pr.title} [${pr.id}]`
+          : `📋 [${pr.id}] ${pr.title || pr.category}`,
+        desc: `${pr.description} • Location: ${pr.stationOrSection || 'Mumbai Corridor'}${pr.trainNumber ? ` • Train #${pr.trainNumber}` : ''} • Status: ${pr.status.replace('_', ' ')}`,
+        time: pr.timestamp || 'Just now',
+        severity: isCritical ? 'critical' : isHigh ? 'high' : 'medium',
+        enabled: true,
+        isSos: isCritical,
+        isNew: isJustNow,
+        rawTimestamp: isJustNow ? 9999999999999 : 1,
+        onClick: () => {
+          setIsProblemModalOpen(true);
+          onClose();
+        }
+      };
+    }),
+
     // ── Emergency SOS / Accidents ──────────────────────────────────────────
     ...accidents.map(acc => ({
       id: `acc_${acc.id}`,
@@ -62,36 +84,14 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
       severity: acc.severity,
       enabled: emergencySosAlerts,
       isSos: acc.severity === 'critical',
+      isNew: false,
+      rawTimestamp: 50,
       onClick: () => {
         setPersona('planner');
         setActiveTab('accidents');
         onClose();
       }
     })),
-
-    // ── RailMadad Problem Reports (passengers + controllers) ───────────────
-    ...problemReports.map(pr => {
-      const isCritical = pr.severity === 'CRITICAL_SOS';
-      const isHigh = pr.severity === 'HIGH';
-      return {
-        id: `pr_${pr.id}`,
-        type: 'railmadad' as const,
-        title: isCritical
-          ? `🆘 SOS EMERGENCY: ${pr.id}`
-          : isHigh
-          ? `🚨 HIGH PRIORITY: ${pr.id}`
-          : `📋 RailMadad: ${pr.id}`,
-        desc: `${pr.title || pr.category} • ${pr.description?.slice(0, 80) || ''}${(pr.description?.length ?? 0) > 80 ? '…' : ''} • Status: ${pr.status}`,
-        time: pr.timestamp || 'Just now',
-        severity: isCritical ? 'critical' : isHigh ? 'high' : 'medium',
-        enabled: true,
-        isSos: isCritical,
-        onClick: () => {
-          setIsProblemModalOpen(true);
-          onClose();
-        }
-      };
-    }),
 
     // ── Mega Blocks ─────────────────────────────────────────────────────────
     ...megaBlocks.map(mb => ({
@@ -103,6 +103,8 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
       severity: mb.status === 'active' ? 'high' : 'medium',
       enabled: megaBlockAlerts,
       isSos: false,
+      isNew: false,
+      rawTimestamp: 20,
       onClick: () => {
         setPersona('planner');
         setActiveTab('blocks');
@@ -120,6 +122,8 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
       severity: 'info',
       enabled: kavachAlerts,
       isSos: false,
+      isNew: false,
+      rawTimestamp: 10,
       onClick: () => {
         setIsKavachModalOpen(true);
         onClose();
@@ -132,15 +136,17 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
     return item.type === activeFilter;
   });
 
-  // Sort: SOS first, then unread, then by type
+  // Sort: Newly submitted reports (isNew) and SOS ALWAYS at the top!
   const sortedItems = [...filteredItems].sort((a, b) => {
+    if (a.isNew && !b.isNew) return -1;
+    if (!a.isNew && b.isNew) return 1;
     if (a.isSos && !b.isSos) return -1;
     if (!a.isSos && b.isSos) return 1;
     const aRead = readIds.has(a.id);
     const bRead = readIds.has(b.id);
     if (!aRead && bRead) return -1;
     if (aRead && !bRead) return 1;
-    return 0;
+    return b.rawTimestamp - a.rawTimestamp;
   });
 
   const unreadCount = filteredItems.filter(i => !readIds.has(i.id)).length;
@@ -152,11 +158,16 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
     setReadIds(new Set(notificationItems.map(i => i.id)));
   };
 
-  const getSeverityStyle = (severity: string, isSos: boolean) => {
+  const getSeverityStyle = (severity: string, isSos: boolean, isNew?: boolean) => {
     if (isSos || severity === 'critical') return {
-      border: '1.5px solid rgba(239, 68, 68, 0.6)',
-      background: 'rgba(239, 68, 68, 0.08)',
-      boxShadow: '0 0 0 2px rgba(239,68,68,0.12), 0 6px 20px rgba(0,0,0,0.2)'
+      border: '2px solid rgba(239, 68, 68, 0.7)',
+      background: 'rgba(239, 68, 68, 0.1)',
+      boxShadow: '0 0 16px rgba(239,68,68,0.2)'
+    };
+    if (isNew) return {
+      border: '2px solid var(--rx-green)',
+      background: 'rgba(16, 185, 129, 0.08)',
+      boxShadow: '0 0 12px rgba(16,185,129,0.2)'
     };
     if (severity === 'high') return {
       border: '1.5px solid rgba(245, 158, 11, 0.5)',
@@ -182,7 +193,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
     >
       <div
         style={{
-          width: '100%', maxWidth: '460px', height: '100%',
+          width: '100%', maxWidth: '480px', height: '100%',
           background: 'var(--rx-surface)',
           borderLeft: '1px solid var(--border-light)',
           display: 'flex', flexDirection: 'column',
@@ -201,7 +212,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
-              width: '36px', height: '36px', borderRadius: '10px',
+              width: '38px', height: '38px', borderRadius: '10px',
               background: sosProblemCount > 0 ? 'rgba(239, 68, 68, 0.25)' : 'rgba(234, 88, 12, 0.2)',
               border: sosProblemCount > 0 ? '1px solid rgba(239,68,68,0.5)' : '1px solid rgba(234, 88, 12, 0.4)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -210,8 +221,8 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
               {sosProblemCount > 0 ? <Zap size={18} color="#EF4444" /> : <Bell size={18} color="var(--rx-orange)" />}
             </div>
             <div>
-              <div style={{ fontSize: '1rem', fontWeight: 900, fontFamily: 'var(--font-display)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {language === 'mr' ? 'सूचना केंद्र' : 'Notifications Center'}
+              <div style={{ fontSize: '1.02rem', fontWeight: 900, fontFamily: 'var(--font-display)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {language === 'mr' ? 'सूचना केंद्र' : 'Live Notifications Center'}
                 {sosProblemCount > 0 && (
                   <span style={{
                     background: 'rgba(239, 68, 68, 0.3)',
@@ -229,7 +240,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                 )}
               </div>
               <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.6)' }}>
-                {unreadCount} unread • Real-time from context state
+                {unreadCount} alerts • Real-time passenger & official feed
               </div>
             </div>
           </div>
@@ -282,8 +293,8 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
             { key: 'all', label: 'All', icon: <Filter size={12} />, count: notificationItems.length },
             {
               key: 'railmadad',
-              label: '🆘 RailMadad',
-              icon: <LifeBuoy size={12} color={sosProblemCount > 0 ? '#EF4444' : '#F59E0B'} />,
+              label: '🚨 RailMadad Issues',
+              icon: <LifeBuoy size={12} color={sosProblemCount > 0 ? '#EF4444' : 'var(--rx-orange)'} />,
               count: problemReports.length,
               pulse: sosProblemCount > 0
             },
@@ -336,64 +347,6 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
           ))}
         </div>
 
-        {/* ── SOS Active Banner ── */}
-        {sosProblemCount > 0 && (
-          <div style={{
-            padding: '10px 16px',
-            background: 'linear-gradient(90deg, rgba(239,68,68,0.18) 0%, rgba(220,38,38,0.08) 100%)',
-            borderBottom: '2px solid rgba(239,68,68,0.4)',
-            display: 'flex', alignItems: 'center', gap: '10px',
-            animation: 'pulse 2s infinite'
-          }}>
-            <Radio size={16} color="#EF4444" style={{ flexShrink: 0 }} />
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 900, color: '#FCA5A5' }}>
-                🆘 {sosProblemCount} CRITICAL SOS REPORT{sosProblemCount > 1 ? 'S' : ''} ACTIVE
-              </div>
-              <div style={{ fontSize: '0.66rem', color: '#FDA4A4' }}>
-                Emergency alerts dispatched to Section Controller & Station Master
-              </div>
-            </div>
-            <button
-              onClick={() => { setIsProblemModalOpen(true); onClose(); }}
-              style={{
-                background: '#EF4444', border: 'none', borderRadius: '8px',
-                color: '#fff', padding: '5px 10px', fontSize: '0.7rem',
-                fontWeight: 800, cursor: 'pointer', whiteSpace: 'nowrap'
-              }}
-            >
-              View SOS →
-            </button>
-          </div>
-        )}
-
-        {/* ── Muted Alert Warning ── */}
-        {((activeFilter === 'sos' && !emergencySosAlerts) ||
-          (activeFilter === 'megablock' && !megaBlockAlerts) ||
-          (activeFilter === 'kavach' && !kavachAlerts)) && (
-          <div style={{
-            padding: '10px 16px',
-            background: 'rgba(234, 88, 12, 0.12)',
-            borderBottom: '1px solid rgba(234, 88, 12, 0.25)',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px'
-          }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-dark)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <AlertTriangle size={14} color="var(--rx-orange)" />
-              <span>This notification category is currently disabled in Settings.</span>
-            </div>
-            <button
-              onClick={() => toggleNotification(activeFilter as any)}
-              style={{
-                background: 'var(--rx-orange)', border: 'none', color: '#fff',
-                padding: '3px 8px', borderRadius: '6px', fontSize: '0.68rem',
-                fontWeight: 800, cursor: 'pointer'
-              }}
-            >
-              Enable
-            </button>
-          </div>
-        )}
-
         {/* ── Notification List ── */}
         <div
           ref={listRef}
@@ -408,7 +361,8 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
           ) : (
             sortedItems.map(item => {
               const isRead = readIds.has(item.id);
-              const severityStyle = getSeverityStyle(item.severity, item.isSos);
+              const severityStyle = getSeverityStyle(item.severity, item.isSos, item.isNew);
+
               return (
                 <div
                   key={item.id}
@@ -424,7 +378,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '6px',
-                    opacity: isRead ? 0.75 : 1,
+                    opacity: isRead ? 0.8 : 1,
                     transition: 'all 0.18s ease'
                   }}
                   onMouseEnter={e => { e.currentTarget.style.transform = 'translateX(-3px)'; }}
@@ -432,28 +386,40 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
                     <div style={{
-                      fontSize: '0.82rem',
+                      fontSize: '0.84rem',
                       fontWeight: isRead ? 700 : 900,
-                      color: item.isSos ? '#FCA5A5' : 'var(--text-dark)',
+                      color: item.isSos ? '#EF4444' : 'var(--text-dark)',
                       display: 'flex', alignItems: 'center', gap: '6px'
                     }}>
-                      {!isRead && (
+                      {item.isNew && (
+                        <span style={{
+                          background: 'var(--rx-green)',
+                          color: '#fff',
+                          fontSize: '0.58rem',
+                          fontWeight: 900,
+                          padding: '1px 5px',
+                          borderRadius: '4px',
+                          animation: 'pulse 1.2s infinite'
+                        }}>
+                          NEW
+                        </span>
+                      )}
+                      {!isRead && !item.isNew && (
                         <span style={{
                           width: '7px', height: '7px', borderRadius: '50%',
                           background: item.isSos ? '#EF4444' : 'var(--rx-green)',
-                          flexShrink: 0,
-                          animation: item.isSos ? 'pulse 1s infinite' : undefined
+                          flexShrink: 0
                         }} />
                       )}
                       <span>{item.title}</span>
                     </div>
-                    <span style={{ fontSize: '0.63rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                    <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', flexShrink: 0 }}>
                       <Clock size={10} style={{ display: 'inline', marginRight: '3px' }} />
                       {item.time}
                     </span>
                   </div>
 
-                  <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
                     {item.desc}
                   </div>
 
@@ -473,17 +439,20 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
                           ? 'rgba(59,130,246,0.15)'
                           : 'rgba(16,185,129,0.15)',
                         color: item.type === 'railmadad'
-                          ? (item.isSos ? '#FCA5A5' : '#D97706')
-                          : item.type === 'sos' ? '#FCA5A5'
+                          ? (item.isSos ? '#EF4444' : '#D97706')
+                          : item.type === 'sos' ? '#EF4444'
                           : item.type === 'megablock' ? '#93C5FD'
                           : '#6EE7B7',
                         padding: '2px 7px', borderRadius: '10px',
                         letterSpacing: '0.04em', textTransform: 'uppercase' as const
                       }}>
-                        {item.type === 'railmadad' ? '🆘 RailMadad'
+                        {item.type === 'railmadad' ? '🚨 RailMadad'
                           : item.type === 'sos' ? '🔴 SOS Incident'
                           : item.type === 'megablock' ? '🚧 Mega Block'
                           : '🛡️ Kavach'}
+                      </span>
+                      <span style={{ fontSize: '0.65rem', color: 'var(--rx-green-deep)', fontWeight: 700 }}>
+                        Tap to manage →
                       </span>
                     </div>
                     <ChevronRight size={14} color="var(--text-muted)" />
@@ -508,7 +477,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
               background: sosProblemCount > 0 ? '#EF4444' : '#10B981',
               boxShadow: `0 0 6px ${sosProblemCount > 0 ? '#EF4444' : '#10B981'}`
             }} />
-            {sosProblemCount > 0 ? `${sosProblemCount} SOS Active` : 'Live — RailwayContext'}
+            {sosProblemCount > 0 ? `${sosProblemCount} SOS Active` : 'Synced in real-time'}
           </div>
           <button
             onClick={() => { setIsProblemModalOpen(true); onClose(); }}
@@ -519,7 +488,7 @@ export const NotificationsDrawer: React.FC<NotificationsDrawerProps> = ({ isOpen
             }}
           >
             <LifeBuoy size={13} />
-            Report Issue
+            + Report Problem
           </button>
         </div>
       </div>
