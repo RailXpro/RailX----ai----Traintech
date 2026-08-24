@@ -1,16 +1,36 @@
-# React + Vite
+# 🛡️ Rail Kavach AI: Emergency Disruption & Smart Detour Management
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+[![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat&logo=react)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.1.0-646CFF?style=flat&logo=vite)](https://vitejs.dev/)
+[![Oxlint](https://img.shields.io/badge/Lint-Oxlint-cyan.svg)](https://oxc.rs)
 
-Currently, two official plugins are available:
+**Rail Kavach AI** is a specialized subsystem within the **RailX.ai** ecosystem designed for automatic disaster interception, circular scanning, real-time timetable disruption mitigation, and personalized passenger notifications for Indian Railways.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🚀 Key Modules
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **AI Circular Scanner (`megaBlockParser.js`)**: Parses unstructured Railway Board maintenance circular text into structured block data.
+- **Accident & Incident Interception (`NotificationEngine.js`)**: Automatically triggers emergency alerts, red-aspect locks, and broadcasts to affected train crew & passengers.
+- **Smart Detour Solver (`routeSolver.js`)**: Synthesizes alternate route corridors avoiding active block possessions and accident cordons.
+- **Dual Persona Console**: Switch between **Controller/Planner** and **Passenger (Rail Yatri Saathi)** views with live simulation controls.
 
-## Expanding the Oxlint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 🛠️ Quick Start
+
+```bash
+# Navigate to the module directory
+cd rail-kavach-ai
+
+# Install dependencies
+npm install
+
+# Run the development server
+npm run dev
+
+# Run oxlint
+npm run lint
+```
+Open `http://localhost:5173` in your browser.
+
