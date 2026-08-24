@@ -9,6 +9,7 @@ import { GmailAuthModal } from './components/auth/GmailAuthModal';
 import { SignInGateway } from './components/auth/SignInGateway';
 import { IndianRailwaysTripPlanner } from './components/planner/IndianRailwaysTripPlanner';
 import { ToastContainer } from './components/notifications/ToastContainer';
+import { ProblemIntakeModal } from './components/problems/ProblemIntakeModal';
 import { Train, ShieldCheck, PhoneCall } from 'lucide-react';
 
 const MainView: React.FC = () => {
@@ -30,6 +31,7 @@ const MainView: React.FC = () => {
       <Header />
       <GmailAuthModal />
       <IndianRailwaysTripPlanner />
+      <ProblemIntakeModal />
       <ToastContainer />
 
       <main className="main-content">

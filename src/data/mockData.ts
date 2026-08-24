@@ -7,7 +7,8 @@ import {
   OptimizationMetrics,
   PassengerBooking,
   DisruptionNotification,
-  RerouteOption
+  RerouteOption,
+  ProblemReport
 } from '../types/railway';
 
 export const INITIAL_TRACK_SECTIONS: TrackSection[] = [
@@ -829,4 +830,85 @@ Passengers are requested to bear with the Railway Administration for the inconve
 Possession on 5th and 6th lines between Churchgate and Mumbai Central from 00:30 hrs to 04:30 hrs for Electronic Interlocking (Kavach 2.0) testing. All long-distance trains arriving into Mumbai Central will run at 30 kmph with pilot escort. Passengers advised to check live status on 139.`
   }
 ];
+
+export const INITIAL_PROBLEM_REPORTS: ProblemReport[] = [
+  {
+    id: 'RM-2026-98412',
+    category: 'OHE_ELECTRICAL',
+    severity: 'CRITICAL_SOS',
+    title: 'Heavy OHE Wire Sparking & Drooping Contact Wire',
+    description: 'Visible sparking and sagging overhead 25kV wire near Igatpuri Ghat kilometer post 132/4. Potential pantograph entanglement risk.',
+    trainNumber: '12859',
+    pnr: '8421984210',
+    stationOrSection: 'Kasara - Igatpuri Ghat Corridor',
+    division: 'Mumbai CR',
+    reporterName: 'Loco Pilot S. K. Yadav',
+    reporterContact: '+91 98201 44521',
+    status: 'DISPATCHED',
+    timestamp: '15 mins ago',
+    assignedOfficer: 'Er. Rajesh Kumar Sharma (TPC Control)',
+    aiPriorityScore: 98,
+    actionTaken: 'Emergency Tower Wagon & OHE Gang dispatched from Kasara. Speed caution 20 km/h applied.',
+    resolutionEta: '45 mins',
+    photoAttached: true,
+    locationGps: { lat: 19.6974, lng: 73.5594 }
+  },
+  {
+    id: 'RM-2026-97805',
+    category: 'TRACK_INFRASTRUCTURE',
+    severity: 'HIGH',
+    title: 'Loose Fishplate & Ballast Scour Reported',
+    description: 'Track vibrations noticed on Down Slow Line between Diva and Dombivli. Fasteners need re-tightening.',
+    stationOrSection: 'Diva - Dombivli Slow Line',
+    division: 'Mumbai CR',
+    reporterName: 'Trackman Ramesh Shinde',
+    reporterContact: '+91 97654 11239',
+    status: 'IN_PROGRESS',
+    timestamp: '42 mins ago',
+    assignedOfficer: 'Assistant Divisional Engineer (ADE Kalyan)',
+    aiPriorityScore: 84,
+    actionTaken: 'Section Gang #4 on site with tamping and torque wrenches.',
+    resolutionEta: '30 mins',
+    photoAttached: true,
+    locationGps: { lat: 19.1892, lng: 73.0844 }
+  },
+  {
+    id: 'RM-2026-96340',
+    category: 'COACH_AMENITIES',
+    severity: 'MEDIUM',
+    title: 'AC Failure & Power Inverter Tripped in Coach B2',
+    description: 'Passengers experiencing high temperatures due to AC duct airflow stoppage in Coach B2 (Seats 24-48).',
+    trainNumber: '12137',
+    pnr: '8452190342',
+    stationOrSection: 'Approaching Dadar CR',
+    division: 'Mumbai CR',
+    reporterName: 'Pooja Verma (Passenger)',
+    reporterContact: '+91 98190 23847',
+    status: 'AI_TRIAGED',
+    timestamp: '1 hour ago',
+    assignedOfficer: 'On-Board Electrical Staff (OBHS Team)',
+    aiPriorityScore: 65,
+    actionTaken: 'OBHS electrical technician alerted. Will board at next scheduled halt (Dadar).',
+    resolutionEta: '20 mins'
+  },
+  {
+    id: 'RM-2026-95120',
+    category: 'SIGNALING_KAVACH',
+    severity: 'HIGH',
+    title: 'Kavach Radio Beacon Packet Latency Fluctuation',
+    description: 'UHF Radio trackside communication packet drops observed near Virar North Yard junction approach.',
+    stationOrSection: 'Virar North Yard Signal #S-42',
+    division: 'Mumbai WR',
+    reporterName: 'ASTE Signal Engineer V. Nair',
+    reporterContact: '+91 98450 67120',
+    status: 'RESOLVED',
+    timestamp: '3 hours ago',
+    assignedOfficer: 'Signal & Telecom Inspector (STI Churchgate)',
+    aiPriorityScore: 78,
+    actionTaken: 'Radio transponder rebooted and RFID tag alignment recalibrated successfully.',
+    resolutionEta: 'Completed',
+    locationGps: { lat: 19.456, lng: 72.805 }
+  }
+];
+
 

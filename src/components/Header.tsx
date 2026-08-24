@@ -11,7 +11,8 @@ import {
   RefreshCw,
   Zap,
   Settings,
-  Bell
+  Bell,
+  LifeBuoy
 } from 'lucide-react';
 import { SettingsPanel } from './settings/SettingsPanel';
 import { KavachModal } from './planner/KavachModal';
@@ -52,7 +53,9 @@ export const Header: React.FC = () => {
     metrics,
     activeTab,
     setActiveTab,
-    setIsKavachModalOpen
+    setIsKavachModalOpen,
+    setIsProblemModalOpen,
+    problemReports
   } = useRailway();
 
   const { language, setLanguage, t } = useLanguage();
@@ -457,6 +460,46 @@ export const Header: React.FC = () => {
             >
               <Zap size={12} style={{ display: 'inline' }} />
               {t('nav.kavach')}
+            </button>
+
+            <button
+              className="nav-tab-button"
+              onClick={() => setIsProblemModalOpen(true)}
+              style={{
+                color: '#FFB27A',
+                background: 'rgba(234,88,12,0.16)',
+                border: '1px solid rgba(234,88,12,0.35)',
+                cursor: 'pointer',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px',
+                transition: 'all 0.18s ease',
+                whiteSpace: 'nowrap'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'var(--rx-orange)';
+                e.currentTarget.style.color = '#FFFFFF';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(234,88,12,0.16)';
+                e.currentTarget.style.color = '#FFB27A';
+              }}
+            >
+              <LifeBuoy size={12} style={{ display: 'inline' }} />
+              {language === 'mr' ? '🚨 रेल मदद / तक्रार' : '🚨 RailMadad / Report Issue'}
+              {problemReports.filter(r => r.status !== 'RESOLVED').length > 0 && (
+                <span style={{
+                  background: 'var(--rx-red)',
+                  color: '#fff',
+                  borderRadius: '10px',
+                  padding: '0 5px',
+                  fontSize: '0.62rem',
+                  fontWeight: 900
+                }}>
+                  {problemReports.filter(r => r.status !== 'RESOLVED').length}
+                </span>
+              )}
             </button>
           </div>
 

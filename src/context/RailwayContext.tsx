@@ -10,7 +10,9 @@ import {
   DivisionName,
   AccidentSeverity,
   AuthUser,
-  UserRole
+  UserRole,
+  ProblemReport,
+  ProblemStatus
 } from '../types/railway';
 import { 
   INITIAL_TRACK_SECTIONS, 
@@ -18,7 +20,8 @@ import {
   INITIAL_MEGA_BLOCKS, 
   INITIAL_ACCIDENTS, 
   INITIAL_ASSETS, 
-  INITIAL_OPTIMIZATION_METRICS 
+  INITIAL_OPTIMIZATION_METRICS,
+  INITIAL_PROBLEM_REPORTS
 } from '../data/mockData';
 import { playEmergencyAlertSound, playOptimizationChime } from '../utils/audioAlert';
 
@@ -52,6 +55,14 @@ interface RailwayContextType {
   tripDest: string;
   setTripDest: (dest: string) => void;
   openTripPlanner: (origin?: string, dest?: string) => void;
+  
+  // Problem Intake & RailMadad Grievance Center
+  problemReports: ProblemReport[];
+  isProblemModalOpen: boolean;
+  setIsProblemModalOpen: (open: boolean) => void;
+  submitProblemReport: (report: Omit<ProblemReport, 'id' | 'status' | 'timestamp' | 'aiPriorityScore'>) => ProblemReport;
+  updateProblemStatus: (id: string, status: ProblemStatus, actionTaken?: string, assignedOfficer?: string) => void;
+  resolveProblemReport: (id: string, actionTaken?: string) => void;
   
   // Actions
   runAiOptimizer: () => Promise<void>;
@@ -106,6 +117,8 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [tripPlannerModalOpen, setTripPlannerModalOpen] = useState<boolean>(false);
   const [tripOrigin, setTripOrigin] = useState<string>('CSMT Mumbai');
   const [tripDest, setTripDest] = useState<string>('Kalyan Junction');
+  const [problemReports, setProblemReports] = useState<ProblemReport[]>(INITIAL_PROBLEM_REPORTS);
+  const [isProblemModalOpen, setIsProblemModalOpen] = useState<boolean>(false);
 
   const openTripPlanner = (origin?: string, dest?: string) => {
     if (origin) setTripOrigin(origin);
@@ -390,6 +403,78 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setMegaBlocks(prev => [newBlock, ...prev]);
   };
 
+  // Submit Problem Report / RailMadad Grievance
+  const submitProblemReport = (
+    reportData: Omit<ProblemReport, 'id' | 'status' | 'timestamp' | 'aiPriorityScore'>
+  ): ProblemReport => {
+    const randomSuffix = Math.floor(10000 + Math.random() * 90000);
+    const id = `RM-2026-${randomSuffix}`;
+    
+    // Calculate AI priority score based on severity & category
+    let aiPriorityScore = 50;
+    if (reportData.severity === 'CRITICAL_SOS') aiPriorityScore = 98;
+    else if (reportData.severity === 'HIGH') aiPriorityScore = 85;
+    else if (reportData.severity === 'MEDIUM') aiPriorityScore = 65;
+    else aiPriorityScore = 40;
+
+    if (reportData.category === 'TRACK_INFRASTRUCTURE' || reportData.category === 'OHE_ELECTRICAL' || reportData.category === 'SAFETY_SECURITY_SOS') {
+      aiPriorityScore = Math.min(100, aiPriorityScore + 5);
+    }
+
+    const newReport: ProblemReport = {
+      ...reportData,
+      id,
+      status: 'AI_TRIAGED',
+      timestamp: 'Just now',
+      aiPriorityScore,
+      assignedOfficer: 'Divisional Operations Control (DOM CRIS)',
+      actionTaken: reportData.severity === 'CRITICAL_SOS' 
+        ? 'AI Priority Escalation: Urgent alert dispatched to Section Controller & Station Master.'
+        : 'AI Ticket Logged: Assigned to field maintenance queue.'
+    };
+
+    setProblemReports(prev => [newReport, ...prev]);
+
+    // If critical, trigger emergency audio sound
+    if (reportData.severity === 'CRITICAL_SOS') {
+      playEmergencyAlertSound();
+    }
+
+    return newReport;
+  };
+
+  // Update Problem Status
+  const updateProblemStatus = (
+    id: string, 
+    status: ProblemStatus, 
+    actionTaken?: string, 
+    assignedOfficer?: string
+  ) => {
+    setProblemReports(prev =>
+      prev.map(item => {
+        if (item.id === id) {
+          return {
+            ...item,
+            status,
+            actionTaken: actionTaken || item.actionTaken,
+            assignedOfficer: assignedOfficer || item.assignedOfficer,
+            resolutionEta: status === 'RESOLVED' ? 'Completed' : item.resolutionEta
+          };
+        }
+        return item;
+      })
+    );
+  };
+
+  // Resolve Problem Report
+  const resolveProblemReport = (id: string, actionTaken?: string) => {
+    updateProblemStatus(
+      id, 
+      'RESOLVED', 
+      actionTaken || 'Verified and resolved by Section Field Engineer. Track & passenger safety confirmed.'
+    );
+  };
+
   // Reset Simulation to Pristine State
   const resetSimulation = () => {
     setTrackSections(INITIAL_TRACK_SECTIONS);
@@ -398,6 +483,7 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setAccidents(INITIAL_ACCIDENTS);
     setAssets(INITIAL_ASSETS);
     setMetrics(INITIAL_OPTIMIZATION_METRICS);
+    setProblemReports(INITIAL_PROBLEM_REPORTS);
     setSelectedSectionId(null);
   };
 
@@ -433,6 +519,12 @@ export const RailwayProvider: React.FC<{ children: React.ReactNode }> = ({ child
         tripDest,
         setTripDest,
         openTripPlanner,
+        problemReports,
+        isProblemModalOpen,
+        setIsProblemModalOpen,
+        submitProblemReport,
+        updateProblemStatus,
+        resolveProblemReport,
         runAiOptimizer,
         reportAccident,
         scheduleMegaBlock,

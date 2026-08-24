@@ -286,3 +286,39 @@ export interface BroadcastSummary {
   sent_at: string;
 }
 
+export type ProblemCategory = 
+  | 'TRACK_INFRASTRUCTURE'      // Track fracture, debris, ballast washout, broken rail
+  | 'OHE_ELECTRICAL'            // OHE snap, pantograph, sparking, power outage
+  | 'SIGNALING_KAVACH'          // Signal red flicker, point jam, Kavach drop
+  | 'SAFETY_SECURITY_SOS'       // Medical emergency, crime/harassment, unauthorized chain pull
+  | 'COACH_AMENITIES'           // AC/light failure, water shortage, bio-toilet, broken window
+  | 'PUNCTUALITY_TIMETABLE'     // Unannounced halt, abnormal delay, platform chaos
+  | 'APP_TECHNICAL_FEEDBACK';   // Software bug, routing suggestion, UI issue
+
+export type ProblemSeverity = 'CRITICAL_SOS' | 'HIGH' | 'MEDIUM' | 'LOW';
+
+export type ProblemStatus = 'AI_TRIAGED' | 'DISPATCHED' | 'IN_PROGRESS' | 'RESOLVED';
+
+export interface ProblemReport {
+  id: string; // e.g. RM-2026-98412
+  category: ProblemCategory;
+  severity: ProblemSeverity;
+  title: string;
+  description: string;
+  trainNumber?: string;
+  pnr?: string;
+  stationOrSection?: string;
+  division?: DivisionName;
+  reporterName: string;
+  reporterContact: string;
+  locationGps?: { lat: number; lng: number };
+  status: ProblemStatus;
+  timestamp: string;
+  assignedOfficer?: string;
+  aiPriorityScore: number; // 0-100
+  actionTaken?: string;
+  resolutionEta?: string;
+  photoAttached?: boolean;
+}
+
+

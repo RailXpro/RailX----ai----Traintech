@@ -10,24 +10,27 @@ import { AiBlockOptimizer } from './AiBlockOptimizer';
 import { MegaBlockManager } from './MegaBlockManager';
 import { AccidentIncidentManager } from './AccidentIncidentManager';
 import { AssetAnalyticsView } from './AssetAnalyticsView';
+import { ProblemIntakeManager } from './ProblemIntakeManager';
 import {
   Map, Cpu, AlertTriangle, BarChart3,
-  Activity, Wifi, Train as TrainIcon, Zap, Calendar
+  Activity, Wifi, Train as TrainIcon, Zap, Calendar, LifeBuoy
 } from 'lucide-react';
 
 export const PlannerDashboard: React.FC = () => {
-  const { trackSections, trains, megaBlocks, accidents, persona, activeTab, setActiveTab } = useRailway();
-  const { t } = useLanguage();
+  const { trackSections, trains, megaBlocks, accidents, problemReports, persona, activeTab, setActiveTab } = useRailway();
+  const { t, language } = useLanguage();
   const { mapStyle } = useSettings();
 
   const activeAccidents = accidents.filter(a => a.status !== 'resolved');
   const activeMegaBlocks = megaBlocks.filter(b => b.status === 'active');
+  const activeProblems = problemReports.filter(r => r.status !== 'RESOLVED');
 
   const tabs = [
     { id: 'map', icon: <Map size={15} />, label: t('tab.map') },
     { id: 'optimizer', icon: <Cpu size={15} />, label: t('tab.optimizer') },
     { id: 'megablock', icon: <Calendar size={15} />, label: t('tab.megablock') },
     { id: 'accidents', icon: <AlertTriangle size={15} />, label: t('tab.accidents'), badge: activeAccidents.length },
+    { id: 'problems', icon: <LifeBuoy size={15} />, label: language === 'mr' ? 'समस्या निवारण' : 'RailMadad & Issues', badge: activeProblems.length },
     { id: 'analytics', icon: <BarChart3 size={15} />, label: t('tab.analytics') },
   ];
 
@@ -260,6 +263,7 @@ export const PlannerDashboard: React.FC = () => {
         {activeTab === 'optimizer' && <AiBlockOptimizer />}
         {activeTab === 'megablock' && <MegaBlockManager />}
         {activeTab === 'accidents' && <AccidentIncidentManager />}
+        {activeTab === 'problems' && <ProblemIntakeManager />}
         {activeTab === 'analytics' && <AssetAnalyticsView />}
       </div>
     </div>

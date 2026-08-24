@@ -12,7 +12,11 @@ import {
   Ticket,
   AlertOctagon,
   Train,
-  Compass
+  Compass,
+  LifeBuoy,
+  Plus,
+  Zap,
+  MapPin
 } from 'lucide-react';
 import { useRailway } from '../../context/RailwayContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -29,8 +33,15 @@ import {
 import { DisruptionNotification, PassengerBooking, RerouteOption } from '../../types/railway';
 
 export const PassengerPortal: React.FC = () => {
-  const { megaBlocks, accidents, selectedDivision, openTripPlanner } = useRailway();
-  const { t, localize } = useLanguage();
+  const { 
+    megaBlocks, 
+    accidents, 
+    problemReports,
+    setIsProblemModalOpen,
+    selectedDivision, 
+    openTripPlanner 
+  } = useRailway();
+  const { t, localize, language } = useLanguage();
 
   const [searchOrigin, setSearchOrigin] = useState<string>('CSMT Mumbai');
   const [searchDest, setSearchDest] = useState<string>('Kalyan Junction');
@@ -122,6 +133,31 @@ export const PassengerPortal: React.FC = () => {
               <PhoneCall size={14} />
               {t('passenger.helpline139')}
             </a>
+
+            {/* Direct Problem Report SOS Button */}
+            <button
+              onClick={() => setIsProblemModalOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'linear-gradient(135deg, var(--rx-red) 0%, #DC2626 100%)',
+                padding: '9px 20px',
+                borderRadius: 'var(--radius-pill)',
+                color: '#FFFFFF',
+                border: 'none',
+                fontSize: '0.84rem',
+                fontWeight: 800,
+                boxShadow: '0 4px 14px rgba(225, 29, 72, 0.4)',
+                cursor: 'pointer',
+                transition: 'all 0.18s ease'
+              }}
+              onMouseEnter={e => { (e.currentTarget.style.transform = 'translateY(-1px)'); }}
+              onMouseLeave={e => { (e.currentTarget.style.transform = 'translateY(0)'); }}
+            >
+              <LifeBuoy size={15} />
+              {language === 'mr' ? '🚨 समस्या नोंदवा / SOS' : '🚨 Report Problem / SOS'}
+            </button>
 
             {/* GRP Emergency: 1512 */}
             <a
@@ -571,6 +607,132 @@ export const PassengerPortal: React.FC = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── RailMadad: Live Problem & Community Issue Radar (Real-Time Passenger Sync) ── */}
+      <div className="bms-card" style={{ padding: '26px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--rx-orange-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--rx-orange)' }}>
+              <LifeBuoy size={22} className="pulse-radar" />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h3 className="bms-section-title" style={{ fontSize: '1.18rem' }}>
+                  {language === 'mr' ? '🚨 रेल मदद: थेट समस्या निवारण व स्थिती' : '🚨 RailMadad: Live Problem & Grievance Radar'}
+                </h3>
+                <span className="badge badge-clear" style={{ fontSize: '0.65rem' }}>
+                  LIVE SYNC
+                </span>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                {language === 'mr'
+                  ? 'प्रवाशांनी व कर्मचाऱ्यांनी नोंदवलेल्या समस्या, ट्रॅक दोष व थेट कार्यवाही स्थिती'
+                  : 'Real-time feed of passenger & field reports, AI triage priority, and engineering gang actions'}
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span className="badge" style={{ background: 'rgba(234, 88, 12, 0.15)', color: 'var(--rx-orange)', fontSize: '0.72rem' }}>
+              {problemReports.filter(r => r.status !== 'RESOLVED').length} Active Issues
+            </span>
+            <button
+              onClick={() => setIsProblemModalOpen(true)}
+              className="btn btn-primary"
+              style={{ fontSize: '0.78rem', padding: '7px 14px', background: 'var(--rx-orange)' }}
+            >
+              <Plus size={14} />
+              {language === 'mr' ? 'समस्या नोंदवा' : 'Report Issue'}
+            </button>
+          </div>
+        </div>
+
+        {problemReports.length === 0 ? (
+          <div style={{ background: 'var(--rx-green-light)', padding: '18px', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <CheckCircle2 size={24} color="#15803D" />
+            <div>
+              <h4 style={{ fontSize: '0.94rem', fontWeight: 700, color: '#15803D' }}>
+                {language === 'mr' ? 'सर्व यंत्रणा सुरळीत' : 'All Clear — No Active Track Problems'}
+              </h4>
+              <p style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                {language === 'mr' ? 'सध्या कोणतीही प्रलंबित तक्रार नाही.' : 'No open passenger or infrastructure grievances reported in this division.'}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(340px, 100%), 1fr))', gap: '14px' }}>
+            {problemReports.map(report => {
+              const isResolved = report.status === 'RESOLVED';
+              const isDispatched = report.status === 'DISPATCHED';
+              const isCritical = report.severity === 'CRITICAL_SOS';
+
+              return (
+                <div
+                  key={report.id}
+                  style={{
+                    background: 'var(--rx-surface)',
+                    borderTop: `4px solid ${
+                      isResolved
+                        ? 'var(--rx-green)'
+                        : isCritical
+                        ? 'var(--rx-red)'
+                        : report.severity === 'HIGH'
+                        ? 'var(--rx-orange)'
+                        : 'var(--rx-blue)'
+                    }`,
+                    borderRadius: 'var(--radius-sm)',
+                    padding: '16px',
+                    boxShadow: 'var(--shadow-card)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '10px'
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 800, fontFamily: 'var(--font-mono)', color: 'var(--rx-orange)' }}>
+                        {report.id}
+                      </span>
+                      <span
+                        style={{
+                          fontSize: '0.65rem',
+                          padding: '2px 8px',
+                          borderRadius: 'var(--radius-pill)',
+                          fontWeight: 800,
+                          background: isResolved ? 'var(--rx-green-light)' : isDispatched ? 'var(--rx-orange-light)' : 'var(--rx-blue-light)',
+                          color: isResolved ? 'var(--rx-green)' : isDispatched ? 'var(--rx-orange)' : 'var(--rx-blue)'
+                        }}
+                      >
+                        {report.status.replace('_', ' ')}
+                      </span>
+                    </div>
+
+                    <h4 style={{ fontSize: '0.94rem', fontWeight: 700, color: 'var(--text-dark)', margin: '0 0 6px' }}>
+                      {report.title}
+                    </h4>
+
+                    <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', margin: '0 0 10px', lineHeight: 1.45 }}>
+                      {report.description}
+                    </p>
+
+                    <div style={{ background: 'var(--rx-surface-alt)', padding: '8px 10px', borderRadius: 'var(--radius-xs)', fontSize: '0.72rem', color: 'var(--text-body)', marginBottom: '8px' }}>
+                      <div><strong>Location:</strong> {report.stationOrSection}</div>
+                      {report.trainNumber && <div><strong>Train:</strong> #{report.trainNumber}</div>}
+                      {report.actionTaken && <div style={{ color: 'var(--rx-green)', marginTop: '4px' }}>⚡ <strong>Status:</strong> {report.actionTaken}</div>}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                    <span>By: {report.reporterName}</span>
+                    <span>{report.timestamp}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
